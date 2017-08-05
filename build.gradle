@@ -1,0 +1,47 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext {
+        libs = [
+             supportLibVersion       : "26.0.0",
+             firebaseLibVersion      : "11.0.4",
+             constraintLayoutVersion : "1.0.2",
+             daggerVersion           : "2.11-rc1",
+             javaxInjectVersion      : "1",
+             gsonVersion             : "2.8.0",
+        ]
+        kotlin = [
+            kotlinVersion            : "1.1.3-2",
+            ankoVersion              : "0.10.1",
+        ]
+        testing = [
+            junit : "4.12"
+        ]
+    }
+
+
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha9'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin.kotlinVersion}"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

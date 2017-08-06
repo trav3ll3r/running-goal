@@ -1,7 +1,10 @@
+def libs = rootProject.ext.libs
+def kotlin = rootProject.ext.kotlin
+def test = rootProject.ext.testing
+
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -23,11 +26,10 @@ android {
     }
 }
 
-def libs = rootProject.ext.libs
-def kotlin = rootProject.ext.kotlin
-def test = rootProject.ext.testing
-//def config = rootProject.ext.configuration
-
+//compileOptions {
+//    sourceCompatibility JavaVersion.VERSION_1_8
+//    targetCompatibility JavaVersion.VERSION_1_8
+//}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -61,13 +63,9 @@ dependencies {
     implementation "javax.inject:javax.inject:${libs.javaxInjectVersion}"
 
     // TEST
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:${test.junit}"
     androidTestImplementation 'com.android.support.test:runner:1.0.0'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 
     // UTILS
     implementation "com.google.code.gson:gson:${libs.gsonVersion}"

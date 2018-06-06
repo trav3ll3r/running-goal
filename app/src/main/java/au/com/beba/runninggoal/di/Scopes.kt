@@ -1,4 +1,4 @@
-package au.com.beba.cleanproject.di
+package au.com.beba.runninggoal.di
 
 import javax.inject.Scope
 

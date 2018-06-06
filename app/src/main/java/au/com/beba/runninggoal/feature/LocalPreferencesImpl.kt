@@ -1,4 +1,4 @@
-package au.com.beba.cleanproject.feature
+package au.com.beba.runninggoal.feature
 
 import android.content.Context
 

@@ -8,12 +8,12 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
-        applicationId "au.com.beba.cleanproject"
+        applicationId "au.com.beba.runninggoal"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -43,16 +43,16 @@ dependencies {
     implementation "com.android.support:animated-vector-drawable:${libs.supportLibVersion}"
 
     // Kotlin AND Anko
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:${kotlin.kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin.kotlinVersion}"
     implementation "org.jetbrains.anko:anko-sdk25:${kotlin.ankoVersion}"// sdk23 are also available
     implementation "org.jetbrains.anko:anko-support-v4:${kotlin.ankoVersion}" // support-v4 bindings
     implementation "org.jetbrains.anko:anko-appcompat-v7:${kotlin.ankoVersion}" // appcompat-v7 bindings
 
     // FIREBASE AND MAPS
-    implementation "com.google.firebase:firebase-core:${libs.firebaseLibVersion}"
-    implementation "com.google.firebase:firebase-database:${libs.firebaseLibVersion}"
-    implementation "com.google.firebase:firebase-auth:${libs.firebaseLibVersion}"
-    implementation "com.google.android.gms:play-services-auth:${libs.firebaseLibVersion}"
+    implementation "com.google.firebase:firebase-core:${libs.firebaseCoreVer}"
+    implementation "com.google.firebase:firebase-database:${libs.firebaseDatabaseVer}"
+    implementation "com.google.firebase:firebase-auth:${libs.firebaseAuthVer}"
+    implementation "com.google.android.gms:play-services-auth:${libs.playServicesAuthVer}"
 
     // DAGGER2 dependencies
     implementation "com.google.dagger:dagger:${libs.daggerVersion}"
@@ -64,8 +64,8 @@ dependencies {
 
     // TEST
     testImplementation "junit:junit:${test.junit}"
-    androidTestImplementation 'com.android.support.test:runner:1.0.0'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // UTILS
     implementation "com.google.code.gson:gson:${libs.gsonVersion}"

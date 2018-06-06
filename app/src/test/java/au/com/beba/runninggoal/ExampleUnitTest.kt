@@ -1,4 +1,4 @@
-package au.com.beba.cleanproject
+package au.com.beba.runninggoal
 
 import org.junit.Test
 

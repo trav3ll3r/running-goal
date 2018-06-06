@@ -1,6 +1,6 @@
-package au.com.beba.cleanproject
+package au.com.beba.runninggoal
 
-import au.com.beba.cleanproject.di.component.DaggerAppComponent
+import au.com.beba.runninggoal.di.component.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 

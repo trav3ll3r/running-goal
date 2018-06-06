@@ -1,7 +1,7 @@
-package au.com.beba.cleanproject.di.module
+package au.com.beba.runninggoal.di.module
 
-import au.com.beba.cleanproject.MainActivity
-import au.com.beba.cleanproject.di.ActivityScope
+import au.com.beba.runninggoal.MainActivity
+import au.com.beba.runninggoal.di.ActivityScope
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

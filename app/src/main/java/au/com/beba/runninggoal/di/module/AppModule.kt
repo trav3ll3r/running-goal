@@ -1,8 +1,8 @@
-package au.com.beba.cleanproject.di.module
+package au.com.beba.runninggoal.di.module
 
-import au.com.beba.cleanproject.App
-import au.com.beba.cleanproject.feature.LocalPreferences
-import au.com.beba.cleanproject.feature.LocalPreferencesImpl
+import au.com.beba.runninggoal.App
+import au.com.beba.runninggoal.feature.LocalPreferences
+import au.com.beba.runninggoal.feature.LocalPreferencesImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

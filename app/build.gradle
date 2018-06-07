@@ -12,7 +12,7 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "au.com.beba.runninggoal"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -32,8 +32,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:design:${libs.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${libs.supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${libs.supportLibVersion}"
@@ -44,9 +43,15 @@ dependencies {
 
     // Kotlin AND Anko
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin.kotlinVersion}"
-    implementation "org.jetbrains.anko:anko-sdk25:${kotlin.ankoVersion}"// sdk23 are also available
-    implementation "org.jetbrains.anko:anko-support-v4:${kotlin.ankoVersion}" // support-v4 bindings
-    implementation "org.jetbrains.anko:anko-appcompat-v7:${kotlin.ankoVersion}" // appcompat-v7 bindings
+    implementation "org.jetbrains.anko:anko-sdk25:${kotlin.ankoVersion}"
+
+    // sdk23 are also available
+    implementation "org.jetbrains.anko:anko-support-v4:${kotlin.ankoVersion}"
+
+    // support-v4 bindings
+    implementation "org.jetbrains.anko:anko-appcompat-v7:${kotlin.ankoVersion}"
+
+    // appcompat-v7 bindings
 
     // FIREBASE AND MAPS
     implementation "com.google.firebase:firebase-core:${libs.firebaseCoreVer}"

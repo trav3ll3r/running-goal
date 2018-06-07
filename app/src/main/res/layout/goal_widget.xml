@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:background="@android:color/holo_orange_light">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="4">
+
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:text="Goal"
+            />
+        <TextView
+            android:id="@+id/goal_distance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_distance"
+            android:layout_gravity="fill"
+            />
+
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:text="km / day"
+            />
+        <TextView
+            android:id="@+id/project_distance_per_day"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_distance"
+            android:layout_gravity="fill"
+            />
+
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:text="Current"
+            />
+
+        <TextView
+            android:id="@+id/current_distance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_distance"
+            android:layout_gravity="fill"/>
+
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:text="Expected"
+            />
+
+        <TextView
+            android:id="@+id/expected_distance_today"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_distance"
+            android:layout_gravity="fill"
+            />
+
+    </GridLayout>
+
+
+
+    <Button
+        android:id="@+id/btn_configure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Configure" />
+
+</LinearLayout>

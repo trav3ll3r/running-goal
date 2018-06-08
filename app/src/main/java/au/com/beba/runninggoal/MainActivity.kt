@@ -7,7 +7,8 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject lateinit var localPreferences: LocalPreferences
+    @Inject
+    lateinit var localPreferences: LocalPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

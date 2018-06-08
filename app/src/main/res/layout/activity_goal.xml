@@ -1,8 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/goal_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="Goal name"
+        />
+
+    <EditText
+        android:id="@+id/goal_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:hint="Goal distance"
+        />
+
+    <EditText
+        android:id="@+id/goal_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:hint="Goal start"
+        android:text="01.06.2018"
+        />
+
+    <EditText
+        android:id="@+id/goal_end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:hint="Goal end"
+        android:text="30.06.2018"
+        />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_ok"

@@ -13,6 +13,8 @@ buildscript {
              daggerVersion           : "2.14.1",
              javaxInjectVersion      : "1",
              gsonVersion             : "2.8.0",
+             roomVer                 : "1.1.0", // or, for latest rc, use "1.1.1-rc1"
+             archLifecycleVer        : "1.1.1",
         ]
         kotlin = [
             kotlinVersion            : "1.2.41",

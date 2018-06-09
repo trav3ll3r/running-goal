@@ -9,7 +9,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 
-@Database(entities = arrayOf(RunningGoalEntity::class), version = 1)
+@Database(entities = [(RunningGoalEntity::class)], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {

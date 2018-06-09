@@ -1,6 +1,5 @@
 package au.com.beba.runninggoal.feature
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
@@ -11,7 +10,7 @@ import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.repo.GoalRepo
 
 
-class RunningGoalWidgetProvider : AppWidgetProvider() {
+open class RunningGoalWidgetProvider : AppWidgetProvider() {
 
     companion object {
         private val TAG = RunningGoalWidgetProvider::class.java.simpleName
@@ -19,30 +18,53 @@ class RunningGoalWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray) {
         Log.d(TAG, "onUpdate")
-        val widgetCount = appWidgetIds.size
 
         // Perform this loop procedure for each App Widget that belongs to this provider
-        for (i in 0 until widgetCount) {
-            val appWidgetId = appWidgetIds[i]
-            Log.d(TAG, "onUpdate | appWidgetId=%s".format(appWidgetId))
+        appWidgetIds.forEach {
+            Log.d(TAG, "onUpdate | appWidgetId=%s".format(it))
+            bindRemoteViews(context, appWidgetManager, it)
+        }
+    }
 
-            // Create an Intent to launch GoalActivity
-            val intent = Intent(context, GoalActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+    private fun bindRemoteViews(context: Context, appWidgetManager: AppWidgetManager?, appWidgetId: Int) {
+        // Get the layout for the App Widget and attach an on-click listener to the button
+        val rootView = RemoteViews(context.packageName, R.layout.goal_widget)
+        val goal = GoalRepo.getGoalForWidget(appWidgetId)
+        if (goal != null) {
+            GoalWidgetRenderer.updateUi(context, rootView, goal)
+            // Tell the AppWidgetManager to perform an update on the current app widget
+            appWidgetManager?.updateAppWidget(appWidgetId, rootView)
+        } else {
+            Log.e(TAG, "Goal for widget not found!!!")
+        }
+    }
 
-            // Get the layout for the App Widget and attach an on-click listener
-            // to the button
-            val rootView = RemoteViews(context.packageName, R.layout.goal_widget)
-            val goal = GoalRepo.getGoalForWidget(appWidgetId)
-            if (goal != null) {
-                GoalWidgetUtil.updateUi(rootView, goal)
-                rootView.setOnClickPendingIntent(R.id.btn_configure, pendingIntent)
+    override fun onReceive(context: Context, intent: Intent) {
+        Log.d(TAG, "onReceive")
+        super.onReceive(context, intent)
 
-                // Tell the AppWidgetManager to perform an update on the current app widget
-                appWidgetManager?.updateAppWidget(appWidgetId, rootView)
-            } else {
-                Log.e(TAG, "Goal for widget not found!!!")
+        if (GoalWidgetRenderer.FLIP_CLICKED == intent.action) {
+            val appWidgetId = getWidgetIdFromIntent(intent)
+            Log.d(TAG, "onReceive | widgetId=%s".format(appWidgetId))
+            if (appWidgetId > 0) {
+
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+
+
+                val goal = GoalRepo.getGoalForWidget(appWidgetId)
+                if (goal != null) {
+
+                    // UPDATE Goal's ViewType AND STORE IT IN DATABASE
+                    goal.view.toggle()
+                    GoalRepo.save(goal, appWidgetId)
+
+                    bindRemoteViews(context, appWidgetManager, appWidgetId)
+                }
             }
         }
+    }
+
+    private fun getWidgetIdFromIntent(intent: Intent): Int {
+        return intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
     }
 }

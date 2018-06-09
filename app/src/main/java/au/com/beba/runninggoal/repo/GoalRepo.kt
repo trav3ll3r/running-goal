@@ -1,10 +1,7 @@
 package au.com.beba.runninggoal.repo
 
 import android.content.Context
-import au.com.beba.runninggoal.models.GoalProgress
-import au.com.beba.runninggoal.models.GoalProjection
-import au.com.beba.runninggoal.models.GoalTarget
-import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.models.*
 import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.RunningGoalEntity
 import java.time.LocalDate
@@ -32,7 +29,8 @@ object GoalRepo {
                             goalEntity.targetDistance,
                             LocalDate.ofEpochDay(goalEntity.startDate),
                             LocalDate.ofEpochDay(goalEntity.endDate)
-                    )
+                    ),
+                    view = GoalView(GoalViewType.fromDbValue(goalEntity.viewType))
             )
             setProgress(goal, goalEntity.currentDistance)
         }
@@ -47,10 +45,12 @@ object GoalRepo {
         val daysTotal = java.time.Period.between(runningGoal.target.start, runningGoal.target.end).days
         val daysLapsed = java.time.Period.between(runningGoal.target.start, today).days
 
-        val linearDistancePerDay = (runningGoal.target.distance / daysTotal) * 1.0
+        val linearDistancePerDay = (runningGoal.target.distance * 1.0 / daysTotal)
         val expectedDistance = linearDistancePerDay * daysLapsed
 
         runningGoal.progress = GoalProgress(currentDistance, daysLapsed, expectedDistance)
+        runningGoal.progress?.positionInDistance = currentDistance - expectedDistance
+        runningGoal.progress?.positionInDays = runningGoal.progress!!.positionInDistance / daysLapsed
 
         runningGoal.projection = GoalProjection(linearDistancePerDay, daysLapsed)
     }
@@ -59,9 +59,17 @@ object GoalRepo {
         val goalEntity = RunningGoalEntity(widgetId)
         goalEntity.goalName = goal.name
         goalEntity.targetDistance = goal.target.distance
+        goalEntity.currentDistance = goal.progress?.distanceToday ?: 0.0
         goalEntity.startDate = goal.target.start.toEpochDay()
         goalEntity.endDate = goal.target.end.toEpochDay()
         goalEntity.widgetId = widgetId
-        db?.runningGoalDao()?.insertAll(goalEntity)
+        goalEntity.viewType = goal.view.viewType.asDbValue()
+
+        val goalDao = db?.runningGoalDao()
+
+        val id : Long = goalDao?.insert(goalEntity) ?: 0
+        if (id < 0L) {
+            goalDao?.update(goalEntity)
+        }
     }
 }

@@ -8,4 +8,25 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="flip_button" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <!--<item name="android:background">@android:color/holo_blue_dark</item>-->
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:text">@null</item>
+        <item name="android:src">@drawable/ic_list_24dp</item>
+    </style>
+
+    <style name="Text">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Text.Small">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="Text.Large">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>

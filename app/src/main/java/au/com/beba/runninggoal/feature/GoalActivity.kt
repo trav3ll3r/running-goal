@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.RemoteViews
 import android.widget.TextView
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.models.GoalProgress
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepo
@@ -43,23 +44,28 @@ class GoalActivity : AppCompatActivity() {
 
     private fun populateGoal(goal: RunningGoal?) {
         val goalName = goal?.name ?: "Goal"
-        val distance = (goal?.target?.distance ?: 200).toString()
+        val distance = (goal?.target?.distance ?: 0).toString()
+        val currentDistance = (goal?.progress?.distanceToday?: 0).toString()
 
         goal_name.setText(goalName, TextView.BufferType.EDITABLE)
         goal_distance.setText(distance, TextView.BufferType.EDITABLE)
+        current_distance.setText(currentDistance, TextView.BufferType.EDITABLE)
     }
 
     private fun saveGoal() {
-        val goal = RunningGoal(-1,
+        val goal = RunningGoal(appWidgetId,
                 goal_name.text.toString(),
                 GoalTarget((goal_distance.text.toString()).toInt(),
-                        LocalDate.of(2018, 5, 1),        //FIXME
-                        LocalDate.of(2018, 5, 30)        //FIXME
-                ))
+                        LocalDate.of(2018, 6, 1),        //FIXME
+                        LocalDate.of(2018, 6, 30)        //FIXME
+                ),
+                GoalProgress((current_distance.text.toString()).toDouble()))
 
         GoalRepo.save(goal, appWidgetId)
 
-        updateWidgetView(goal)
+        val updatedGoal = GoalRepo.getGoalForWidget(appWidgetId)
+
+        updateWidgetView(updatedGoal!!)
     }
 
     private fun updateWidgetView(runningGoal: RunningGoal) {
@@ -67,7 +73,7 @@ class GoalActivity : AppCompatActivity() {
 
         val rootView = RemoteViews(packageName, R.layout.goal_widget)
 
-        GoalWidgetUtil.updateUi(rootView, runningGoal)
+        GoalWidgetRenderer.updateUi(this, rootView, runningGoal)
 
         appWidgetManager.updateAppWidget(appWidgetId, rootView)
 

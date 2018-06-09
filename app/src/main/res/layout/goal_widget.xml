@@ -1,16 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="4dp"
     android:background="@android:color/holo_orange_light">
 
-    <GridLayout
-        android:layout_width="match_parent"
+
+    <ImageButton
+        android:id="@+id/btn_flip"
+        style="@style/flip_button"
+        android:layout_marginStart="@dimen/button_spacing"
+        android:contentDescription="@string/btn_flip"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="true"
+        />
+
+    <!--HEADING (GOAL NAME)-->
+    <LinearLayout
+        android:id="@+id/goal_heading"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/goal_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="GOAL NAME"/>
+
+        <TextView
+            android:id="@+id/goal_period"
+            style="@style/Text.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Jan 2018 - Dec 2018"/>
+
+    </LinearLayout>
+
+    <!--AS GRAPH-->
+    <GridLayout
+        android:id="@+id/goal_in_visuals"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/goal_heading"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:columnCount="2"
-        android:rowCount="4">
+        android:visibility="gone"
+        tools:visibility="gone"
+        >
+
+        <ProgressBar
+            android:id="@+id/goal_progress_time"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:padding="0dp"
+            android:layout_margin="0dp"
+            android:max="100"
+            android:progress="20"
+            android:indeterminate="false"
+            android:layout_columnSpan="2"
+            />
+        <ProgressBar
+            android:id="@+id/goal_progress_distance"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:padding="0dp"
+            android:layout_margin="0dp"
+            android:max="100"
+            android:progress="20"
+            android:indeterminate="false"
+            android:layout_columnSpan="2"
+            />
+
+
+    </GridLayout>
+
+    <!--AS NUMBERS-->
+    <GridLayout
+        android:id="@+id/goal_in_numbers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/goal_heading"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:columnCount="3"
+        android:visibility="gone"
+        tools:visibility="visible"
+        >
 
         <TextView
             android:layout_width="@dimen/label_width"
@@ -23,6 +113,21 @@
             android:layout_height="wrap_content"
             android:text="@string/zero_distance"
             android:layout_gravity="fill"
+            android:layout_columnSpan="2"
+            />
+
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:text="Days lapsed"
+            />
+        <TextView
+            android:id="@+id/goal_days_lapsed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_days"
+            android:layout_gravity="fill"
+            android:layout_columnSpan="2"
             />
 
         <TextView
@@ -36,43 +141,64 @@
             android:layout_height="wrap_content"
             android:text="@string/zero_distance"
             android:layout_gravity="fill"
+            android:layout_columnSpan="2"
             />
-
-        <TextView
-            android:layout_width="@dimen/label_width"
-            android:layout_height="wrap_content"
-            android:text="Current"
-            />
-
-        <TextView
-            android:id="@+id/current_distance"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_distance"
-            android:layout_gravity="fill"/>
 
         <TextView
             android:layout_width="@dimen/label_width"
             android:layout_height="wrap_content"
             android:text="Expected"
             />
-
         <TextView
             android:id="@+id/expected_distance_today"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/zero_distance"
             android:layout_gravity="fill"
+            android:layout_columnSpan="2"
             />
 
+        <!-- PROGRESS -->
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:text="Current"
+            />
+        <TextView
+            android:id="@+id/current_distance"
+            style="@style/Text.Large"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_distance"
+            android:layout_gravity="fill"
+            android:layout_columnSpan="2"
+            />
+
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:text="Position"
+            />
+        <TextView
+            android:id="@+id/position_in_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_distance"
+            android:layout_columnSpan="2"
+            />
+
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            />
+        <TextView
+            android:id="@+id/position_in_days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_days"
+            android:layout_columnSpan="1"
+            />
     </GridLayout>
 
-
-
-    <Button
-        android:id="@+id/btn_configure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Configure" />
-
-</LinearLayout>
+</RelativeLayout>

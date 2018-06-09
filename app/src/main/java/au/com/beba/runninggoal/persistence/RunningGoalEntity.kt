@@ -29,5 +29,8 @@ data class RunningGoalEntity(
 
     // TODO: CHANGE TO ONE-TO-MANY RELATIONSHIP
     @ColumnInfo(name = "widget_id")
-    var widgetId: Int = 0
+    var widgetId: Int = 0,
+
+    @ColumnInfo(name = "view_type")
+    var viewType: Int = 0
 )

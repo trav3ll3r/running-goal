@@ -13,31 +13,59 @@
         android:hint="Goal name"
         />
 
-    <EditText
-        android:id="@+id/goal_distance"
+    <!-- DISTANCE (TARGET AND CURRENT) -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberSigned"
-        android:hint="Goal distance"
-        />
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/goal_start"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="date"
-        android:hint="Goal start"
-        android:text="01.06.2018"
-        />
+        <EditText
+            android:id="@+id/goal_distance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="numberSigned"
+            android:hint="Goal distance"
+            />
 
-    <EditText
-        android:id="@+id/goal_end"
+        <EditText
+            android:id="@+id/current_distance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="numberSigned"
+            android:hint="Current distance"
+            />
+
+    </LinearLayout>
+
+    <!-- DATE START / END -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="date"
-        android:hint="Goal end"
-        android:text="30.06.2018"
-        />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/goal_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="date"
+            android:hint="Goal start"
+            android:text="01.06.2018"
+            />
+
+        <EditText
+            android:id="@+id/goal_end"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:hint="Goal end"
+            android:text="30.06.2018"
+            />
+
+    </LinearLayout>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_ok"

@@ -15,11 +15,15 @@ import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepo
 import kotlinx.android.synthetic.main.activity_goal.*
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 class GoalActivity : AppCompatActivity() {
 
     private var appWidgetId: Int = -1
+
+    private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,19 +49,35 @@ class GoalActivity : AppCompatActivity() {
     private fun populateGoal(goal: RunningGoal?) {
         val goalName = goal?.name ?: "Goal"
         val distance = (goal?.target?.distance ?: 0).toString()
-        val currentDistance = (goal?.progress?.distanceToday?: 0).toString()
+        val currentDistance = (goal?.progress?.distanceToday ?: 0).toString()
+        val startDate = (goal?.target?.start ?: LocalDate.now())
+        val endDate = (goal?.target?.end ?: LocalDate.now())
 
         goal_name.setText(goalName, TextView.BufferType.EDITABLE)
         goal_distance.setText(distance, TextView.BufferType.EDITABLE)
         current_distance.setText(currentDistance, TextView.BufferType.EDITABLE)
+        goal_start.setText(formatDate(startDate), TextView.BufferType.EDITABLE)
+        goal_end.setText(formatDate(endDate), TextView.BufferType.EDITABLE)
+    }
+
+    private fun parseDate(value: String): LocalDate {
+        return LocalDate.parse(value, dateFormatter)
+    }
+
+    private fun formatDate(value: LocalDate): String {
+        return dateFormatter.format(value)
     }
 
     private fun saveGoal() {
+        val startDate = parseDate(goal_start.text.toString())
+        val endDate = parseDate(goal_end.text.toString())
+
         val goal = RunningGoal(appWidgetId,
                 goal_name.text.toString(),
-                GoalTarget((goal_distance.text.toString()).toInt(),
-                        LocalDate.of(2018, 6, 1),        //FIXME
-                        LocalDate.of(2018, 6, 30)        //FIXME
+                GoalTarget(
+                        (goal_distance.text.toString()).toInt(),
+                        startDate,
+                        endDate
                 ),
                 GoalProgress((current_distance.text.toString()).toDouble()))
 

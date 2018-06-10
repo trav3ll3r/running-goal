@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="label_width">90dp</dimen>
-    <dimen name="button_spacing">16dp</dimen>
+
+    <dimen name="base_ring_stroke">15dp</dimen>
+    <dimen name="outer_ring_stroke">5dp</dimen>
+    <dimen name="inner_ring_stroke">15dp</dimen>
+
+
+    <dimen name="widget_text_large_value">32sp</dimen>
+    <dimen name="widget_text_small_value">12sp</dimen>
 </resources>

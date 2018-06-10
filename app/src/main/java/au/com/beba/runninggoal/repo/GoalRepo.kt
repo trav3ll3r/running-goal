@@ -42,15 +42,15 @@ object GoalRepo {
     private fun setProgress(runningGoal: RunningGoal, currentDistance: Double) {
         val today = LocalDate.now()
 
-        val daysTotal = java.time.Period.between(runningGoal.target.start, runningGoal.target.end).days
-        val daysLapsed = java.time.Period.between(runningGoal.target.start, today).days
+        val daysTotal = java.time.Period.between(runningGoal.target.start, runningGoal.target.end).days + 1
+        val daysLapsed = java.time.Period.between(runningGoal.target.start, today).days + 1
 
         val linearDistancePerDay = (runningGoal.target.distance * 1.0 / daysTotal)
         val expectedDistance = linearDistancePerDay * daysLapsed
 
-        runningGoal.progress = GoalProgress(currentDistance, daysLapsed, expectedDistance)
-        runningGoal.progress?.positionInDistance = currentDistance - expectedDistance
-        runningGoal.progress?.positionInDays = runningGoal.progress!!.positionInDistance / daysLapsed
+        runningGoal.progress = GoalProgress(currentDistance, daysTotal, daysLapsed, expectedDistance)
+        runningGoal.progress.positionInDistance = currentDistance - expectedDistance
+        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance / daysLapsed
 
         runningGoal.projection = GoalProjection(linearDistancePerDay, daysLapsed)
     }

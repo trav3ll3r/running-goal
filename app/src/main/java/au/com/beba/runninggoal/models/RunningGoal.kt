@@ -15,6 +15,7 @@ data class GoalTarget(val distance: Int, val start: LocalDate, val end: LocalDat
 
 data class GoalProgress(
         var distanceToday: Double = 0.0,
+        var daysTotal: Int = 0,
         var daysLapsed: Int = 0,
         var distanceExpected: Double = 0.0,
         var positionInDistance: Double = 0.0,

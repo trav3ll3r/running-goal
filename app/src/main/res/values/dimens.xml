@@ -2,11 +2,18 @@
 <resources>
     <dimen name="label_width">90dp</dimen>
 
+    <dimen name="base_ring_padding">5dp</dimen>
     <dimen name="base_ring_stroke">15dp</dimen>
     <dimen name="outer_ring_stroke">5dp</dimen>
     <dimen name="inner_ring_stroke">15dp</dimen>
 
+    <dimen name="base_notch_padding">8dp</dimen>
+    <dimen name="base_notch_height">8dp</dimen>
+    <dimen name="base_notch_height_major">16dp</dimen>
+    <dimen name="base_notch_width">3dp</dimen>
 
     <dimen name="widget_text_large_value">32sp</dimen>
     <dimen name="widget_text_small_value">12sp</dimen>
+    <dimen name="max_width">120dp</dimen>
+    <dimen name="max_height">120dp</dimen>
 </resources>

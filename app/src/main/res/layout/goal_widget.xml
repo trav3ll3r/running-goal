@@ -77,6 +77,14 @@
             android:tint="@android:color/holo_red_dark"
             android:contentDescription="@null"
             />
+
+        <ImageView
+            android:id="@+id/progress_expected_notches"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:contentDescription="@null"
+            />
     </FrameLayout>
 
     <!--AS NUMBERS-->

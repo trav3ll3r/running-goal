@@ -18,7 +18,23 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        debug {
+            // Sign with debug key
+            storeFile file("src/debug/debug_certificate.jks")
+            storePassword "password"
+            keyAlias "debug_key"
+            keyPassword "password"
+        }
+    }
+
     buildTypes {
+        debug {
+            debuggable true
+            signingConfig signingConfigs.debug
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

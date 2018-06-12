@@ -4,8 +4,17 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
-import android.graphics.Paint.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Paint.ANTI_ALIAS_FLAG
+import android.graphics.Paint.DITHER_FLAG
+import android.graphics.Paint.FILTER_BITMAP_FLAG
+import android.graphics.Path
+import android.graphics.Point
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.util.Log
@@ -89,12 +98,27 @@ object ProgressRenderer {
 
     private var widthMax: Int = 0
     private var heightMax: Int = 0
+    private lateinit var notchesSpecs: Notches
+
+    private data class Notches(
+            val days: Int,
+            val notches: Int,
+            val fullAngle: Float = 360.0f,
+            val notchWidth: Float = 0.05f
+    ) {
+        val notchOffsetAngle: Float
+            get() {
+                return (fullAngle - (notchWidth * notches)) / days
+            }
+
+//        fun notchOffsetAngle(): Float {
+//            return (fullAngle - (notchWidth * notches)) / days
+//        }
+    }
 
     fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
         widthMax = context.resources.getDimensionPixelSize(R.dimen.max_width)
         heightMax = context.resources.getDimensionPixelSize(R.dimen.max_height)
-//        val width = 400
-//        val height = 400
 
         //Paint for arc stroke.
         val paint = Paint(FILTER_BITMAP_FLAG or DITHER_FLAG or ANTI_ALIAS_FLAG)
@@ -113,10 +137,17 @@ object ProgressRenderer {
         val expected = runningGoal.progress.distanceExpected
         val current = runningGoal.progress.distanceToday.toInt()
 
+        notchesSpecs = Notches(
+                days = runningGoal.progress.daysTotal,
+                notches = runningGoal.progress.daysTotal - 1,
+                fullAngle = fullSweep
+        )
+
         circleBase(context, canvas, paint)
         arcBase(context, canvas)
-        arcProgressNotches(context, rootView)
+        //arcProgressNotchesWithIcon(context, rootView)
         arcCurrent(context, canvas, current.toFloat() / max)
+        arcProgressNotches(context, canvas)
 
         //Draw text value
         val centreWidth = (bitmap.width / 2).toFloat()
@@ -134,10 +165,10 @@ object ProgressRenderer {
 
         val factor = expected.toFloat() / max
         val notchAngle = gapAngle + (factor * fullSweep)
-        ProgressRenderer.renderNotch(context, rootView, notchAngle)
+        ProgressRenderer.renderExpectedMarker(context, rootView, notchAngle)
     }
 
-    private fun renderNotch(context: Context, rootView: RemoteViews, angle: Float) {
+    private fun renderExpectedMarker(context: Context, rootView: RemoteViews, angle: Float) {
         val notch = Icon.createWithResource(context, R.drawable.ic_navigation_24dp)
         val drawableNotch = notch.loadDrawable(context)
 
@@ -158,41 +189,49 @@ object ProgressRenderer {
     }
 
     private fun arcBase(context: Context, canvas: Canvas) {
-        drawArc(context, canvas, Color.argb(55, 255, 255, 255))
+        drawArc(context, canvas, Color.argb(55, 255, 255, 255), startAngle, fullSweep)
     }
 
     private fun arcCurrent(context: Context, canvas: Canvas, percentage: Float) {
-        drawArc(context, canvas, Color.argb(150, 0, 255, 0), percentage)
+        drawArc(context, canvas, Color.argb(150, 0, 255, 0), arcLengthAngle = fullSweep * percentage)
     }
 
-    private fun arcProgressNotches(context: Context, rootView: RemoteViews) {
-        /*
-        *  . day1 | day2 | day3 .
-        *
-        * 3 days        n
-        * 3 segments    n
-        * 2 notches     n-1
-        *
-        * */
-        val days = 30
-        val notches = days - 1
+    private fun arcProgressNotches(context: Context, canvas: Canvas) {
+        (0 until notchesSpecs.notches).forEach {
+            val arcStartAngle = startAngle + (notchesSpecs.notchOffsetAngle * it)
+            Log.d("WIDGET", "arcProgressNotches | notch=%s angleStart=%s".format(it, arcStartAngle))
 
-        val notch = Icon.createWithResource(context, R.drawable.ic_notch)
-        notch.setTint(Color.argb(120, 0, 60, 0))
-        val drawableNotch = notch.loadDrawable(context)
-
-        if (drawableNotch != null) {
-            var bitmapIcon = Bitmap.createBitmap(widthMax, heightMax, Bitmap.Config.ARGB_8888)
-            val notchAngle = fullSweep / notches //degrees
-            (0 until notches).forEach {
-                val angle = startAngle + (notchAngle * it)
-                Log.d("WIDGET", "arcProgressNotches | notch=%s angle=%s".format(it, angle))
-                bitmapIcon = addToBitmap(context, bitmapIcon, drawableNotch, angle, (it + 1) % 5 == 0)
-            }
-
-            rootView.setImageViewBitmap(R.id.progress_expected_notches, bitmapIcon.rotate(-90f))
+            drawArc(context, canvas, Color.argb(150, 0, 255, 255), arcStartAngle, notchesSpecs.notchWidth)
         }
     }
+
+//    private fun arcProgressNotchesWithIcon(context: Context, rootView: RemoteViews) {
+//        /*
+//        *  . day1 | day2 | day3 .
+//        *
+//        * 3 days        n
+//        * 3 segments    n
+//        * 2 notches     n-1
+//        *
+//        * */
+//        val notches = notchesSpecs.notches
+//
+//        val notch = Icon.createWithResource(context, R.drawable.ic_notch)
+//        notch.setTint(Color.argb(120, 0, 60, 0))
+//        val drawableNotch = notch.loadDrawable(context)
+//
+//        if (drawableNotch != null) {
+//            var bitmapIcon = Bitmap.createBitmap(widthMax, heightMax, Bitmap.Config.ARGB_8888)
+//            val notchAngle = fullSweep / notches //degrees
+//            (0 until notches).forEach {
+//                val angle = startAngle + (notchAngle * it)
+//                Log.d("WIDGET", "arcProgressNotches | notch=%s angle=%s".format(it, angle))
+//                bitmapIcon = addToBitmap(context, bitmapIcon, drawableNotch, angle, (it + 1) % 5 == 0)
+//            }
+//
+//            rootView.setImageViewBitmap(R.id.progress_expected_notches, bitmapIcon.rotate(-90f))
+//        }
+//    }
 
     private fun getArcRect(stroke: Float, padding: Int, width: Int? = null, height: Int? = null): RectF {
         val arcWidth = width ?: widthMax
@@ -203,21 +242,22 @@ object ProgressRenderer {
         return arcRect
     }
 
-    private fun drawArc(context: Context, canvas: Canvas, colour: Int, percentage: Float = 1f) {
+    private fun drawArc(context: Context, canvas: Canvas, colour: Int, arcStartAngle: Float = startAngle, arcLengthAngle: Float) {
         val center = Point(canvas.width / 2, canvas.height / 2)
         val outerRadius = (canvas.width.toFloat() / 2) - context.resources.getDimensionPixelSize(R.dimen.base_ring_padding)
         val innerRadius = outerRadius - context.resources.getDimensionPixelSize(R.dimen.inner_ring_stroke)
-        val arcSweep = fullSweep * percentage
+        val arcSweep = arcLengthAngle //fullSweep * percentage
 
         val outerRect = RectF(center.x - outerRadius, center.y - outerRadius, center.x + outerRadius, center.y + outerRadius)
         val innerRect = RectF(center.x - innerRadius, center.y - innerRadius, center.x + innerRadius, center.y + innerRadius)
 
         val path = Path()
-        path.arcTo(outerRect, startAngle, arcSweep)
-        path.arcTo(innerRect, startAngle + arcSweep, -arcSweep)
+        path.arcTo(outerRect, arcStartAngle, arcSweep)
+        path.arcTo(innerRect, arcStartAngle + arcSweep, -arcSweep)
         path.close()
 
-        val fill = Paint()
+        //val fill = Paint()
+        val fill = Paint(FILTER_BITMAP_FLAG or DITHER_FLAG or ANTI_ALIAS_FLAG)
         fill.color = colour
         canvas.drawPath(path, fill)
 

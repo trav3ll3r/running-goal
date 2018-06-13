@@ -50,7 +50,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="date"
+            android:inputType="none"
+            android:focusable="false"
             android:hint="Goal start"
             android:text="01.06.2018"
             />
@@ -60,7 +61,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:inputType="date"
+            android:inputType="none"
+            android:focusable="false"
             android:hint="Goal end"
             android:text="30.06.2018"
             />

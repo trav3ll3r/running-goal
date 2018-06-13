@@ -1,11 +1,13 @@
 package au.com.beba.runninggoal.feature
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.EditText
 import android.widget.RemoteViews
 import android.widget.TextView
 import au.com.beba.runninggoal.R
@@ -44,6 +46,9 @@ class GoalActivity : AppCompatActivity() {
                     AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID)
         }
+
+        initDatePicker(findViewById(R.id.goal_start))
+        initDatePicker(findViewById(R.id.goal_end))
     }
 
     private fun populateGoal(goal: RunningGoal?) {
@@ -105,5 +110,16 @@ class GoalActivity : AppCompatActivity() {
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(Activity.RESULT_OK, resultValue)
         finish()
+    }
+
+    private fun initDatePicker(editText: EditText) {
+        val date = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            editText.setText(dateFormatter.format(LocalDate.of(year, monthOfYear + 1, dayOfMonth)))
+        }
+
+        editText.setOnClickListener {
+            val currentDate = parseDate(editText.text.toString())
+            DatePickerDialog(this, date, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth).show()
+        }
     }
 }

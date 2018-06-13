@@ -61,12 +61,13 @@
         tools:visibility="visible"
         >
 
+        <!--android:padding="16dp"-->
         <ImageView
             android:id="@+id/progress_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Goal progress"
-            android:padding="16dp"
+            android:padding="0dp"
             />
 
         <ImageView

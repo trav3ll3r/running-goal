@@ -4,19 +4,11 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.Paint.ANTI_ALIAS_FLAG
-import android.graphics.Paint.DITHER_FLAG
-import android.graphics.Paint.FILTER_BITMAP_FLAG
-import android.graphics.Path
-import android.graphics.Point
-import android.graphics.RectF
+import android.graphics.*
+import android.graphics.Paint.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
@@ -93,6 +85,7 @@ object GoalWidgetRenderer {
 }
 
 object ProgressRenderer {
+
     private const val gapAngle = 30f
     private const val startAngle = 90f + gapAngle
     private const val fullSweep = 360f - (gapAngle * 2)
@@ -142,7 +135,6 @@ object ProgressRenderer {
 
         circleBase(context, canvas, paint)
         arcBase(context, canvas)
-        //arcProgressNotchesWithIcon(context, rootView)
         arcCurrent(context, canvas, current.toFloat() / max)
         arcProgressNotches(context, canvas)
 
@@ -166,11 +158,12 @@ object ProgressRenderer {
     }
 
     private fun renderExpectedMarker(context: Context, rootView: RemoteViews, angle: Float) {
-        val notch = Icon.createWithResource(context, R.drawable.ic_navigation_24dp)
-        val drawableNotch = notch.loadDrawable(context)
+        val markerIcon = Icon.createWithResource(context, R.drawable.ic_navigation_24dp)
+        val markerDrawable = markerIcon.loadDrawable(context)
+        markerDrawable.setTint(ContextCompat.getColor(context, R.color.marker_color))
 
-        if (drawableNotch != null) {
-            val bitmapIcon = rotateExpectedMarker(drawableNotch, angle)
+        if (markerDrawable != null) {
+            val bitmapIcon = placeMarkerAndRotation(context, markerDrawable, angle)
             rootView.setImageViewBitmap(R.id.progress_expected_flag_img, bitmapIcon)
         }
     }
@@ -254,25 +247,7 @@ object ProgressRenderer {
         canvas.drawPath(path, border)
     }
 
-//    private fun rotateExpectedMarker(context: Context, drawable: Drawable, angle: Float): Bitmap {
-//        val max = widthMax
-//        val iconSize = context.resources.getDimensionPixelSize(R.dimen.marker_size)
-//        val right = (widthMax / 2) + (iconSize / 2)
-//        val bitmap = Bitmap.createBitmap(max, max, Bitmap.Config.ARGB_8888)
-//        val canvas = Canvas(bitmap)
-//        // ROTATE AROUND THE CENTER OF CANVAS
-////        canvas.rotate(
-////                angle,
-////                canvas.width / 2f, // px, center x
-////                canvas.height / 2f // py, center y
-////        )
-//        drawable.setBounds(right - iconSize, max - iconSize, right, max)
-//        drawable.draw(canvas)
-//        return bitmap
-//    }
-
-    private fun rotateExpectedMarker(drawableIcon: Drawable, angle: Float): Bitmap {
-
+    private fun placeMarkerAndRotation(context: Context, drawableIcon: Drawable, angle: Float): Bitmap {
         val max = widthMax
         val bitmap = Bitmap.createBitmap(max, max, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -282,17 +257,17 @@ object ProgressRenderer {
 //        paint.color = Color.argb(30, 0, 0, 0)
 //        canvas.drawRect(0f, 0f, max.toFloat(), max.toFloat(), paint)
 
-
         if (angle > 0) {
             canvas.rotate(angle, widthMax.toFloat() / 2, widthMax.toFloat() / 2)
         }
 
-        //TODO: SET iconHeight and iconWidth TO DESIRED SIZE (OVERRIDE NATURAL SIZE)
-        val iconLeft = widthMax.toFloat() / 2 - (drawableIcon.intrinsicWidth / 2)
-        val iconRight = widthMax.toFloat() / 2 + (drawableIcon.intrinsicWidth / 2)
+        //SET iconHeight and iconWidth TO DESIRED SIZE (OVERRIDE NATURAL SIZE)
+        val iconSize = context.resources.getDimensionPixelSize(R.dimen.marker_size)
+        val iconLeft = widthMax.toFloat() / 2 - (iconSize / 2)
+        val iconRight = widthMax.toFloat() / 2 + (iconSize / 2)
 
         val iconBottom = canvas.height
-        val iconTop = iconBottom - drawableIcon.intrinsicHeight
+        val iconTop = iconBottom - iconSize
 
         drawableIcon.setBounds(iconLeft.toInt(), iconTop, iconRight.toInt(), iconBottom) // CONTROL SIZE
         drawableIcon.draw(canvas)
@@ -317,9 +292,9 @@ object DecimalRenderer {
     }
 }
 
-fun Bitmap.rotate(angle: Float): Bitmap {
-    val source = this
-    val matrix = Matrix()
-    matrix.postRotate(angle)
-    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
-}
+//fun Bitmap.rotate(angle: Float): Bitmap {
+//    val source = this
+//    val matrix = Matrix()
+//    matrix.postRotate(angle)
+//    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+//}

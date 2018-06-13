@@ -35,7 +35,6 @@ object GoalRepo {
             setProgress(goal, goalEntity.currentDistance)
         }
 
-
         return goal
     }
 
@@ -50,7 +49,7 @@ object GoalRepo {
 
         runningGoal.progress = GoalProgress(currentDistance, daysTotal, daysLapsed, expectedDistance)
         runningGoal.progress.positionInDistance = currentDistance - expectedDistance
-        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance / daysLapsed
+        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance / linearDistancePerDay
 
         runningGoal.projection = GoalProjection(linearDistancePerDay, daysLapsed)
     }
@@ -59,7 +58,7 @@ object GoalRepo {
         val goalEntity = RunningGoalEntity(widgetId)
         goalEntity.goalName = goal.name
         goalEntity.targetDistance = goal.target.distance
-        goalEntity.currentDistance = goal.progress?.distanceToday ?: 0.0
+        goalEntity.currentDistance = goal.progress.distanceToday
         goalEntity.startDate = goal.target.start.toEpochDay()
         goalEntity.endDate = goal.target.end.toEpochDay()
         goalEntity.widgetId = widgetId

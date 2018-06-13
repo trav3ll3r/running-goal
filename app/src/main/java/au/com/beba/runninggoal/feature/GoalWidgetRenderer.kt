@@ -170,9 +170,8 @@ object ProgressRenderer {
         val drawableNotch = notch.loadDrawable(context)
 
         if (drawableNotch != null) {
-//            val bitmapIcon = rotateExpectedMarker(context, drawableNotch, angle)
-            val bitmapIcon = rotateExpectedMarker(context, drawableNotch, 0f)
-            rootView.setImageViewBitmap(R.id.progress_expected_flag_img, bitmapIcon.rotate(angle))
+            val bitmapIcon = rotateExpectedMarker(drawableNotch, angle)
+            rootView.setImageViewBitmap(R.id.progress_expected_flag_img, bitmapIcon)
         }
     }
 
@@ -206,14 +205,10 @@ object ProgressRenderer {
                 0 -> correctedArcStartAngle
                 else -> correctedArcStartAngle + notchesSpecs.notchOffsetAngle
             }
-//            val arcStartAngle = correctedArcStartAngle + (notchesSpecs.notchOffsetAngle * it)
-//            val arcStartAngle = correctedArcStartAngle + if (it>0notchesSpecs.notchOffsetAngle
-
             correctedArcStartAngle = fmt.format(arcStartAngle).toFloat()
             if (correctedArcStartAngle > 360.00f) {
                 correctedArcStartAngle -= 360.00f
             }
-//            Log.d("WIDGET", "arcProgressNotches | notch=%s angleStart=%s correctedArcStartAngle=%s".format(it, arcStartAngle, correctedArcStartAngle))
             Log.d("WIDGET", "arcProgressNotches | notch=%s correctedArcStartAngle=%s sweep=%s".format(it, correctedArcStartAngle, notchesSpecs.notchOffsetAngle))
 
             val notchScale = if ((it + 0) % 5 == 0) 0.5f else 0.2f // every 5th notch is longer
@@ -259,20 +254,49 @@ object ProgressRenderer {
         canvas.drawPath(path, border)
     }
 
-    private fun rotateExpectedMarker(context: Context, drawable: Drawable, angle: Float): Bitmap {
+//    private fun rotateExpectedMarker(context: Context, drawable: Drawable, angle: Float): Bitmap {
+//        val max = widthMax
+//        val iconSize = context.resources.getDimensionPixelSize(R.dimen.marker_size)
+//        val right = (widthMax / 2) + (iconSize / 2)
+//        val bitmap = Bitmap.createBitmap(max, max, Bitmap.Config.ARGB_8888)
+//        val canvas = Canvas(bitmap)
+//        // ROTATE AROUND THE CENTER OF CANVAS
+////        canvas.rotate(
+////                angle,
+////                canvas.width / 2f, // px, center x
+////                canvas.height / 2f // py, center y
+////        )
+//        drawable.setBounds(right - iconSize, max - iconSize, right, max)
+//        drawable.draw(canvas)
+//        return bitmap
+//    }
+
+    private fun rotateExpectedMarker(drawableIcon: Drawable, angle: Float): Bitmap {
+
         val max = widthMax
-        val iconSize = context.resources.getDimensionPixelSize(R.dimen.marker_size)
-        val right = (widthMax / 2) + (iconSize / 2)
         val bitmap = Bitmap.createBitmap(max, max, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        // ROTATE AROUND THE CENTER OF CANVAS
-//        canvas.rotate(
-//                angle,
-//                canvas.width / 2f, // px, center x
-//                canvas.height / 2f // py, center y
-//        )
-        drawable.setBounds(right - iconSize, max - iconSize, right, max)
-        drawable.draw(canvas)
+
+        // TODO: FOR TEST ONLY
+//        val paint = Paint()
+//        paint.color = Color.argb(30, 0, 0, 0)
+//        canvas.drawRect(0f, 0f, max.toFloat(), max.toFloat(), paint)
+
+
+        if (angle > 0) {
+            canvas.rotate(angle, widthMax.toFloat() / 2, widthMax.toFloat() / 2)
+        }
+
+        //TODO: SET iconHeight and iconWidth TO DESIRED SIZE (OVERRIDE NATURAL SIZE)
+        val iconLeft = widthMax.toFloat() / 2 - (drawableIcon.intrinsicWidth / 2)
+        val iconRight = widthMax.toFloat() / 2 + (drawableIcon.intrinsicWidth / 2)
+
+        val iconBottom = canvas.height
+        val iconTop = iconBottom - drawableIcon.intrinsicHeight
+
+        drawableIcon.setBounds(iconLeft.toInt(), iconTop, iconRight.toInt(), iconBottom) // CONTROL SIZE
+        drawableIcon.draw(canvas)
+
         return bitmap
     }
 }

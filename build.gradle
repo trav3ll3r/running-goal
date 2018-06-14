@@ -17,7 +17,7 @@ buildscript {
              archLifecycleVer        : "1.1.1",
         ]
         kotlin = [
-            kotlinVersion            : "1.2.41",
+            kotlinVersion            : "1.2.50",
             ankoVersion              : "0.10.1",
         ]
         testing = [

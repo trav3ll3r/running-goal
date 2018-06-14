@@ -3,7 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <!--<color name="marker_color">#AA004400</color>-->
-    <!--<color name="marker_color">#66000000</color>-->
     <color name="marker_color">#FFFFFF</color>
+
+    <color name="goal_slot_default">#33000000</color>
+    <color name="goal_slot_distance">#cc00AA55</color>
+    <color name="goal_slot_time">#cc5588AA</color>
 </resources>

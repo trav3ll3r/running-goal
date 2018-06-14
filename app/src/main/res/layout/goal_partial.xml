@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingTop="4dp">
+
+    <TextView
+        android:id="@+id/goal_part_name"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Category"
+        />
+    <TextView
+        android:id="@+id/goal_part_value"
+        style="@style/Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/zero_distance"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/goal_part_out_of"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="/max"
+        />
+
+    <TextView
+        android:id="@+id/goal_part_unit"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/unit_kilometre"
+        />
+
+
+</LinearLayout>

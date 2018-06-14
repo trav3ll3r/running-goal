@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#33ffffff"
     android:orientation="vertical"
-    android:padding="4dp"
-    android:background="#33ffffff">
+    android:padding="4dp">
 
 
     <ImageButton
         android:id="@+id/btn_flip"
         style="@style/flip_button"
-        android:contentDescription="@string/btn_flip"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="false"
         android:layout_alignParentEnd="true"
-        />
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/btn_flip" />
 
     <!--HEADING (GOAL NAME)-->
     <LinearLayout
         android:id="@+id/goal_heading"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:orientation="vertical"
-        >
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/goal_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-            android:text="GOAL NAME"/>
+            android:text="GOAL NAME"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/goal_period"
@@ -43,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Jan 2018 - Dec 2018"/>
+            android:text="Jan 2018 - Dec 2018" />
 
     </LinearLayout>
 
@@ -52,82 +50,87 @@
         android:id="@+id/goal_in_visuals"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/goal_heading"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/goal_heading"
         android:columnCount="2"
         android:visibility="gone"
-        tools:visibility="visible"
-        >
+        tools:visibility="gone">
 
-        <!--android:padding="16dp"-->
         <ImageView
             android:id="@+id/progress_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Goal progress"
-            android:padding="0dp"
-            />
+            android:padding="0dp" />
 
         <ImageView
             android:id="@+id/progress_expected_flag_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:importantForAccessibility="no"
             android:contentDescription="@null"
-            />
+            android:importantForAccessibility="no" />
 
         <ImageView
             android:id="@+id/progress_expected_notches"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:importantForAccessibility="no"
             android:contentDescription="@null"
-            />
+            android:importantForAccessibility="no" />
     </FrameLayout>
 
     <!--AS NUMBERS-->
-    <GridLayout
+    <RelativeLayout
         android:id="@+id/goal_in_numbers"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/goal_heading"
-        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:columnCount="3"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/goal_heading"
         android:visibility="gone"
-        tools:visibility="gone"
-        >
+        tools:visibility="visible">
 
-        <TextView
-            android:layout_width="@dimen/label_width"
-            android:layout_height="wrap_content"
-            android:text="Goal"
-            />
-        <TextView
-            android:id="@+id/goal_distance"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_distance"
-            android:layout_gravity="fill"
-            android:layout_columnSpan="2"
-            />
+        <!-- ROW 1 -->
+        <LinearLayout
+            android:id="@+id/slot_total_distance"
+            style="@style/GoalSlot.Distance.TopTier"
+            android:layout_alignParentStart="true"
+            android:orientation="vertical" />
 
-        <TextView
-            android:layout_width="@dimen/label_width"
-            android:layout_height="wrap_content"
-            android:text="Days lapsed"
-            />
-        <TextView
-            android:id="@+id/goal_days_lapsed"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_days"
-            android:layout_gravity="fill"
-            android:layout_columnSpan="2"
-            />
+        <LinearLayout
+            android:id="@+id/slot_total_days"
+            style="@style/GoalSlot.Days.TopTier"
+            android:layout_below="@id/slot_total_distance"
+            android:layout_alignTop="@id/slot_total_distance"
+            android:layout_toEndOf="@id/slot_total_distance"
+            android:orientation="vertical" />
 
+        <LinearLayout
+            android:id="@+id/slot_distance_per_day"
+            style="@style/GoalSlot.Distance"
+            android:layout_alignTop="@id/slot_total_days"
+            android:layout_toEndOf="@id/slot_total_days"
+            android:orientation="vertical" />
+
+        <!-- ROW 2 -->
+        <LinearLayout
+            android:id="@+id/slot_position_distance"
+            style="@style/GoalSlot.Distance"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/slot_total_distance"
+            android:layout_marginTop="1dp"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:id="@+id/slot_position_days"
+            style="@style/GoalSlot.Days"
+            android:layout_alignTop="@id/slot_position_distance"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@id/slot_position_distance"
+            android:orientation="vertical" />
+
+        <!--
         <TextView
             android:layout_width="@dimen/label_width"
             android:layout_height="wrap_content"
@@ -155,48 +158,7 @@
             android:layout_gravity="fill"
             android:layout_columnSpan="2"
             />
-
-        <!-- PROGRESS -->
-        <TextView
-            android:layout_width="@dimen/label_width"
-            android:layout_height="wrap_content"
-            android:text="Current"
-            />
-        <TextView
-            android:id="@+id/current_distance"
-            style="@style/Text.Large"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_distance"
-            android:layout_gravity="fill"
-            android:layout_columnSpan="2"
-            />
-
-        <TextView
-            android:layout_width="@dimen/label_width"
-            android:layout_height="wrap_content"
-            android:text="Position"
-            />
-        <TextView
-            android:id="@+id/position_in_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_distance"
-            android:layout_columnSpan="2"
-            />
-
-        <TextView
-            android:layout_width="@dimen/label_width"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            />
-        <TextView
-            android:id="@+id/position_in_days"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_days"
-            android:layout_columnSpan="1"
-            />
-    </GridLayout>
+        -->
+    </RelativeLayout>
 
 </RelativeLayout>

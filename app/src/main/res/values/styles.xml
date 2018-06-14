@@ -29,4 +29,29 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="GoalSlot">
+        <item name="android:layout_width">@dimen/goal_slot_width</item>
+        <item name="android:layout_height">@dimen/goal_slot_height</item>
+        <item name="android:background">@drawable/ic_hex</item>
+        <item name="android:backgroundTint">@color/goal_slot_default</item>
+    </style>
+
+    <style name="GoalSlot.Distance">
+        <item name="android:backgroundTint">@color/goal_slot_distance</item>
+    </style>
+
+    <style name="GoalSlot.Distance.TopTier">
+        <item name="android:layout_width">@dimen/goal_slot_width_toptier</item>
+        <item name="android:layout_height">@dimen/goal_slot_height_toptier</item>
+    </style>
+
+    <style name="GoalSlot.Days">
+        <item name="android:backgroundTint">@color/goal_slot_time</item>
+    </style>
+
+    <style name="GoalSlot.Days.TopTier">
+        <item name="android:layout_width">@dimen/goal_slot_width_toptier</item>
+        <item name="android:layout_height">@dimen/goal_slot_height_toptier</item>
+        <item name="android:backgroundTint">@color/goal_slot_time</item>
+    </style>
 </resources>

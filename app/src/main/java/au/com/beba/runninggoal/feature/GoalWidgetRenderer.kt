@@ -49,19 +49,7 @@ object GoalWidgetRenderer {
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.VISIBLE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_pie_chart_24dp))
 
-                rootView.setTextViewText(R.id.goal_distance, "%s km".format(runningGoal.target.distance))
-
-                val progress = runningGoal.progress
-                rootView.setTextViewText(R.id.current_distance, "%s km".format(progress.distanceToday))
-                rootView.setTextViewText(R.id.goal_days_lapsed, "%s days".format(progress.daysLapsed))
-                rootView.setTextViewText(R.id.expected_distance_today, "%s km".format(DecimalRenderer.fromDouble(progress.distanceExpected)))
-                rootView.setTextViewText(R.id.position_in_distance, "%s km".format(DecimalRenderer.fromDouble(progress.positionInDistance)))
-                rootView.setTextViewText(R.id.position_in_days, "%s days".format(DecimalRenderer.fromDouble(progress.positionInDays)))
-
-                val projections = runningGoal.projection
-                if (projections != null) {
-                    rootView.setTextViewText(R.id.project_distance_per_day, "%s km/day".format(DecimalRenderer.fromDouble(projections.distancePerDay)))
-                }
+                GoalInNumbersRenderer.render(context, rootView, runningGoal)
             }
         }
 
@@ -81,6 +69,52 @@ object GoalWidgetRenderer {
         intent.action = action
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         return PendingIntent.getBroadcast(context, 0, intent, 0)
+    }
+}
+
+object GoalInNumbersRenderer {
+
+    fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
+
+        val progress = runningGoal.progress
+        val projections = runningGoal.projection
+
+        // ROW 1
+        val slotTotalDistance = RemoteViews(context.packageName, R.layout.goal_partial)
+        slotTotalDistance.setTextViewText(R.id.goal_part_name, "Km")
+        slotTotalDistance.setTextViewText(R.id.goal_part_value, "%s".format(progress.distanceToday))
+        slotTotalDistance.setTextViewText(R.id.goal_part_out_of, "/%s".format(runningGoal.target.distance))
+        slotTotalDistance.setViewVisibility(R.id.goal_part_unit, View.GONE)
+        rootView.addView(R.id.slot_total_distance, slotTotalDistance)
+
+        val slotTotalDays = RemoteViews(context.packageName, R.layout.goal_partial)
+        slotTotalDays.setTextViewText(R.id.goal_part_name, "Days")
+        slotTotalDays.setTextViewText(R.id.goal_part_value, "%s".format(progress.daysLapsed))
+        slotTotalDays.setTextViewText(R.id.goal_part_out_of, "/%s".format(progress.daysTotal))
+        slotTotalDistance.setViewVisibility(R.id.goal_part_unit, View.GONE)
+        rootView.addView(R.id.slot_total_days, slotTotalDays)
+
+        val slotDistancePerDay = RemoteViews(context.packageName, R.layout.goal_partial)
+        slotDistancePerDay.setTextViewText(R.id.goal_part_name, "Average")
+        slotDistancePerDay.setTextViewText(R.id.goal_part_value, "%s".format(DecimalRenderer.fromDouble(projections.distancePerDay)))
+        slotDistancePerDay.setViewVisibility(R.id.goal_part_out_of, View.GONE)
+        slotDistancePerDay.setTextViewText(R.id.goal_part_unit, "km/day")
+        rootView.addView(R.id.slot_distance_per_day, slotDistancePerDay)
+
+        // ROW 2
+        val slotPositionDistance = RemoteViews(context.packageName, R.layout.goal_partial)
+        slotPositionDistance.setTextViewText(R.id.goal_part_name, "Position")
+        slotPositionDistance.setTextViewText(R.id.goal_part_value, "%s".format(DecimalRenderer.fromDouble(progress.positionInDistance, true)))
+        slotPositionDistance.setViewVisibility(R.id.goal_part_out_of, View.GONE)
+        slotPositionDistance.setTextViewText(R.id.goal_part_unit, "km")
+        rootView.addView(R.id.slot_position_distance, slotPositionDistance)
+
+        val slotPositionDays = RemoteViews(context.packageName, R.layout.goal_partial)
+        slotPositionDays.setTextViewText(R.id.goal_part_name, "Position")
+        slotPositionDays.setTextViewText(R.id.goal_part_value, "%s".format(DecimalRenderer.fromDouble(progress.positionInDays, true)))
+        slotPositionDays.setViewVisibility(R.id.goal_part_out_of, View.GONE)
+        slotPositionDays.setTextViewText(R.id.goal_part_unit, "day(s)")
+        rootView.addView(R.id.slot_position_days, slotPositionDays)
     }
 }
 
@@ -126,6 +160,7 @@ object ProgressRenderer {
         val max = runningGoal.target.distance
         val expected = runningGoal.progress.distanceExpected
         val current = runningGoal.progress.distanceToday.toInt()
+        val positionInDistance = runningGoal.progress.positionInDistance
 
         notchesSpecs = Notches(
                 days = runningGoal.progress.daysTotal,
@@ -145,10 +180,16 @@ object ProgressRenderer {
         //canvas.drawText( "%s%%".format(percentage), centreWidth, centreHeight, textPaint)
         //Draw widget title.
         //textPaint.setTextSize((context.getResources().getDimension(R.dimen.widget_text_large_title) / density) as Int)
-        canvas.drawText("%s".format(current), centreWidth, centreHeight, textPaint)
+        // CURRENT DISTANCE
+        canvas.drawText(
+                "%s".format(current),
+                centreWidth, centreHeight, textPaint)
 
+        // POSITION (DISTANCE)
         textPaint.textSize = (context.resources.getDimensionPixelSize(R.dimen.widget_text_small_value)).toFloat()
-        canvas.drawText("%s".format(expected.toInt()), centreWidth, centreHeight - textPaint.ascent() * 1.4f, textPaint)
+        canvas.drawText(
+                "(%s)".format(DecimalRenderer.fromDouble(positionInDistance, true)),
+                centreWidth, centreHeight - textPaint.ascent() * 3f, textPaint)
 
         rootView.setImageViewBitmap(R.id.progress_view, bitmap)
 
@@ -283,12 +324,13 @@ object DateRenderer {
 }
 
 object DecimalRenderer {
-    fun fromDouble(value: Double): String {
+    fun fromDouble(value: Double, showSigned: Boolean = false): String {
         val numberFormat = NumberFormat.getInstance(Locale.ENGLISH)
+        numberFormat.minimumFractionDigits = 0
         numberFormat.maximumFractionDigits = 1
         numberFormat.roundingMode = RoundingMode.HALF_UP
-
-        return numberFormat.format(value)
+        val sign = if (value > 0 && showSigned) "+" else ""
+        return "%s%s".format(sign, numberFormat.format(value))
     }
 }
 

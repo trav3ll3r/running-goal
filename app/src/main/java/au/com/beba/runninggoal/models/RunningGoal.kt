@@ -7,7 +7,7 @@ data class RunningGoal(
         val name: String,
         var target: GoalTarget,
         var progress: GoalProgress = GoalProgress(),
-        var projection: GoalProjection? = null,
+        var projection: GoalProjection = GoalProjection(),
         var view: GoalView = GoalView()
 )
 
@@ -21,7 +21,7 @@ data class GoalProgress(
         var positionInDistance: Double = 0.0,
         var positionInDays: Double = 0.0)
 
-data class GoalProjection(val distancePerDay: Double, val daysLapsed: Int)
+data class GoalProjection(val distancePerDay: Double = 0.0, val daysLapsed: Int = 0)
 
 data class GoalView(var viewType: GoalViewType = GoalViewType.PROGRESS_BAR) {
     fun toggle() {

@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.RemoteViews
@@ -22,6 +23,10 @@ import java.util.*
 
 
 class GoalActivity : AppCompatActivity() {
+
+    companion object {
+        private val TAG = GoalActivity::class.java.simpleName
+    }
 
     private var appWidgetId: Int = -1
 
@@ -45,6 +50,7 @@ class GoalActivity : AppCompatActivity() {
             appWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID)
+            Log.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
         }
 
         initDatePicker(findViewById(R.id.goal_start))
@@ -86,6 +92,7 @@ class GoalActivity : AppCompatActivity() {
                 ),
                 GoalProgress((current_distance.text.toString()).toDouble()))
 
+        Log.d(TAG, "saveGoal | appWidgetId=%s".format(appWidgetId))
         GoalRepo.save(goal, appWidgetId)
 
         val updatedGoal = GoalRepo.getGoalForWidget(appWidgetId)
@@ -100,12 +107,14 @@ class GoalActivity : AppCompatActivity() {
 
         GoalWidgetRenderer.updateUi(this, rootView, runningGoal)
 
+        Log.d(TAG, "updateWidgetView | appWidgetId=%s".format(appWidgetId))
         appWidgetManager.updateAppWidget(appWidgetId, rootView)
 
         closeWidgetConfig()
     }
 
     private fun closeWidgetConfig() {
+        Log.d(TAG, "closeWidgetConfig | appWidgetId=%s".format(appWidgetId))
         val resultValue = Intent()
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(Activity.RESULT_OK, resultValue)

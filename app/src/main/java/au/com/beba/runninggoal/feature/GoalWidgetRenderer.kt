@@ -68,7 +68,7 @@ object GoalWidgetRenderer {
         val intent = Intent(context, RunningGoalWidgetProvider::class.java)
         intent.action = action
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        return PendingIntent.getBroadcast(context, 0, intent, 0)
+        return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }
 

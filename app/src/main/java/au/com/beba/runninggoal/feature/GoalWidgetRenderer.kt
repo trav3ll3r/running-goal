@@ -85,13 +85,13 @@ object GoalInNumbersRenderer {
         val projections = runningGoal.projection
 
         // ROW 1
-        addNumericView(context, rootView, R.id.slot_total_distance, "Km", progress.distanceToday.toString(), runningGoal.target.distance.toString())
-        addNumericView(context, rootView, R.id.slot_total_days, "Days", progress.daysLapsed.toString(), progress.daysTotal.toString())
-        addNumericView(context, rootView, R.id.slot_distance_per_day, "Average", DecimalRenderer.fromDouble(projections.distancePerDay, true), units = "km/day")
+        addNumericView(context, rootView, R.id.hex_center, "Km", progress.distanceToday.toString(), runningGoal.target.distance.toString())
+        addNumericView(context, rootView, R.id.hex_top_left, "Days", progress.daysLapsed.toString(), progress.daysTotal.toString())
+        addNumericView(context, rootView, R.id.hex_bottom_left, "Average", DecimalRenderer.fromDouble(projections.distancePerDay, true), units = "km/day")
 
         // ROW 2
-        addNumericView(context, rootView, R.id.slot_position_distance, "Position", DecimalRenderer.fromDouble(progress.positionInDistance, true), units = "km")
-        addNumericView(context, rootView, R.id.slot_position_days, "Position", DecimalRenderer.fromDouble(progress.positionInDays, true), units = "day(s)")
+        addNumericView(context, rootView, R.id.hex_top_right, "Position", DecimalRenderer.fromDouble(progress.positionInDistance, true), units = "km")
+        addNumericView(context, rootView, R.id.hex_bottom_right, "Position", DecimalRenderer.fromDouble(progress.positionInDays, true), units = "day(s)")
     }
 
     private fun addNumericView(context: Context, rootView: RemoteViews, @Identifier holderViewId: Int, name: String, value: String, valueMax: String? = null, units: String? = null) {

@@ -15,6 +15,7 @@ import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.models.GoalViewType
 import au.com.beba.runninggoal.models.RunningGoal
+import org.intellij.lang.annotations.Identifier
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -83,48 +84,34 @@ object GoalInNumbersRenderer {
         val progress = runningGoal.progress
         val projections = runningGoal.projection
 
-        rootView.removeAllViews(R.id.slot_total_distance)
-        rootView.removeAllViews(R.id.slot_total_days)
-        rootView.removeAllViews(R.id.slot_distance_per_day)
-        rootView.removeAllViews(R.id.slot_position_distance)
-        rootView.removeAllViews(R.id.slot_position_days)
-
         // ROW 1
-        val slotTotalDistance = RemoteViews(context.packageName, R.layout.goal_partial)
-        slotTotalDistance.setTextViewText(R.id.goal_part_name, "Km")
-        slotTotalDistance.setTextViewText(R.id.goal_part_value, "%s".format(progress.distanceToday))
-        slotTotalDistance.setTextViewText(R.id.goal_part_out_of, "/%s".format(runningGoal.target.distance))
-        slotTotalDistance.setViewVisibility(R.id.goal_part_unit, View.GONE)
-        rootView.addView(R.id.slot_total_distance, slotTotalDistance)
-
-        val slotTotalDays = RemoteViews(context.packageName, R.layout.goal_partial)
-        slotTotalDays.setTextViewText(R.id.goal_part_name, "Days")
-        slotTotalDays.setTextViewText(R.id.goal_part_value, "%s".format(progress.daysLapsed))
-        slotTotalDays.setTextViewText(R.id.goal_part_out_of, "/%s".format(progress.daysTotal))
-        slotTotalDistance.setViewVisibility(R.id.goal_part_unit, View.GONE)
-        rootView.addView(R.id.slot_total_days, slotTotalDays)
-
-        val slotDistancePerDay = RemoteViews(context.packageName, R.layout.goal_partial)
-        slotDistancePerDay.setTextViewText(R.id.goal_part_name, "Average")
-        slotDistancePerDay.setTextViewText(R.id.goal_part_value, "%s".format(DecimalRenderer.fromDouble(projections.distancePerDay)))
-        slotDistancePerDay.setViewVisibility(R.id.goal_part_out_of, View.GONE)
-        slotDistancePerDay.setTextViewText(R.id.goal_part_unit, "km/day")
-        rootView.addView(R.id.slot_distance_per_day, slotDistancePerDay)
+        addNumericView(context, rootView, R.id.slot_total_distance, "Km", progress.distanceToday.toString(), runningGoal.target.distance.toString())
+        addNumericView(context, rootView, R.id.slot_total_days, "Days", progress.daysLapsed.toString(), progress.daysTotal.toString())
+        addNumericView(context, rootView, R.id.slot_distance_per_day, "Average", DecimalRenderer.fromDouble(projections.distancePerDay, true), units = "km/day")
 
         // ROW 2
-        val slotPositionDistance = RemoteViews(context.packageName, R.layout.goal_partial)
-        slotPositionDistance.setTextViewText(R.id.goal_part_name, "Position")
-        slotPositionDistance.setTextViewText(R.id.goal_part_value, "%s".format(DecimalRenderer.fromDouble(progress.positionInDistance, true)))
-        slotPositionDistance.setViewVisibility(R.id.goal_part_out_of, View.GONE)
-        slotPositionDistance.setTextViewText(R.id.goal_part_unit, "km")
-        rootView.addView(R.id.slot_position_distance, slotPositionDistance)
+        addNumericView(context, rootView, R.id.slot_position_distance, "Position", DecimalRenderer.fromDouble(progress.positionInDistance, true), units = "km")
+        addNumericView(context, rootView, R.id.slot_position_days, "Position", DecimalRenderer.fromDouble(progress.positionInDays, true), units = "day(s)")
+    }
 
-        val slotPositionDays = RemoteViews(context.packageName, R.layout.goal_partial)
-        slotPositionDays.setTextViewText(R.id.goal_part_name, "Position")
-        slotPositionDays.setTextViewText(R.id.goal_part_value, "%s".format(DecimalRenderer.fromDouble(progress.positionInDays, true)))
-        slotPositionDays.setViewVisibility(R.id.goal_part_out_of, View.GONE)
-        slotPositionDays.setTextViewText(R.id.goal_part_unit, "day(s)")
-        rootView.addView(R.id.slot_position_days, slotPositionDays)
+    private fun addNumericView(context: Context, rootView: RemoteViews, @Identifier holderViewId: Int, name: String, value: String, valueMax: String? = null, units: String? = null) {
+        val view = RemoteViews(context.packageName, R.layout.goal_partial)
+        view.setTextViewText(R.id.goal_part_name, name)
+        view.setTextViewText(R.id.goal_part_value, value)
+        view.setViewVisibility(R.id.goal_part_out_of, View.GONE)
+        if (valueMax != null) {
+            view.setViewVisibility(R.id.goal_part_out_of, View.VISIBLE)
+            view.setTextViewText(R.id.goal_part_out_of, "/%s".format(valueMax))
+        }
+        view.setViewVisibility(R.id.goal_part_unit, View.GONE)
+        if (units != null) {
+            view.setViewVisibility(R.id.goal_part_unit, View.VISIBLE)
+            view.setTextViewText(R.id.goal_part_unit, units)
+        }
+
+        rootView.removeAllViews(holderViewId)
+        rootView.addView(holderViewId, view)
+
     }
 }
 

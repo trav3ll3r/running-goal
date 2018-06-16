@@ -128,7 +128,9 @@ class GoalActivity : AppCompatActivity() {
 
         editText.setOnClickListener {
             val currentDate = parseDate(editText.text.toString())
-            DatePickerDialog(this, date, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth).show()
+            val dpd = DatePickerDialog(this, date, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
+            dpd.datePicker.firstDayOfWeek = Calendar.MONDAY
+            dpd.show()
         }
     }
 }

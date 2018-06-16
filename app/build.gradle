@@ -65,8 +65,11 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$libs.roomVer"
 
     // Kotlin AND Anko
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin.kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin.kotlinVer}"
     implementation "org.jetbrains.anko:anko-sdk25:${kotlin.ankoVersion}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin.kotlinCoroutinesVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+    implementation "org.jetbrains.anko:anko-coroutines:${kotlin.ankoVersion}"
 
     // sdk23 are also available
     implementation "org.jetbrains.anko:anko-support-v4:${kotlin.ankoVersion}"
@@ -77,10 +80,10 @@ dependencies {
     // appcompat-v7 bindings
 
     // FIREBASE AND MAPS
-    implementation "com.google.firebase:firebase-core:${libs.firebaseCoreVer}"
-    implementation "com.google.firebase:firebase-database:${libs.firebaseDatabaseVer}"
-    implementation "com.google.firebase:firebase-auth:${libs.firebaseAuthVer}"
-    implementation "com.google.android.gms:play-services-auth:${libs.playServicesAuthVer}"
+//    implementation "com.google.firebase:firebase-core:${libs.firebaseCoreVer}"
+//    implementation "com.google.firebase:firebase-database:${libs.firebaseDatabaseVer}"
+//    implementation "com.google.firebase:firebase-auth:${libs.firebaseAuthVer}"
+//    implementation "com.google.android.gms:play-services-auth:${libs.playServicesAuthVer}"
 
     // DAGGER2 dependencies
     implementation "com.google.dagger:dagger:${libs.daggerVersion}"

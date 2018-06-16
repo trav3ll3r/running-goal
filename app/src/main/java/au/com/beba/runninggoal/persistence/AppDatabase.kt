@@ -5,8 +5,6 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.support.annotation.VisibleForTesting
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 
 @Database(entities = [(RunningGoalEntity::class)], version = 1)
@@ -16,17 +14,17 @@ abstract class AppDatabase : RoomDatabase() {
         @VisibleForTesting
         private val DATABASE_NAME: String = "goals"
 
-        private var sInstance: AppDatabase? = null
+        private var INSTANCE: AppDatabase? = null
 
-        fun getInstance(context: Context, executor: Executor = Executors.newSingleThreadExecutor()): AppDatabase {
-            if (sInstance == null) {
+        fun getInstance(context: Context/*, executor: Executor = Executors.newSingleThreadExecutor()*/): AppDatabase {
+            if (INSTANCE == null) {
                 synchronized(AppDatabase::class.java) {
-                    if (sInstance == null) {
-                        sInstance = buildDatabase(context.applicationContext, executor)
+                    if (INSTANCE == null) {
+                        INSTANCE = buildDatabase(context.applicationContext/*, executor*/)
                     }
                 }
             }
-            return sInstance!!
+            return INSTANCE!!
         }
 
         /**
@@ -34,27 +32,24 @@ abstract class AppDatabase : RoomDatabase() {
          * creates a new instance of the database.
          * The SQLite database is only created when it's accessed for the first time.
          */
-        private fun buildDatabase(appContext: Context, executor: Executor): AppDatabase {
+        private fun buildDatabase(appContext: Context/*, executor: Executor*/): AppDatabase {
             return Room.databaseBuilder(appContext, AppDatabase::class.java, DATABASE_NAME)
 //                    .addCallback(object : RoomDatabase.Callback() {
 //                        override fun onCreate(db: SupportSQLiteDatabase) {
 //                            super.onCreate(db)
-//                            executor.execute({
+//                            executor.execute {
 //                                // Generate the data for pre-population
 //                                AppDatabase.getInstance(appContext, executor)
 //
 //                                // notify that the database was created and it's ready to be used
 //                                //database.setDatabaseCreated()
-//                            })
+//                            }
 //                        }
 //                    })
-                    .allowMainThreadQueries() // FIXME: JUST NO!!!
                     .build()
         }
     }
 
     abstract fun runningGoalDao(): RunningGoalDao
-
-
 }
 

@@ -12,11 +12,14 @@ import android.widget.EditText
 import android.widget.RemoteViews
 import android.widget.TextView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.models.GoalProgress
+import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepo
+import au.com.beba.runninggoal.repo.GoalRepository
 import kotlinx.android.synthetic.main.activity_goal.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -29,6 +32,7 @@ class GoalActivity : AppCompatActivity() {
     }
 
     private var appWidgetId: Int = -1
+    private lateinit var goalRepository: GoalRepository
 
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH)
 
@@ -38,10 +42,14 @@ class GoalActivity : AppCompatActivity() {
 
         extractIntentData(intent)
 
-        val goal = GoalRepo.getGoalForWidget(appWidgetId)
+        goalRepository = GoalRepo.getInstance(this)
 
-        populateGoal(goal)
-        findViewById<View>(R.id.btn_ok).setOnClickListener { saveGoal() }
+        @Suppress("DeferredResultUnused")
+        async(UI) {
+            val goal = goalRepository.getGoalForWidget(appWidgetId)
+            populateGoal(goal)
+            findViewById<View>(R.id.btn_ok).setOnClickListener { saveGoal(goal) }
+        }
     }
 
     private fun extractIntentData(intent: Intent) {
@@ -57,12 +65,12 @@ class GoalActivity : AppCompatActivity() {
         initDatePicker(findViewById(R.id.goal_end))
     }
 
-    private fun populateGoal(goal: RunningGoal?) {
-        val goalName = goal?.name ?: "Goal"
-        val distance = (goal?.target?.distance ?: 0).toString()
-        val currentDistance = (goal?.progress?.distanceToday ?: 0).toString()
-        val startDate = (goal?.target?.start ?: LocalDate.now())
-        val endDate = (goal?.target?.end ?: LocalDate.now())
+    private fun populateGoal(goal: RunningGoal) = launchSilent(UI) {
+        val goalName = goal.name
+        val distance = (goal.target.distance).toString()
+        val currentDistance = (goal.progress.distanceToday).toString()
+        val startDate = (goal.target.start)
+        val endDate = (goal.target.end)
 
         goal_name.setText(goalName, TextView.BufferType.EDITABLE)
         goal_distance.setText(distance, TextView.BufferType.EDITABLE)
@@ -79,25 +87,25 @@ class GoalActivity : AppCompatActivity() {
         return dateFormatter.format(value)
     }
 
-    private fun saveGoal() {
+    private fun saveGoal(goal: RunningGoal) = launchSilent(UI) {
+        Log.i(TAG, "saveGoal")
         val startDate = parseDate(goal_start.text.toString())
         val endDate = parseDate(goal_end.text.toString())
 
-        val goal = RunningGoal(appWidgetId,
-                goal_name.text.toString(),
-                GoalTarget(
-                        (goal_distance.text.toString()).toInt(),
-                        startDate,
-                        endDate
-                ),
-                GoalProgress((current_distance.text.toString()).toDouble()))
+        goal.name = goal_name.text.toString()
+        goal.target = GoalTarget(
+                (goal_distance.text.toString()).toInt(),
+                startDate,
+                endDate
+        )
+        goal.progress.distanceToday = (current_distance.text.toString()).toDouble()
 
         Log.d(TAG, "saveGoal | appWidgetId=%s".format(appWidgetId))
-        GoalRepo.save(goal, appWidgetId)
+        goalRepository.save(goal, appWidgetId)
 
-        val updatedGoal = GoalRepo.getGoalForWidget(appWidgetId)
+        val updatedGoal = goalRepository.getGoalForWidget(appWidgetId)
 
-        updateWidgetView(updatedGoal!!)
+        updateWidgetView(updatedGoal)
     }
 
     private fun updateWidgetView(runningGoal: RunningGoal) {
@@ -107,14 +115,14 @@ class GoalActivity : AppCompatActivity() {
 
         GoalWidgetRenderer.updateUi(this, rootView, runningGoal)
 
-        Log.d(TAG, "updateWidgetView | appWidgetId=%s".format(appWidgetId))
+        Log.i(TAG, "updateWidgetView | appWidgetId=%s".format(appWidgetId))
         appWidgetManager.updateAppWidget(appWidgetId, rootView)
 
         closeWidgetConfig()
     }
 
     private fun closeWidgetConfig() {
-        Log.d(TAG, "closeWidgetConfig | appWidgetId=%s".format(appWidgetId))
+        Log.i(TAG, "closeWidgetConfig | appWidgetId=%s".format(appWidgetId))
         val resultValue = Intent()
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(Activity.RESULT_OK, resultValue)

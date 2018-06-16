@@ -1,26 +1,43 @@
 package au.com.beba.runninggoal.repo
 
 import android.content.Context
+import android.util.Log
 import au.com.beba.runninggoal.models.*
 import au.com.beba.runninggoal.persistence.AppDatabase
+import au.com.beba.runninggoal.persistence.RunningGoalDao
 import au.com.beba.runninggoal.persistence.RunningGoalEntity
+import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.withContext
 import java.time.LocalDate
+import kotlin.coroutines.experimental.CoroutineContext
 
 
-object GoalRepo {
+class GoalRepo private constructor(
+        private val coroutineContext: CoroutineContext,
+        private val runningGoalDao: RunningGoalDao) : GoalRepository {
 
-    private var db: AppDatabase? = null
+    companion object {
+        private val TAG = GoalRepo::class.java.simpleName
 
-    fun initialise(context: Context) {
-        if (db == null) {
-            db = AppDatabase.getInstance(context)
+        private lateinit var db: AppDatabase
+        private var INSTANCE: GoalRepository? = null
+
+        @JvmStatic
+        fun getInstance(context: Context, coroutineContext: CoroutineContext = DefaultDispatcher): GoalRepository {
+            if (INSTANCE == null) {
+                synchronized(GoalRepo::javaClass) {
+                    db = AppDatabase.getInstance(context)
+                    INSTANCE = GoalRepo(coroutineContext, db.runningGoalDao())
+                }
+            }
+            return INSTANCE!!
         }
     }
 
-    fun getGoalForWidget(widgetId: Int): RunningGoal? {
-        val goalEntity = db?.runningGoalDao()?.getById(widgetId)
+    override suspend fun getGoalForWidget(appWidgetId: Int): RunningGoal = withContext(coroutineContext) {
+        val goalEntity = runningGoalDao.getById(appWidgetId)
 
-        var goal: RunningGoal? = null
+        val goal: RunningGoal
         if (goalEntity != null) {
             goal = RunningGoal(
                     goalEntity.uid,
@@ -32,14 +49,20 @@ object GoalRepo {
                     ),
                     view = GoalView(GoalViewType.fromDbValue(goalEntity.viewType))
             )
-            setProgress(goal, goalEntity.currentDistance)
+            goal.progress.distanceToday = goalEntity.currentDistance
+        } else {
+            Log.e(TAG, "Goal for appWidgetId=%s not found!!!".format(appWidgetId))
+            goal = RunningGoal(0, "", GoalTarget(0, LocalDate.now(), LocalDate.now()))
         }
 
-        return goal
+        setProgress(goal)
+
+        goal
     }
 
-    private fun setProgress(runningGoal: RunningGoal, currentDistance: Double) {
+    private fun setProgress(runningGoal: RunningGoal) {
         val today = LocalDate.now()
+        val currentDistance: Double = runningGoal.progress.distanceToday
 
         val daysTotal = java.time.Period.between(runningGoal.target.start, runningGoal.target.end).days + 1
         val daysLapsed = java.time.Period.between(runningGoal.target.start, today).days + 1
@@ -54,21 +77,19 @@ object GoalRepo {
         runningGoal.projection = GoalProjection(linearDistancePerDay, daysLapsed)
     }
 
-    fun save(goal: RunningGoal, widgetId: Int) {
-        val goalEntity = RunningGoalEntity(widgetId)
+    override suspend fun save(goal: RunningGoal, appWidgetId: Int) = withContext(coroutineContext) {
+        val goalEntity = RunningGoalEntity(appWidgetId)
         goalEntity.goalName = goal.name
         goalEntity.targetDistance = goal.target.distance
         goalEntity.currentDistance = goal.progress.distanceToday
         goalEntity.startDate = goal.target.start.toEpochDay()
         goalEntity.endDate = goal.target.end.toEpochDay()
-        goalEntity.widgetId = widgetId
+        goalEntity.widgetId = appWidgetId
         goalEntity.viewType = goal.view.viewType.asDbValue()
 
-        val goalDao = db?.runningGoalDao()
-
-        val id : Long = goalDao?.insert(goalEntity) ?: 0
+        val id: Long = runningGoalDao.insert(goalEntity)
         if (id < 0L) {
-            goalDao?.update(goalEntity)
+            runningGoalDao.update(goalEntity)
         }
     }
 }

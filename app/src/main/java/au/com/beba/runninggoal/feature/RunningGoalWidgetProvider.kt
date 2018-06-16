@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.repo.GoalRepo
 
 
@@ -17,7 +18,7 @@ open class RunningGoalWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray) {
-        Log.d(TAG, "onUpdate")
+        Log.i(TAG, "onUpdate")
 
         // Perform this loop procedure for each App Widget that belongs to this provider
         appWidgetIds.forEach {
@@ -27,38 +28,41 @@ open class RunningGoalWidgetProvider : AppWidgetProvider() {
     }
 
     private fun bindRemoteViews(context: Context, appWidgetManager: AppWidgetManager?, appWidgetId: Int) {
+        Log.i(TAG, "bindRemoteViews")
+        val goalRepo = GoalRepo.getInstance(context)
         // Get the layout for the App Widget and attach an on-click listener to the button
         val rootView = RemoteViews(context.packageName, R.layout.goal_widget)
-        val goal = GoalRepo.getGoalForWidget(appWidgetId)
-        if (goal != null) {
+
+        launchSilent {
+            Log.d(TAG, "bindRemoteViews | appWidgetId=%s".format(appWidgetId))
+            val goal = goalRepo.getGoalForWidget(appWidgetId)
             GoalWidgetRenderer.updateUi(context, rootView, goal)
             // Tell the AppWidgetManager to perform an update on the current app widget
             appWidgetManager?.updateAppWidget(appWidgetId, rootView)
-        } else {
-            Log.e(TAG, "Goal for widget not found!!!")
         }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d(TAG, "onReceive")
+        Log.i(TAG, "onReceive")
         super.onReceive(context, intent)
 
         if (GoalWidgetRenderer.FLIP_CLICKED == intent.action) {
             val appWidgetId = getWidgetIdFromIntent(intent)
-            Log.d(TAG, "onReceive | widgetId=%s".format(appWidgetId))
+            Log.d(TAG, "onReceive | appWidgetId=%s".format(appWidgetId))
             if (appWidgetId > 0) {
-
+                val goalRepo = GoalRepo.getInstance(context)
                 val appWidgetManager = AppWidgetManager.getInstance(context)
 
+                launchSilent {
+                    val goal = goalRepo.getGoalForWidget(appWidgetId)
+                    if (goal != null) {
 
-                val goal = GoalRepo.getGoalForWidget(appWidgetId)
-                if (goal != null) {
+                        // UPDATE Goal's ViewType AND STORE IT IN DATABASE
+                        goal.view.toggle()
+                        goalRepo.save(goal, appWidgetId)
 
-                    // UPDATE Goal's ViewType AND STORE IT IN DATABASE
-                    goal.view.toggle()
-                    GoalRepo.save(goal, appWidgetId)
-
-                    bindRemoteViews(context, appWidgetManager, appWidgetId)
+                        bindRemoteViews(context, appWidgetManager, appWidgetId)
+                    }
                 }
             }
         }

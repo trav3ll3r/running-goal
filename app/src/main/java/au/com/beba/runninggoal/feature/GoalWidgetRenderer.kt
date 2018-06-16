@@ -25,10 +25,12 @@ import java.util.*
 
 object GoalWidgetRenderer {
 
+    private val TAG = GoalWidgetRenderer::class.java.simpleName
+
     const val FLIP_CLICKED = "au.com.beba.runninggoal.FLIP_CLICKED"
 
     fun updateUi(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
-
+        Log.d(TAG, "updateUi")
         rootView.setTextViewText(R.id.goal_name, "%s".format(runningGoal.name))
         rootView.setTextViewText(R.id.goal_period, "%s to %s (%s days)".format(
                 DateRenderer.asFullDate(runningGoal.target.start),
@@ -38,6 +40,7 @@ object GoalWidgetRenderer {
 
         when (runningGoal.view.viewType) {
             GoalViewType.PROGRESS_BAR -> {
+                Log.d(TAG, "updateUi | PROGRESS_BAR | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.VISIBLE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.GONE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_list_24dp))
@@ -45,6 +48,7 @@ object GoalWidgetRenderer {
                 ProgressRenderer.render(context, rootView, runningGoal)
             }
             GoalViewType.NUMBERS -> {
+                Log.d(TAG, "updateUi | NUMBERS | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.GONE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.VISIBLE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_pie_chart_24dp))
@@ -57,7 +61,7 @@ object GoalWidgetRenderer {
         // Create the "edit" Intent to launch Activity
         val intent = Intent(context, GoalActivity::class.java)
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, runningGoal.id)
-        val pendingIntentEdit = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntentEdit = PendingIntent.getActivity(context, runningGoal.id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         rootView.setOnClickPendingIntent(R.id.widget_root, pendingIntentEdit)
 
         // Create an Intent to change Goal's GoalViewType
@@ -78,6 +82,12 @@ object GoalInNumbersRenderer {
 
         val progress = runningGoal.progress
         val projections = runningGoal.projection
+
+        rootView.removeAllViews(R.id.slot_total_distance)
+        rootView.removeAllViews(R.id.slot_total_days)
+        rootView.removeAllViews(R.id.slot_distance_per_day)
+        rootView.removeAllViews(R.id.slot_position_distance)
+        rootView.removeAllViews(R.id.slot_position_days)
 
         // ROW 1
         val slotTotalDistance = RemoteViews(context.packageName, R.layout.goal_partial)

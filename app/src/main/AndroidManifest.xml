@@ -19,13 +19,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="au.com.beba.runninggoal.feature.GoalActivity">
+        <activity android:name=".feature.GoalActivity"
+            android:theme="@style/ActivityDialog">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
 
-        <receiver android:name="au.com.beba.runninggoal.feature.RunningGoalWidgetProvider">
+        <receiver android:name="au.com.beba.runninggoal.feature.widget.RunningGoalWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

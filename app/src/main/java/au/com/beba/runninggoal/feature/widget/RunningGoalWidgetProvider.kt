@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.feature
+package au.com.beba.runninggoal.feature.widget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider

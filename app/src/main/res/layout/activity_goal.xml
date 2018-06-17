@@ -1,78 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
-    <EditText
-        android:id="@+id/goal_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:hint="Goal name"
-        />
-
-    <!-- DISTANCE (TARGET AND CURRENT) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/goal_distance"
-            android:layout_width="0dp"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/goal_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Goal name"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- DISTANCE (TARGET AND CURRENT) -->
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/goal_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Goal distance"
+                android:inputType="numberSigned" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/current_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Current distance"
+                android:inputType="numberSigned" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- DATE START / END -->
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/goal_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="Start date"
+                android:inputType="none"
+                tools:text="01/06/2018" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/goal_end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="End date"
+                android:inputType="none"
+                tools:text="30/06/2018" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_ok"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="numberSigned"
-            android:hint="Goal distance"
-            />
-
-        <EditText
-            android:id="@+id/current_distance"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="numberSigned"
-            android:hint="Current distance"
-            />
-
+            android:text="@android:string/ok" />
     </LinearLayout>
-
-    <!-- DATE START / END -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/goal_start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="none"
-            android:focusable="false"
-            android:hint="Goal start"
-            android:text="01.06.2018"
-            />
-
-        <EditText
-            android:id="@+id/goal_end"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:focusable="false"
-            android:hint="Goal end"
-            android:text="30.06.2018"
-            />
-
-    </LinearLayout>
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@android:string/ok"
-        />
-</LinearLayout>
+</RelativeLayout>

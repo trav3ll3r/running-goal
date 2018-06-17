@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.RemoteViews
 import android.widget.TextView
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.feature.widget.GoalWidgetRenderer
 import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.RunningGoal

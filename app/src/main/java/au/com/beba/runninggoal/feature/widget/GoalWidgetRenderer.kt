@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.feature
+package au.com.beba.runninggoal.feature.widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.feature.GoalActivity
 import au.com.beba.runninggoal.models.GoalViewType
 import au.com.beba.runninggoal.models.RunningGoal
 import org.intellij.lang.annotations.Identifier

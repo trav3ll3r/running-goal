@@ -35,6 +35,31 @@ class GoalRepo private constructor(
         }
     }
 
+    override suspend fun getGoals(): List<RunningGoal> = withContext(coroutineContext) {
+        val goalEntities = runningGoalDao.getAll()
+
+        val goals = goalEntities.map {
+            val goal = RunningGoal(
+                    it.uid,
+                    it.goalName,
+                    GoalTarget(
+                            it.targetDistance,
+                            LocalDate.ofEpochDay(it.startDate),
+                            LocalDate.ofEpochDay(it.endDate)
+                    ),
+                    view = GoalView(GoalViewType.fromDbValue(it.viewType))
+            )
+            goal.progress.distanceToday = it.currentDistance
+
+            setProgress(goal)
+            goal
+        }.toList()
+
+        Log.d(TAG, "goals=%s".format(goals.size))
+
+        goals
+    }
+
     override suspend fun getGoalForWidget(appWidgetId: Int): RunningGoal = withContext(coroutineContext) {
         val goalEntity = runningGoalDao.getById(appWidgetId)
 

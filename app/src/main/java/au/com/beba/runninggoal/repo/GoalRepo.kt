@@ -8,6 +8,7 @@ import au.com.beba.runninggoal.persistence.RunningGoalDao
 import au.com.beba.runninggoal.persistence.RunningGoalEntity
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.withContext
+import java.time.Duration
 import java.time.LocalDate
 import kotlin.coroutines.experimental.CoroutineContext
 
@@ -64,8 +65,10 @@ class GoalRepo private constructor(
         val today = LocalDate.now()
         val currentDistance: Double = runningGoal.progress.distanceToday
 
-        val daysTotal = java.time.Period.between(runningGoal.target.start, runningGoal.target.end).days + 1
-        val daysLapsed = java.time.Period.between(runningGoal.target.start, today).days + 1
+        Log.d(TAG, "startDate=%s endDate=%s".format(runningGoal.target.start, runningGoal.target.end))
+        val daysTotal = getTotalDaysBetween(runningGoal.target.start, runningGoal.target.end)
+        val daysLapsed = getTotalDaysBetween(runningGoal.target.start, today)
+        Log.d(TAG, "daysTotal=%s daysLapsed=%s".format(daysTotal, daysLapsed))
 
         val linearDistancePerDay = (runningGoal.target.distance * 1.0 / daysTotal)
         val expectedDistance = linearDistancePerDay * daysLapsed
@@ -91,5 +94,9 @@ class GoalRepo private constructor(
         if (id < 0L) {
             runningGoalDao.update(goalEntity)
         }
+    }
+
+    private fun getTotalDaysBetween(from: LocalDate, to: LocalDate): Int {
+        return Duration.between(from.atTime(0, 0), to.atTime(0, 0)).toDays().toInt() + 1
     }
 }

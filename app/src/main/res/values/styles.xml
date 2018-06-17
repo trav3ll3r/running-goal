@@ -38,11 +38,13 @@
 
     <style name="GoalSlot.Distance">
         <item name="android:backgroundTint">@color/goal_slot_distance</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="GoalSlot.Distance.TopTier">
         <item name="android:layout_width">@dimen/goal_slot_width_toptier</item>
         <item name="android:layout_height">@dimen/goal_slot_height_toptier</item>
+        <!--<item name="android:paddingTop">4dp</item>-->
     </style>
 
     <style name="GoalSlot.Days">

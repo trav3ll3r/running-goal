@@ -1,6 +1,8 @@
 package au.com.beba.runninggoal
 
+import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,6 +17,7 @@ import org.jetbrains.anko.find
 import javax.inject.Inject
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.DividerItemDecoration.VERTICAL
+import au.com.beba.runninggoal.feature.GoalActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var localPreferences: LocalPreferences
 
+    private lateinit var fab: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: RecyclerView.Adapter<GoalViewHolder>
 
@@ -33,7 +37,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initFAB()
+
         populateGoals()
+    }
+
+    private fun initFAB() {
+        fab = find(R.id.fab)
+        fab.setOnClickListener {
+            createNewGoal()
+        }
+    }
+
+    private fun createNewGoal() {
+        val intent = Intent(this, GoalActivity::class.java)
+        startActivity(intent)
     }
 
     private fun populateGoals() {

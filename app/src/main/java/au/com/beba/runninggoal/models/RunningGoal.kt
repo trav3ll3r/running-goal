@@ -11,17 +11,17 @@ data class RunningGoal(
         var view: GoalView = GoalView()
 )
 
-data class GoalTarget(val distance: Int, val start: LocalDate, val end: LocalDate)
+data class GoalTarget(val distance: Distance, val start: LocalDate, val end: LocalDate)
 
 data class GoalProgress(
-        var distanceToday: Double = 0.0,
+        var distanceToday: Distance = Distance(),
         var daysTotal: Int = 0,
         var daysLapsed: Int = 0,
-        var distanceExpected: Double = 0.0,
-        var positionInDistance: Double = 0.0,
-        var positionInDays: Double = 0.0)
+        var distanceExpected: Distance = Distance(),
+        var positionInDistance: Distance = Distance(),
+        var positionInDays: Float = 0.0f)
 
-data class GoalProjection(val distancePerDay: Double = 0.0, val daysLapsed: Int = 0)
+data class GoalProjection(val distancePerDay: Distance = Distance(), val daysLapsed: Int = 0)
 
 data class GoalView(var viewType: GoalViewType = GoalViewType.PROGRESS_BAR) {
     fun toggle() {

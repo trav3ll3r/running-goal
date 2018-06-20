@@ -12,8 +12,10 @@ import android.widget.EditText
 import android.widget.RemoteViews
 import android.widget.TextView
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.component.DistancePickerDialog
 import au.com.beba.runninggoal.feature.widget.GoalWidgetRenderer
 import au.com.beba.runninggoal.launchSilent
+import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepo
@@ -62,14 +64,17 @@ class GoalActivity : AppCompatActivity() {
             Log.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
         }
 
+        initDistancePicker(findViewById(R.id.goal_distance))
+        initDistancePicker(findViewById(R.id.current_distance))
+
         initDatePicker(findViewById(R.id.goal_start))
         initDatePicker(findViewById(R.id.goal_end))
     }
 
     private fun populateGoal(goal: RunningGoal) = launchSilent(UI) {
         val goalName = goal.name
-        val distance = (goal.target.distance).toString()
-        val currentDistance = (goal.progress.distanceToday).toString()
+        val distance = goal.target.distance.display()
+        val currentDistance = goal.progress.distanceToday.display()
         val startDate = (goal.target.start)
         val endDate = (goal.target.end)
 
@@ -95,11 +100,11 @@ class GoalActivity : AppCompatActivity() {
 
         goal.name = goal_name.text.toString()
         goal.target = GoalTarget(
-                (goal_distance.text.toString()).toInt(),
+                Distance(goal_distance.text.toString()),
                 startDate,
                 endDate
         )
-        goal.progress.distanceToday = (current_distance.text.toString()).toDouble()
+        goal.progress.distanceToday = Distance(current_distance.text.toString())
 
         Log.d(TAG, "saveGoal | appWidgetId=%s".format(appWidgetId))
         goalRepository.save(goal, appWidgetId)
@@ -130,14 +135,26 @@ class GoalActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun initDistancePicker(editText: EditText) {
+        val distanceSetListener: DistancePickerDialog.OnDistanceSetListener
+//        val distanceSetListener: DistancePickerDialog.OnDistanceSetListener = object DistancePickerDialog.OnDistanceSetListener { distance ->
+//            editText.setText(distance.display())
+//        }
+
+        editText.setOnClickListener {
+//            val dpd = DistancePickerDialog(this, distanceSetListener)
+//            dpd.show(Distance(editText.text.toString()))
+        }
+    }
+
     private fun initDatePicker(editText: EditText) {
-        val date = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+        val dateListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             editText.setText(dateFormatter.format(LocalDate.of(year, monthOfYear + 1, dayOfMonth)))
         }
 
         editText.setOnClickListener {
             val currentDate = parseDate(editText.text.toString())
-            val dpd = DatePickerDialog(this, date, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
+            val dpd = DatePickerDialog(this, dateListener, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
             dpd.datePicker.firstDayOfWeek = Calendar.MONDAY
             dpd.show()
         }

@@ -19,8 +19,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".feature.GoalActivity"
-            android:theme="@style/ActivityDialog">
+        <!--android:theme="@style/ActivityDialog"-->
+        <!--android:theme="@style/Theme.AppCompat.NoActionBar"-->
+        <activity android:name=".feature.GoalActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

@@ -18,6 +18,6 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bindView(runningGoal: RunningGoal) {
         lblName.text = runningGoal.name
-        lblDistance.text = runningGoal.target.distance.toString()
+        lblDistance.text = runningGoal.target.distance.display()
     }
 }

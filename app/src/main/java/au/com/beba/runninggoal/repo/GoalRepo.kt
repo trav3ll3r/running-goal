@@ -2,7 +2,13 @@ package au.com.beba.runninggoal.repo
 
 import android.content.Context
 import android.util.Log
-import au.com.beba.runninggoal.models.*
+import au.com.beba.runninggoal.models.Distance
+import au.com.beba.runninggoal.models.GoalProgress
+import au.com.beba.runninggoal.models.GoalProjection
+import au.com.beba.runninggoal.models.GoalTarget
+import au.com.beba.runninggoal.models.GoalView
+import au.com.beba.runninggoal.models.GoalViewType
+import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.RunningGoalDao
 import au.com.beba.runninggoal.persistence.RunningGoalEntity
@@ -43,13 +49,13 @@ class GoalRepo private constructor(
                     it.uid,
                     it.goalName,
                     GoalTarget(
-                            it.targetDistance,
+                            Distance(it.targetDistance),
                             LocalDate.ofEpochDay(it.startDate),
                             LocalDate.ofEpochDay(it.endDate)
                     ),
                     view = GoalView(GoalViewType.fromDbValue(it.viewType))
             )
-            goal.progress.distanceToday = it.currentDistance
+            goal.progress.distanceToday = Distance(it.currentDistance)
 
             setProgress(goal)
             goal
@@ -69,16 +75,16 @@ class GoalRepo private constructor(
                     goalEntity.uid,
                     goalEntity.goalName,
                     GoalTarget(
-                            goalEntity.targetDistance,
+                            Distance(goalEntity.targetDistance),
                             LocalDate.ofEpochDay(goalEntity.startDate),
                             LocalDate.ofEpochDay(goalEntity.endDate)
                     ),
                     view = GoalView(GoalViewType.fromDbValue(goalEntity.viewType))
             )
-            goal.progress.distanceToday = goalEntity.currentDistance
+            goal.progress.distanceToday = Distance(goalEntity.currentDistance)
         } else {
             Log.e(TAG, "Goal for appWidgetId=%s not found!!!".format(appWidgetId))
-            goal = RunningGoal(0, "", GoalTarget(0, LocalDate.now(), LocalDate.now()))
+            goal = RunningGoal(0, "", GoalTarget(Distance(), LocalDate.now(), LocalDate.now()))
         }
 
         setProgress(goal)
@@ -88,28 +94,28 @@ class GoalRepo private constructor(
 
     private fun setProgress(runningGoal: RunningGoal) {
         val today = LocalDate.now()
-        val currentDistance: Double = runningGoal.progress.distanceToday
+        val currentDistance = runningGoal.progress.distanceToday.value
 
         Log.d(TAG, "startDate=%s endDate=%s".format(runningGoal.target.start, runningGoal.target.end))
         val daysTotal = getTotalDaysBetween(runningGoal.target.start, runningGoal.target.end)
         val daysLapsed = getTotalDaysBetween(runningGoal.target.start, today)
         Log.d(TAG, "daysTotal=%s daysLapsed=%s".format(daysTotal, daysLapsed))
 
-        val linearDistancePerDay = (runningGoal.target.distance * 1.0 / daysTotal)
+        val linearDistancePerDay = (runningGoal.target.distance.value / daysTotal)
         val expectedDistance = linearDistancePerDay * daysLapsed
 
-        runningGoal.progress = GoalProgress(currentDistance, daysTotal, daysLapsed, expectedDistance)
-        runningGoal.progress.positionInDistance = currentDistance - expectedDistance
-        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance / linearDistancePerDay
+        runningGoal.progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
+        runningGoal.progress.positionInDistance = Distance(currentDistance - expectedDistance)
+        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance.value / linearDistancePerDay
 
-        runningGoal.projection = GoalProjection(linearDistancePerDay, daysLapsed)
+        runningGoal.projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
     }
 
     override suspend fun save(goal: RunningGoal, appWidgetId: Int) = withContext(coroutineContext) {
         val goalEntity = RunningGoalEntity(appWidgetId)
         goalEntity.goalName = goal.name
-        goalEntity.targetDistance = goal.target.distance
-        goalEntity.currentDistance = goal.progress.distanceToday
+        goalEntity.targetDistance = goal.target.distance.value
+        goalEntity.currentDistance = goal.progress.distanceToday.value
         goalEntity.startDate = goal.target.start.toEpochDay()
         goalEntity.endDate = goal.target.end.toEpochDay()
         goalEntity.widgetId = appWidgetId

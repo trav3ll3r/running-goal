@@ -8,6 +8,7 @@
     tools:context="au.com.beba.runninggoal.MainActivity">
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_finish_flag_24dp"

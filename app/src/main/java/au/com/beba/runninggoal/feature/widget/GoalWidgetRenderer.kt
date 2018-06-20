@@ -4,8 +4,16 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
-import android.graphics.Paint.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Paint.ANTI_ALIAS_FLAG
+import android.graphics.Paint.DITHER_FLAG
+import android.graphics.Paint.FILTER_BITMAP_FLAG
+import android.graphics.Path
+import android.graphics.Point
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.support.v4.content.ContextCompat
@@ -88,11 +96,11 @@ object GoalInNumbersRenderer {
         // ROW 1
         addNumericView(context, rootView, R.id.hex_center, "Km", progress.distanceToday.toString(), runningGoal.target.distance.toString())
         addNumericView(context, rootView, R.id.hex_top_left, "Days", progress.daysLapsed.toString(), progress.daysTotal.toString())
-        addNumericView(context, rootView, R.id.hex_bottom_left, "Average", DecimalRenderer.fromDouble(projections.distancePerDay, true), units = "km/day")
+        addNumericView(context, rootView, R.id.hex_bottom_left, "Average", projections.distancePerDay.displaySigned(), units = "km/day")
 
         // ROW 2
-        addNumericView(context, rootView, R.id.hex_top_right, "Position", DecimalRenderer.fromDouble(progress.positionInDistance, true), units = "km")
-        addNumericView(context, rootView, R.id.hex_bottom_right, "Position", DecimalRenderer.fromDouble(progress.positionInDays, true), units = "day(s)")
+        addNumericView(context, rootView, R.id.hex_top_right, "Position", progress.positionInDistance.displaySigned(), units = "km")
+        addNumericView(context, rootView, R.id.hex_bottom_right, "Position", DecimalRenderer.fromFloat(progress.positionInDays, true), units = "day(s)")
     }
 
     private fun addNumericView(context: Context, rootView: RemoteViews, @Identifier holderViewId: Int, name: String, value: String, valueMax: String? = null, units: String? = null) {
@@ -155,10 +163,10 @@ object ProgressRenderer {
         val bitmap = Bitmap.createBitmap(widthMax, heightMax, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
-        val max = runningGoal.target.distance
-        val expected = runningGoal.progress.distanceExpected
-        val current = runningGoal.progress.distanceToday.toInt()
-        val positionInDistance = runningGoal.progress.positionInDistance
+        val max = runningGoal.target.distance.value
+        val expected = runningGoal.progress.distanceExpected.value
+        val current = runningGoal.progress.distanceToday.value
+        val positionInDistance = runningGoal.progress.positionInDistance.value
 
         notchesSpecs = Notches(
                 days = runningGoal.progress.daysTotal,
@@ -168,7 +176,7 @@ object ProgressRenderer {
 
         circleBase(context, canvas, paint)
         arcBase(context, canvas)
-        arcCurrent(context, canvas, current.toFloat() / max)
+        arcCurrent(context, canvas, current / max)
         arcProgressNotches(context, canvas)
 
         //Draw text value
@@ -186,12 +194,12 @@ object ProgressRenderer {
         // POSITION (DISTANCE)
         textPaint.textSize = (context.resources.getDimensionPixelSize(R.dimen.widget_text_small_value)).toFloat()
         canvas.drawText(
-                "(%s)".format(DecimalRenderer.fromDouble(positionInDistance, true)),
+                "(%s)".format(DecimalRenderer.fromFloat(positionInDistance, true)),
                 centreWidth, centreHeight - textPaint.ascent() * 3f, textPaint)
 
         rootView.setImageViewBitmap(R.id.progress_view, bitmap)
 
-        val factor = expected.toFloat() / max
+        val factor = expected / max
         val expectedAngle = gapAngle + (factor * fullSweep)
         renderExpectedMarker(context, rootView, expectedAngle)
     }
@@ -322,7 +330,7 @@ object DateRenderer {
 }
 
 object DecimalRenderer {
-    fun fromDouble(value: Double, showSigned: Boolean = false): String {
+    fun fromFloat(value: Float, showSigned: Boolean = false): String {
         val numberFormat = NumberFormat.getInstance(Locale.ENGLISH)
         numberFormat.minimumFractionDigits = 0
         numberFormat.maximumFractionDigits = 1

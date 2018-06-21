@@ -1,5 +1,6 @@
 package au.com.beba.runninggoal.models
 
+import android.util.Log
 import java.math.RoundingMode
 import java.text.NumberFormat
 import java.util.*
@@ -26,8 +27,13 @@ class Distance : Displayable {
 
     val segments: Pair<Int, Int>
         get() {
-            val iPart = value.toInt()
-            val fPart = ((value - iPart.toFloat()) * 10).toInt()
+            Log.d("Distance", "segments | value=%s".format(value))
+
+            val valueTokens = value.toString().split(".")
+            val iPart = valueTokens[0].toInt()
+            val fPart = valueTokens[1].toInt()
+
+            Log.d("Distance", "segments | iPart=%s fPart=%s".format(iPart, fPart))
             return Pair(iPart, fPart)
         }
 

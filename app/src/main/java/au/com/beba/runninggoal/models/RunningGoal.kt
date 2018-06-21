@@ -3,15 +3,19 @@ package au.com.beba.runninggoal.models
 import java.time.LocalDate
 
 data class RunningGoal(
-        val id: Int,
-        var name: String,
-        var target: GoalTarget,
+        val id: Int = 0,
+        var name: String = "",
+        var target: GoalTarget = GoalTarget(),
         var progress: GoalProgress = GoalProgress(),
         var projection: GoalProjection = GoalProjection(),
         var view: GoalView = GoalView()
 )
 
-data class GoalTarget(val distance: Distance, val start: LocalDate, val end: LocalDate)
+data class GoalTarget(
+        var distance: Distance = Distance(1f),
+        var start: LocalDate = LocalDate.now(),
+        val end: LocalDate = LocalDate.now()
+)
 
 data class GoalProgress(
         var distanceToday: Distance = Distance(),

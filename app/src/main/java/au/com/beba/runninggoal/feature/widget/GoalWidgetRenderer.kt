@@ -94,7 +94,7 @@ object GoalInNumbersRenderer {
         val projections = runningGoal.projection
 
         // ROW 1
-        addNumericView(context, rootView, R.id.hex_center, "Km", progress.distanceToday.toString(), runningGoal.target.distance.toString())
+        addNumericView(context, rootView, R.id.hex_center, "Km", progress.distanceToday.display(), runningGoal.target.distance.display())
         addNumericView(context, rootView, R.id.hex_top_left, "Days", progress.daysLapsed.toString(), progress.daysTotal.toString())
         addNumericView(context, rootView, R.id.hex_bottom_left, "Average", projections.distancePerDay.displaySigned(), units = "km/day")
 

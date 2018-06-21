@@ -84,7 +84,7 @@ class GoalRepo private constructor(
             goal.progress.distanceToday = Distance(goalEntity.currentDistance)
         } else {
             Log.e(TAG, "Goal for appWidgetId=%s not found!!!".format(appWidgetId))
-            goal = RunningGoal(0, "", GoalTarget(Distance(), LocalDate.now(), LocalDate.now()))
+            goal = RunningGoal()
         }
 
         setProgress(goal)

@@ -6,6 +6,7 @@ import android.support.v7.widget.AppCompatButton
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.models.Distance
 
+
 class DistancePickerDialog(private val context: Context, private val listener: DistancePickerDialog.OnDistanceSetListener) {
 
     fun show(initValue: Distance) {
@@ -13,23 +14,19 @@ class DistancePickerDialog(private val context: Context, private val listener: D
 
         //setting custom layout to dialog
         dialog.setContentView(R.layout.decimal_number_dialog)
+        dialog.setCanceledOnTouchOutside(false)
 
+        // set initial value
         val picker: DistancePicker = dialog.findViewById(R.id.decimal_number_picker)
-
         picker.setValue(initValue)
 
-//        dialog.setTitle("Custom Dialog")
-
-        //adding text dynamically
-//        val txt = dialog.findViewById(R.id.textView) as TextView
-//        txt.text = "Put your dialog text here."
-//
-//        val image = dialog.findViewById(R.id.image) as ImageView
-//        image.setImageDrawable(resources.getDrawable(android.R.drawable.ic_dialog_info))
-//
-//        //add button click event
+        //add button click event
         val dismissButton: AppCompatButton = dialog.findViewById(R.id.button_select)
-        dismissButton.setOnClickListener { dialog.dismiss() }
+        dismissButton.setOnClickListener {
+            listener.onSetValue(picker.getValue())
+            dialog.dismiss()
+        }
+
         dialog.show()
     }
 

@@ -136,14 +136,15 @@ class GoalActivity : AppCompatActivity() {
     }
 
     private fun initDistancePicker(editText: EditText) {
-        val distanceSetListener: DistancePickerDialog.OnDistanceSetListener
-//        val distanceSetListener: DistancePickerDialog.OnDistanceSetListener = object DistancePickerDialog.OnDistanceSetListener { distance ->
-//            editText.setText(distance.display())
-//        }
+        val distanceSetListener: DistancePickerDialog.OnDistanceSetListener = object : DistancePickerDialog.OnDistanceSetListener {
+            override fun onSetValue(distance: Distance) {
+                editText.setText(distance.display())
+            }
+        }
 
         editText.setOnClickListener {
-//            val dpd = DistancePickerDialog(this, distanceSetListener)
-//            dpd.show(Distance(editText.text.toString()))
+            val dpd = DistancePickerDialog(this, distanceSetListener)
+            dpd.show(Distance(editText.text.toString()))
         }
     }
 

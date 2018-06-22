@@ -1,3 +1,5 @@
 package au.com.beba.runninggoal.feature
 
-interface LocalPreferences
+interface LocalPreferences {
+    fun getValueByKey(key: String): String
+}

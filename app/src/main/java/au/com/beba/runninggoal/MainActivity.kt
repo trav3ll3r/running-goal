@@ -4,20 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.DividerItemDecoration.VERTICAL
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
+import au.com.beba.runninggoal.feature.GoalActivity
 import au.com.beba.runninggoal.feature.LocalPreferences
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.RunningGoalsAdapter
+import au.com.beba.runninggoal.networking.source.ApiSource
+import au.com.beba.runninggoal.networking.source.StravaApiSource
 import au.com.beba.runninggoal.repo.GoalRepo
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.coroutines.experimental.bg
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.find
+import java.time.LocalDate
 import javax.inject.Inject
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.DividerItemDecoration.VERTICAL
-import au.com.beba.runninggoal.feature.GoalActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -52,6 +56,17 @@ class MainActivity : AppCompatActivity() {
     private fun createNewGoal() {
         val intent = Intent(this, GoalActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun refreshFromDataSource() {
+        Log.i(TAG, "refreshFromDataSource")
+
+        // TODO: FINISH OFF
+        //val source: ApiSource = StravaApiSource()
+//        launch(UI) {
+//            val distance = source.getDistanceForDateRange(LocalDate.now(), LocalDate.now())
+//            Log.d(TAG, "refreshFromDataSource | distance=$distance")
+//        }
     }
 
     private fun populateGoals() {

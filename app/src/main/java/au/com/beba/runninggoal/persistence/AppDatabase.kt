@@ -7,7 +7,7 @@ import android.content.Context
 import android.support.annotation.VisibleForTesting
 
 
-@Database(entities = [(RunningGoalEntity::class)], version = 1)
+@Database(entities = [RunningGoalEntity::class, SyncSourceEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
@@ -51,5 +51,6 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun runningGoalDao(): RunningGoalDao
+    abstract fun syncSourceDao(): SyncSourceDao
 }
 

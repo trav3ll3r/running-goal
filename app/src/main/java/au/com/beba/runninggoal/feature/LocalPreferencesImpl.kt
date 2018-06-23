@@ -1,13 +1,26 @@
 package au.com.beba.runninggoal.feature
 
 import android.content.Context
+import android.content.SharedPreferences
 
-private const val sharedPrefId: String = "RUNNING_GOAL_SHARED_PREF"
+private const val sharedPrefId: String = "RUNNING_GOAL_SHARED_PREFS"
 
 class LocalPreferencesImpl(private val context: Context) : LocalPreferences {
 
     override fun getValueByKey(key: String): String {
-        val sp = context.getSharedPreferences(sharedPrefId, Context.MODE_PRIVATE)
-        return sp.getString(key, "")
+        return preferences.getString(key, "")
     }
+
+    override fun setValueForKey(key: String, value: String?) {
+        preferences
+                .edit()
+                .putString(key, "")
+                .apply()
+    }
+
+    private val preferences: SharedPreferences
+        get() {
+            return context.getSharedPreferences(sharedPrefId, Context.MODE_PRIVATE)
+        }
+
 }

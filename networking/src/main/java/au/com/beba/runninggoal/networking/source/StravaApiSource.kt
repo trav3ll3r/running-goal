@@ -37,7 +37,7 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher,
         Log.v(TAG, "code=%s".format(response?.code() ?: "UNKNOWN"))
         Log.v(TAG, "body=%s".format(response?.body()?.string() ?: "NULL BODY"))
 
-        if (response?.body() != null) 999f else -1f
+        if (response?.code() == 200) 999f else -1f
     }
 
     private fun executeRequest(request: Request): Deferred<Response?> = async(networkingContext) {

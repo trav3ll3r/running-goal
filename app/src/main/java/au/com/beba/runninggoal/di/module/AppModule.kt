@@ -6,6 +6,10 @@ import au.com.beba.runninggoal.feature.LocalPreferencesImpl
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
 import au.com.beba.runninggoal.networking.source.ApiSource
 import au.com.beba.runninggoal.networking.source.StravaApiSource
+import au.com.beba.runninggoal.repo.GoalRepo
+import au.com.beba.runninggoal.repo.GoalRepository
+import au.com.beba.runninggoal.repo.SyncSourceRepo
+import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -17,9 +21,16 @@ class AppModule {
     fun localPreferences(application: App): LocalPreferences = LocalPreferencesImpl(application.applicationContext)
 
     @Provides @Singleton
-    fun apiSource(localStorage: LocalPreferences): ApiSource {
-        val stravaAccessToken = localStorage.getValueByKey("ACCESS_TOKEN")
+    fun goalRepository(application: App): GoalRepository = GoalRepo.getInstance(application.applicationContext)
 
-        return  StravaApiSource(sourceProfile = ApiSourceProfile(stravaAccessToken))
-    }
+    @Provides @Singleton
+    fun syncSourceRepository(application: App): SyncSourceRepository = SyncSourceRepo.getInstance(application.applicationContext)
+
+    //TODO: USE
+//    @Provides @Singleton
+//    fun apiSource(localStorage: LocalPreferences): ApiSource {
+//        val stravaAccessToken = localStorage.getValueByKey("ACCESS_TOKEN")
+//
+//        return StravaApiSource(sourceProfile = ApiSourceProfile(stravaAccessToken))
+//    }
 }

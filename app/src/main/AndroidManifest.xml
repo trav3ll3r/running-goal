@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="au.com.beba.runninggoal">
 
+    <permission android:name="android.permission.BIND_JOB_SERVICE" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -15,26 +17,36 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!--android:theme="@style/ActivityDialog"-->
-        <!--android:theme="@style/Theme.AppCompat.NoActionBar"-->
+        <!-- android:theme="@style/ActivityDialog" -->
+        <!-- android:theme="@style/Theme.AppCompat.NoActionBar" -->
         <activity android:name=".feature.GoalActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
 
-        <receiver android:name="au.com.beba.runninggoal.feature.widget.RunningGoalWidgetProvider">
+        <activity android:name=".feature.syncSources.DataSourcesActivity"
+            android:label="@string/sync_sources"/>
+
+        <receiver android:name=".feature.widget.RunningGoalWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/goal_widget_info" />
         </receiver>
+
+        <service
+            android:name=".feature.progressSync.ApiSourceIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
     </application>
 
 </manifest>

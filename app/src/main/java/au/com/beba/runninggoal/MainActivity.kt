@@ -9,18 +9,18 @@ import android.support.v7.widget.DividerItemDecoration.VERTICAL
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import au.com.beba.runninggoal.feature.GoalActivity
 import au.com.beba.runninggoal.feature.LocalPreferences
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.RunningGoalsAdapter
-import au.com.beba.runninggoal.networking.source.ApiSource
-import au.com.beba.runninggoal.networking.source.StravaApiSource
+import au.com.beba.runninggoal.feature.progressSync.ApiSourceIntentService
+import au.com.beba.runninggoal.feature.syncSources.DataSourcesActivity
 import au.com.beba.runninggoal.repo.GoalRepo
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.find
-import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.java.simpleName
     }
 
-    @Inject
-    lateinit var localPreferences: LocalPreferences
+//    @Inject
+//    lateinit var localPreferences: LocalPreferences
 
     private lateinit var fab: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
@@ -58,15 +58,26 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun refreshFromDataSource() {
-        Log.i(TAG, "refreshFromDataSource")
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
 
-        // TODO: FINISH OFF
-        //val source: ApiSource = StravaApiSource()
-//        launch(UI) {
-//            val distance = source.getDistanceForDateRange(LocalDate.now(), LocalDate.now())
-//            Log.d(TAG, "refreshFromDataSource | distance=$distance")
-//        }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.data_sources -> {
+                showDataSources()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showDataSources() {
+        val intent = Intent(this, DataSourcesActivity::class.java)
+        startActivity(intent)
     }
 
     private fun populateGoals() {

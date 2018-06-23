@@ -16,8 +16,6 @@ class App : DaggerApplication() {
 
         applicationInjector().inject(this)
 
-//        GoalRepo.initialise(this)
-
         Stetho.initializeWithDefaults(this)
     }
 }

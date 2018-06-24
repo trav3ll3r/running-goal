@@ -17,6 +17,9 @@ data class SyncSourceEntity(
         @ColumnInfo(name = "access_token")
         var accessToken: String = "",
 
+        @ColumnInfo(name = "is_active")
+        var isActive: Boolean = false,
+
         @ColumnInfo(name = "synced_at")
         var syncedAt: Long = 0
 )

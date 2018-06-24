@@ -36,42 +36,41 @@ class SyncSourceRepo private constructor(
 
     override suspend fun getSyncSources(): List<SyncSource> = withContext(coroutineContext) {
         val entities = syncSourceDao.getAll()
-
-        val sources = entities.map {
-            val source = SyncSource(
-                    it.uid,
-                    it.type,
-                    it.accessToken,
-                    LocalDateTime.ofEpochSecond(it.syncedAt, 0, ZoneOffset.UTC)
-            )
-            source
-        }.toList()
-
+        val sources = entities.map { entity2model(it) }.toList()
         Log.d(TAG, "goals=%s".format(sources.size))
-
         sources
     }
 
     override suspend fun getSyncSourceForType(type: String): SyncSource = withContext(coroutineContext) {
         val entity = syncSourceDao.getForType(type)
+        entity2model(entity)
+    }
 
-        if (entity != null) {
+    override suspend fun save(syncSource: SyncSource) = withContext(coroutineContext) {
+        val syncEntity = SyncSourceEntity(
+                syncSource.id,
+                syncSource.type,
+                syncSource.accessToken,
+                syncSource.isActive,
+                LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        )
+        val id: Long = syncSourceDao.insert(syncEntity)
+        if (id < 0L) {
+            syncSourceDao.update(syncEntity)
+        }
+    }
+
+    private fun entity2model(entity: SyncSourceEntity?): SyncSource {
+        return if (entity != null) {
             SyncSource(
                     entity.uid,
                     entity.type,
                     entity.accessToken,
+                    entity.isActive,
                     LocalDateTime.ofEpochSecond(entity.syncedAt, 0, ZoneOffset.UTC)
             )
         } else {
             SyncSource()
-        }
-    }
-
-    override suspend fun save(syncSource: SyncSource) = withContext(coroutineContext) {
-        val syncEntity = SyncSourceEntity(syncSource.id, syncSource.type, syncSource.accessToken, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
-        val id: Long = syncSourceDao.insert(syncEntity)
-        if (id < 0L) {
-            syncSourceDao.update(syncEntity)
         }
     }
 }

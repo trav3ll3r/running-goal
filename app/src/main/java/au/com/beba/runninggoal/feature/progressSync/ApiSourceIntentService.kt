@@ -14,6 +14,8 @@ import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.launch
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 
@@ -65,7 +67,10 @@ class ApiSourceIntentService : JobIntentService() {
 
             val distanceInMetre = getDistanceFromSource(goal, syncSource)
             if (distanceInMetre > -1f) {
-                updateGoalWithNewDistance(goal, Distance(distanceInMetre / 1000), syncSource)
+                val df = DecimalFormat("0.#")
+                df.roundingMode = RoundingMode.HALF_EVEN
+                val roundedDistance = df.format(distanceInMetre / 1000).toFloat()
+                updateGoalWithNewDistance(goal, Distance(roundedDistance), syncSource)
             }
             Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
         }

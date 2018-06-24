@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    >
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/sync_source_type"
+            style="@style/Text.Large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            tools:text="Sync Source Name"
+            />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/sync_source_access_token_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sync_source_type"
+            android:paddingBottom="16dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/sync_source_access_token"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/access_token"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/sync_source_is_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sync_source_access_token_layout"
+            android:text="Is Active"
+            app:switchPadding="16dp"
+            android:checked="false"
+            />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@android:string/ok" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

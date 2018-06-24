@@ -10,4 +10,6 @@
     <string name="local_separator">.</string>
     <string name="measure_unit_sign">km</string>
     <string name="sync_sources">Sync Sources</string>
+    <string name="edit_sync_source">Edit Sync Source</string>
+    <string name="access_token">Access Token</string>
 </resources>

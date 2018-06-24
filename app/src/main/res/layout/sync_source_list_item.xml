@@ -28,4 +28,14 @@
         tools:text="01/01/2018 00:00:00"
         />
 
+    <CheckBox
+        android:id="@+id/sync_source_item_is_active"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:clickable="false"
+        />
+
 </android.support.constraint.ConstraintLayout>

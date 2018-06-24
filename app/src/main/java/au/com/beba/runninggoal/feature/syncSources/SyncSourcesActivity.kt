@@ -8,13 +8,14 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.feature.base.AdapterListener
 import au.com.beba.runninggoal.feature.progressSync.ApiSourceIntentService
 import au.com.beba.runninggoal.feature.progressSync.SyncSourcesAdapter
+import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.find
 import javax.inject.Inject
@@ -65,7 +66,11 @@ class SyncSourcesActivity : AppCompatActivity() {
         val decoration = DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        recyclerAdapter = SyncSourcesAdapter(mutableListOf())
+        recyclerAdapter = SyncSourcesAdapter(mutableListOf(), object : AdapterListener<SyncSource> {
+            override fun onItemClick(item: SyncSource) {
+                editSyncSource(item)
+            }
+        })
         recyclerView.adapter = recyclerAdapter
     }
 
@@ -90,6 +95,10 @@ class SyncSourcesActivity : AppCompatActivity() {
                 ApiSourceIntentService.enqueueWork(ctx, ApiSourceIntentService.buildIntent(it.id, "STRAVA"), jobId)
             }
         }
+    }
 
+    private fun editSyncSource(syncSource: SyncSource) {
+        val intent = EditSyncSourceActivity.buildIntent(this, syncSource)
+        startActivity(intent)
     }
 }

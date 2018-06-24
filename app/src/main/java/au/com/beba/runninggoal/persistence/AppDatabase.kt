@@ -12,7 +12,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 
-@Database(entities = [RunningGoalEntity::class, SyncSourceEntity::class], version = 2)
+@Database(entities = [RunningGoalEntity::class, SyncSourceEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
@@ -61,6 +61,7 @@ abstract class AppDatabase : RoomDatabase() {
                     SyncSourceEntity(0,
                             "STRAVA",
                             "",
+                            false,
                             LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC))
             )
         }

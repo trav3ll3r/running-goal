@@ -85,7 +85,7 @@ dependencies {
     implementation "javax.inject:javax.inject:${libs.javaxInjectVersion}"
 
     // UTILS
-    implementation "com.google.code.gson:gson:${libs.gsonVersion}"
+    //implementation "com.google.code.gson:gson:${libs.gsonVer}"
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true
     }

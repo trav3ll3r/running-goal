@@ -4,9 +4,9 @@ import au.com.beba.runninggoal.models.SyncSource
 
 
 interface SyncSourceRepository {
-//    suspend fun getSyncSources(): List<SyncSource>
+    suspend fun getSyncSources(): List<SyncSource>
 
     suspend fun getSyncSourceForType(type: String): SyncSource
 
-//    suspend fun save(goal: RunningGoal, appWidgetId: Int)
+    suspend fun save(syncSource: SyncSource)
 }

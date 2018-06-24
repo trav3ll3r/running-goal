@@ -4,19 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
+import au.com.beba.runninggoal.models.Distance
+import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
 import au.com.beba.runninggoal.networking.source.ApiSource
 import au.com.beba.runninggoal.networking.source.StravaApiSource
+import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 
 class ApiSourceIntentService : JobIntentService() {
 
+    @Inject
+    lateinit var goalRepository: GoalRepository
     @Inject
     lateinit var syncSourceRepository: SyncSourceRepository
 
@@ -29,9 +33,11 @@ class ApiSourceIntentService : JobIntentService() {
         private val TAG = ApiSourceIntentService::class.java.simpleName
 
         private val SYNC_SOURCE_TYPE = "SYNC_SOURCE_TYPE"
+        private val SYNC_GOAL_ID = "SYNC_GOAL_ID"
 
-        fun buildIntent(syncSourceType: String): Intent {
+        fun buildIntent(goalId: Int, syncSourceType: String): Intent {
             val serviceIntent = Intent()
+            serviceIntent.putExtra(SYNC_GOAL_ID, goalId)
             serviceIntent.putExtra(SYNC_SOURCE_TYPE, syncSourceType)
             return serviceIntent
         }
@@ -46,16 +52,37 @@ class ApiSourceIntentService : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        Log.d(TAG, "onHandleWork")
+        Log.i(TAG, "onHandleWork")
 
-        launch(UI) {
+        launch {
+            val syncGoalId = intent.getIntExtra(SYNC_GOAL_ID, 0)
             val syncType = intent.getStringExtra(SYNC_SOURCE_TYPE)
+            Log.d(TAG, "onHandleWork | syncGoalId=$syncGoalId")
             Log.d(TAG, "onHandleWork | syncType=$syncType")
+
+            val goal = goalRepository.getGoalForWidget(syncGoalId)
             val syncSource = syncSourceRepository.getSyncSourceForType(syncType)
 
-            val source: ApiSource = StravaApiSource(sourceProfile = ApiSourceProfile(syncSource.accessToken))
-            val distance = source.getDistanceForDateRange(LocalDate.now(), LocalDate.now())
-            Log.d(TAG, "onHandleWork | distance=$distance")
+            val distanceInMetre = getDistanceFromSource(goal, syncSource)
+            if (distanceInMetre > -1f) {
+                updateGoalWithNewDistance(goal, Distance(distanceInMetre / 1000), syncSource)
+            }
+            Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
         }
+    }
+
+    private suspend fun getDistanceFromSource(goal: RunningGoal, syncSource: SyncSource): Float {
+        Log.i(TAG, "getDistanceFromSource")
+
+        val source: ApiSource = StravaApiSource(sourceProfile = ApiSourceProfile(syncSource.accessToken))
+        return source.getDistanceForDateRange(goal.target.start, goal.target.end)
+    }
+
+    private suspend fun updateGoalWithNewDistance(goal: RunningGoal, distance: Distance, syncSource: SyncSource) {
+        Log.i(TAG, "updateGoalWithNewDistance")
+        goal.progress.distanceToday = distance
+        goalRepository.save(goal, goal.id)
+
+        syncSourceRepository.save(syncSource)
     }
 }

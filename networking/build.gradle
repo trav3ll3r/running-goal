@@ -1,3 +1,4 @@
+def libs = rootProject.ext.libs
 def kotlin = rootProject.ext.kotlin
 def test = rootProject.ext.testing
 
@@ -7,10 +8,8 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 28
 
-
-
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -38,6 +37,7 @@ dependencies {
 // NETWORKING/COMMS
 dependencies {
     implementation "com.squareup.okhttp3:okhttp:3.9.1"
+    implementation "com.google.code.gson:gson:${libs.gsonVer}"
 }
 
 // TESTING

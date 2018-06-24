@@ -9,15 +9,21 @@ import org.jetbrains.anko.find
 
 class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val lblName: TextView
+    private val lblPeriod: TextView
     private val lblDistance: TextView
+    private val lblCurrent: TextView
 
     init {
         lblName = itemView.find(R.id.goal_item_name)
-        lblDistance = itemView.find(R.id.goal_item_distance)
+        lblPeriod = itemView.find(R.id.goal_item_goal_period)
+        lblDistance = itemView.find(R.id.goal_item_goal_distance)
+        lblCurrent = itemView.find(R.id.goal_item_current_distance)
     }
 
     fun bindView(runningGoal: RunningGoal) {
         lblName.text = runningGoal.name
-        lblDistance.text = runningGoal.target.distance.display()
+        lblPeriod.text = "%s - %s (%s / %s days)".format(runningGoal.target.start, runningGoal.target.end, runningGoal.progress.daysLapsed, runningGoal.progress.daysTotal)
+        lblCurrent.text = runningGoal.progress.distanceToday.display()
+        lblDistance.text = "/ %s".format(runningGoal.target.distance.display())
     }
 }

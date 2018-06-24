@@ -12,38 +12,42 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import au.com.beba.runninggoal.feature.GoalActivity
-import au.com.beba.runninggoal.feature.LocalPreferences
-import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.RunningGoalsAdapter
-import au.com.beba.runninggoal.feature.progressSync.ApiSourceIntentService
-import au.com.beba.runninggoal.feature.syncSources.DataSourcesActivity
-import au.com.beba.runninggoal.repo.GoalRepo
+import au.com.beba.runninggoal.feature.syncSources.SyncSourcesActivity
+import au.com.beba.runninggoal.repo.GoalRepository
+import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.find
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var goalRepository: GoalRepository
+
     companion object {
         private val TAG = MainActivity::class.java.simpleName
     }
 
-//    @Inject
-//    lateinit var localPreferences: LocalPreferences
-
     private lateinit var fab: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
-    private lateinit var recyclerAdapter: RecyclerView.Adapter<GoalViewHolder>
+    private lateinit var recyclerAdapter: RunningGoalsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initFAB()
 
-        populateGoals()
+        initRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshList()
     }
 
     private fun initFAB() {
@@ -68,19 +72,19 @@ class MainActivity : AppCompatActivity() {
         // Handle item selection
         return when (item.itemId) {
             R.id.data_sources -> {
-                showDataSources()
+                showSyncSources()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun showDataSources() {
-        val intent = Intent(this, DataSourcesActivity::class.java)
+    private fun showSyncSources() {
+        val intent = Intent(this, SyncSourcesActivity::class.java)
         startActivity(intent)
     }
 
-    private fun populateGoals() {
+    private fun initRecyclerView() {
         recyclerView = find(R.id.recycler_view)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = GridLayoutManager(this, 1)
@@ -88,11 +92,16 @@ class MainActivity : AppCompatActivity() {
         val decoration = DividerItemDecoration(applicationContext, VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        val ctx = this
-        async(UI) {
-            val goals = GoalRepo.getInstance(ctx).getGoals()
-            recyclerAdapter = RunningGoalsAdapter(goals)
-            recyclerView.adapter = recyclerAdapter
+        recyclerAdapter = RunningGoalsAdapter(mutableListOf())
+        recyclerView.adapter = recyclerAdapter
+    }
+
+    private fun refreshList() {
+        Log.i(TAG, "refreshList")
+        launch(UI) {
+            val goals = goalRepository.getGoals()
+            recyclerAdapter.setItems(goals)
+            recyclerAdapter.notifyDataSetChanged()
         }
     }
 }

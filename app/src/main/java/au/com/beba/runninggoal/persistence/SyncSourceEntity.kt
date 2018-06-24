@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey
 @Entity(tableName = "sync_source")
 data class SyncSourceEntity(
 
-        @PrimaryKey(autoGenerate = false)
+        @PrimaryKey(autoGenerate = true)
         var uid: Int = 0,
 
         @ColumnInfo()

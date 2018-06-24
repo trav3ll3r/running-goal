@@ -10,17 +10,43 @@
 
     <TextView
         android:id="@+id/goal_item_name"
+        style="@style/Text.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:text="Goal Name"
         />
 
     <TextView
-        android:id="@+id/goal_item_distance"
-        android:layout_width="match_parent"
+        android:id="@+id/goal_item_goal_period"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/goal_item_name"
-        tools:text="100km"
+        tools:text="01/01/2018 - 31/12/2018 (365 days)"
+        />
+
+    <TextView
+        android:id="@+id/goal_item_current_distance"
+        style="@style/Text.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_name"
+        tools:text="100"
+        />
+
+    <TextView
+        android:id="@+id/goal_item_goal_distance"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_current_distance"
+        tools:text="50"
         />
 
 </android.support.constraint.ConstraintLayout>

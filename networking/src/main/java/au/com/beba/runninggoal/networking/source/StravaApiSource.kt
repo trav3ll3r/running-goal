@@ -2,28 +2,38 @@ package au.com.beba.runninggoal.networking.source
 
 import android.util.Log
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
-import okhttp3.OkHttpClient
+import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.Response
 import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlin.coroutines.experimental.CoroutineContext
+
 
 class StravaApiSource
 constructor(private val networkingContext: CoroutineContext = DefaultDispatcher,
-            private val sourceProfile: ApiSourceProfile) : ApiSource {
+            private val sourceProfile: ApiSourceProfile) : CommonApiSource(networkingContext) {
 
     companion object {
         private val TAG = StravaApiSource::class.java.simpleName
     }
 
-    private val client: OkHttpClient = OkHttpClient()
-
     override suspend fun getDistanceForDateRange(start: LocalDate, end: LocalDate): Float = withContext(networkingContext) {
-        val url = "https://www.strava.com/api/v3/athlete"
+        val startTime = start.atTime(0, 0, 0).toEpochSecond(ZoneOffset.UTC)
+        val endTime = end.atTime(23, 59, 59).toEpochSecond(ZoneOffset.UTC)
+
+        val url = HttpUrl.Builder()
+                .scheme("https")
+                .host("www.strava.com")
+                .addPathSegments("api/v3")
+                .addPathSegments("athlete/activities")
+                .setQueryParameter("after", startTime.toString())
+                .addQueryParameter("before", endTime.toString())
+                .build()
 
         val request = Request.Builder()
                 .url(url)
@@ -31,16 +41,28 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher,
                 .addHeader("accept", "application/json")
                 .build()
 
+        Log.v(TAG, "request url=%s".format(request.url()))
+
         val responseDef = executeRequest(request)
 
-        val response = responseDef.await()
-        Log.v(TAG, "code=%s".format(response?.code() ?: "UNKNOWN"))
-        Log.v(TAG, "body=%s".format(response?.body()?.string() ?: "NULL BODY"))
-
-        if (response?.code() == 200) 999f else -1f
+        processResponse(responseDef.await())
     }
 
-    private fun executeRequest(request: Request): Deferred<Response?> = async(networkingContext) {
-        client.newCall(request).execute()
+    private fun processResponse(response: Response?): Float {
+        Log.v(TAG, "processResponse")
+        Log.v(TAG, "processResponse | code=%s".format(response?.code() ?: "UNKNOWN"))
+        val responseBody = response?.body()?.string()
+        Log.v(TAG, "processResponse | body=%s".format(responseBody ?: "NULL BODY"))
+
+        var distanceMetre = -1f
+        if (response != null) {
+            val listType = object : TypeToken<ArrayList<AthleteActivity>>() {}.type
+            val activities: List<AthleteActivity> = Gson().fromJson(responseBody ?: "", listType)
+            distanceMetre = activities.map { it.distance }.sum()
+        }
+        Log.v(TAG, "processResponse | distanceMetre=$distanceMetre")
+        return distanceMetre
     }
 }
+
+data class AthleteActivity(val distance: Float)

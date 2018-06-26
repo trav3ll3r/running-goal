@@ -55,7 +55,7 @@ object GoalWidgetRenderer {
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.GONE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_list_24dp))
 
-                ProgressRenderer.render(context, rootView, runningGoal)
+                GoalAsProgressRenderer.render(context, rootView, runningGoal)
             }
             GoalViewType.NUMBERS -> {
                 Log.d(TAG, "updateUi | NUMBERS | runningGoal=%s".format(runningGoal.id))
@@ -124,7 +124,7 @@ object GoalInNumbersRenderer {
     }
 }
 
-object ProgressRenderer {
+object GoalAsProgressRenderer {
 
     private const val gapAngle = 30f
     private const val startAngle = 90f + gapAngle
@@ -230,7 +230,8 @@ object ProgressRenderer {
     }
 
     private fun arcCurrent(context: Context, canvas: Canvas, percentage: Float) {
-        drawArc(context, canvas, Color.argb(150, 0, 255, 0), arcLengthAngle = fullSweep * percentage)
+        val visiblePercentage = if (percentage > 1.0f) 1f else percentage
+        drawArc(context, canvas, Color.argb(150, 0, 255, 0), arcLengthAngle = fullSweep * visiblePercentage)
     }
 
     private fun arcProgressNotches(context: Context, canvas: Canvas) {
@@ -339,10 +340,3 @@ object DecimalRenderer {
         return "%s%s".format(sign, numberFormat.format(value))
     }
 }
-
-//fun Bitmap.rotate(angle: Float): Bitmap {
-//    val source = this
-//    val matrix = Matrix()
-//    matrix.postRotate(angle)
-//    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
-//}

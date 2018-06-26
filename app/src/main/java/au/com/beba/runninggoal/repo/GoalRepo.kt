@@ -57,7 +57,7 @@ class GoalRepo private constructor(
             )
             goal.progress.distanceToday = Distance(it.currentDistance)
 
-            setProgress(goal)
+            setProgress(goal, LocalDate.now())
             goal
         }.toList()
 
@@ -87,18 +87,18 @@ class GoalRepo private constructor(
             goal = RunningGoal()
         }
 
-        setProgress(goal)
+        setProgress(goal, LocalDate.now())
 
         goal
     }
 
-    private fun setProgress(runningGoal: RunningGoal) {
-        val today = LocalDate.now()
+    private fun setProgress(runningGoal: RunningGoal, today: LocalDate) {
         val currentDistance = runningGoal.progress.distanceToday.value
+        val endLapsedDate = getLapsedEndDate(runningGoal, today)
 
-        Log.d(TAG, "startDate=%s endDate=%s".format(runningGoal.target.start, runningGoal.target.end))
         val daysTotal = getTotalDaysBetween(runningGoal.target.start, runningGoal.target.end)
-        val daysLapsed = getTotalDaysBetween(runningGoal.target.start, today)
+        Log.d(TAG, "startDate=%s endDate=%s".format(runningGoal.target.start, endLapsedDate))
+        val daysLapsed = getTotalDaysBetween(runningGoal.target.start, endLapsedDate)
         Log.d(TAG, "daysTotal=%s daysLapsed=%s".format(daysTotal, daysLapsed))
 
         val linearDistancePerDay = (runningGoal.target.distance.value / daysTotal)
@@ -109,6 +109,10 @@ class GoalRepo private constructor(
         runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance.value / linearDistancePerDay
 
         runningGoal.projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
+    }
+
+    private fun getLapsedEndDate(runningGoal: RunningGoal, today: LocalDate): LocalDate {
+        return if (runningGoal.target.end.isAfter(today)) today else runningGoal.target.end
     }
 
     override suspend fun save(goal: RunningGoal, appWidgetId: Int) = withContext(coroutineContext) {
@@ -128,6 +132,9 @@ class GoalRepo private constructor(
     }
 
     private fun getTotalDaysBetween(from: LocalDate, to: LocalDate): Int {
-        return Duration.between(from.atTime(0, 0), to.atTime(0, 0)).toDays().toInt() + 1
+        if (from.isBefore(to)) {
+            return Duration.between(from.atTime(0, 0), to.atTime(0, 0)).toDays().toInt() + 1
+        }
+        return 0
     }
 }

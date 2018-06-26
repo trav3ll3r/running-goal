@@ -25,7 +25,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/darker_background">
 
         <TextView
             android:id="@+id/goal_name"
@@ -33,6 +34,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="GOAL NAME"
+            android:textColor="@color/darker_background_text"
             android:textStyle="bold" />
 
         <TextView
@@ -41,7 +43,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Jan 2018 - Dec 2018" />
+            android:text="Jan 2018 - Dec 2018"
+            android:textColor="@color/darker_background_text"
+            />
 
     </LinearLayout>
 

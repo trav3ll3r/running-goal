@@ -2,61 +2,61 @@ package au.com.beba.runninggoal
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.DividerItemDecoration.VERTICAL
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import au.com.beba.runninggoal.feature.GoalActivity
-import au.com.beba.runninggoal.feature.base.AdapterListener
-import au.com.beba.runninggoal.feature.goals.RunningGoalsAdapter
-import au.com.beba.runninggoal.feature.syncSources.SyncSourcesActivity
+import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
+import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
+import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.models.RunningGoal
-import au.com.beba.runninggoal.repo.GoalRepository
-import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import au.com.beba.runninggoal.models.SyncSource
 import org.jetbrains.anko.find
-import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+        SyncSourcesFragment.SyncSourceListener,
+        RunningGoalsFragment.RunningGoalListener {
 
-    @Inject
-    lateinit var goalRepository: GoalRepository
-
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
-    }
-
-    private lateinit var fab: FloatingActionButton
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var recyclerAdapter: RunningGoalsAdapter
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initFAB()
+        initBottomNavigation()
 
-        initRecyclerView()
+        bottomNavigationView.selectedItemId = R.id.action_running_goals
     }
 
-    override fun onResume() {
-        super.onResume()
-        refreshList()
-    }
-
-    private fun initFAB() {
-        fab = find(R.id.fab)
-        fab.setOnClickListener {
-            createNewGoal()
+    private fun initBottomNavigation() {
+        bottomNavigationView = find(R.id.bottom_navigation)
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.action_running_goals -> showRunningGoals()
+                R.id.action_sync_sources -> showSyncSources()
+            }
+            true
         }
+    }
+
+    override fun onAddRunningGoal() {
+        createNewGoal()
+    }
+
+    override fun onRunningGoalClicked(runningGoal: RunningGoal) {
+        editRunningGoal(runningGoal)
+    }
+
+    override fun onSyncSourceClicked(syncSource: SyncSource) {
+        editSyncSource(syncSource)
+    }
+
+    private fun showRunningGoals() {
+        supportFragmentManager.beginTransaction().replace(R.id.content_container, RunningGoalsFragment()).commit()
+    }
+
+    private fun showSyncSources() {
+        supportFragmentManager.beginTransaction().replace(R.id.content_container, SyncSourcesFragment()).commit()
     }
 
     private fun createNewGoal() {
@@ -64,55 +64,33 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        return when (item.itemId) {
-            R.id.data_sources -> {
-                showSyncSources()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun showSyncSources() {
-        val intent = Intent(this, SyncSourcesActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun initRecyclerView() {
-        recyclerView = find(R.id.recycler_view)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = GridLayoutManager(this, 1)
-
-        val decoration = DividerItemDecoration(applicationContext, VERTICAL)
-        recyclerView.addItemDecoration(decoration)
-
-        recyclerAdapter = RunningGoalsAdapter(mutableListOf(), object : AdapterListener<RunningGoal> {
-            override fun onItemClick(item: RunningGoal) {
-                editRunningGoal(item)
-            }
-        })
-        recyclerView.adapter = recyclerAdapter
-    }
-
-    private fun refreshList() {
-        Log.i(TAG, "refreshList")
-        launch(UI) {
-            val goals = goalRepository.getGoals()
-            recyclerAdapter.setItems(goals)
-            recyclerAdapter.notifyDataSetChanged()
-        }
-    }
-
     private fun editRunningGoal(runningGoal: RunningGoal) {
         val intent = GoalActivity.buildIntent(this, runningGoal.id)
         startActivity(intent)
     }
+
+    private fun editSyncSource(syncSource: SyncSource) {
+        val intent = EditSyncSourceActivity.buildIntent(this, syncSource)
+        startActivity(intent)
+    }
+
+/*
+    private fun initFAB() {
+        refreshFromDataSource()
+    }
+
+    private fun refreshFromDataSource() {
+        Log.i(TAG, "refreshFromDataSource")
+        val jobId = 1000
+
+        val ctx = this
+        launch {
+            val goals = goalRepository.getGoals()
+            goals.forEach {
+                // Starts the JobIntentService
+                ApiSourceIntentService.enqueueWork(ctx, ApiSourceIntentService.buildIntent(it.id, "STRAVA"), jobId)
+            }
+        }
+    }
+*/
 }

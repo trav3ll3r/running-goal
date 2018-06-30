@@ -1,24 +1,26 @@
 package au.com.beba.runninggoal.di.module
 
-import au.com.beba.runninggoal.MainActivity
 import au.com.beba.runninggoal.di.ActivityScope
+import au.com.beba.runninggoal.di.FragmentScope
 import au.com.beba.runninggoal.di.ServiceScope
+import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.feature.progressSync.ApiSourceIntentService
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
-import au.com.beba.runninggoal.feature.syncSources.SyncSourcesActivity
+import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+
 
 @Module
 abstract class AndroidBindingModule {
 
-    @ActivityScope
+    @FragmentScope
     @ContributesAndroidInjector
-    abstract fun mainActivity(): MainActivity
+    abstract fun runningGoalsFragment(): RunningGoalsFragment
 
-    @ActivityScope
+    @FragmentScope
     @ContributesAndroidInjector
-    abstract fun dataSourcesActivity(): SyncSourcesActivity
+    abstract fun syncSourcesFragment(): SyncSourcesFragment
 
     @ActivityScope
     @ContributesAndroidInjector
@@ -27,8 +29,4 @@ abstract class AndroidBindingModule {
     @ServiceScope
     @ContributesAndroidInjector
     abstract fun apiSourceIntentService(): ApiSourceIntentService
-
-//    @FragmentScope
-//    @ContributesAndroidInjector
-//    abstract fun mainFragment(): MainFragment
 }

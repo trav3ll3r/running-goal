@@ -23,4 +23,6 @@
     <dimen name="row_2_start">25dp</dimen>
     <dimen name="column_3_start">110dp</dimen>
     <dimen name="row_3_start">60dp</dimen>
+
+    <dimen name="bottom_navigation_padding">8dp</dimen>
 </resources>

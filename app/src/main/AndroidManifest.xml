@@ -30,7 +30,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".feature.syncSources.SyncSourcesActivity" android:label="@string/sync_sources"/>
         <activity android:name=".feature.syncSources.EditSyncSourceActivity" android:label="@string/edit_sync_source"/>
 
         <receiver android:name=".feature.widget.RunningGoalWidgetProvider">

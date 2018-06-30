@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    >
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/sync_source_item_type"
         style="@style/Text.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Sync Source Type"
-        />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Sync Source Type" />
 
     <TextView
         android:id="@+id/sync_source_item_synced_at"
@@ -25,17 +22,18 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sync_source_item_type"
-        tools:text="01/01/2018 00:00:00"
-        />
+        tools:text="01/01/2018 00:00:00" />
 
-    <CheckBox
-        android:id="@+id/sync_source_item_is_active"
+    <TextView
+        android:id="@+id/sync_source_item_status"
+        style="@style/Text.Small"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="16dp"
+        android:background="@drawable/status_rounded"
+        android:paddingHorizontal="8dp"
+        android:textColor="@color/darker_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:clickable="false"
-        />
+        tools:text="Default" />
 
 </android.support.constraint.ConstraintLayout>

@@ -3,6 +3,7 @@ package au.com.beba.runninggoal.feature
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.appwidget.AppWidgetManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -32,6 +33,12 @@ class GoalActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = GoalActivity::class.java.simpleName
+
+        fun buildIntent(context: Context, goalId: Int): Intent {
+            val intent = Intent(context, GoalActivity::class.java)
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goalId)
+            return intent
+        }
     }
 
     private var appWidgetId: Int = -1

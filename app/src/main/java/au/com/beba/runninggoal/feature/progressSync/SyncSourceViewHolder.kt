@@ -1,8 +1,8 @@
 package au.com.beba.runninggoal.feature.progressSync
 
+import android.support.annotation.ColorRes
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.CheckBox
 import android.widget.TextView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.AdapterListener
@@ -13,15 +13,33 @@ import org.jetbrains.anko.find
 class SyncSourceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val lblType: TextView = itemView.find(R.id.sync_source_item_type)
     private val lblSyncedAt: TextView = itemView.find(R.id.sync_source_item_synced_at)
-    private val checkIsActive: CheckBox = itemView.find(R.id.sync_source_item_is_active)
+    private val statusStatus: TextView = itemView.find(R.id.sync_source_item_status)
 
     fun bindView(syncSource: SyncSource, listener: AdapterListener<SyncSource>) {
         lblType.text = syncSource.type
         lblSyncedAt.text = syncSource.syncedAt.toString()
-        checkIsActive.isChecked = syncSource.isActive
+
+        statusStatus.visibility = View.GONE
+
+        if (syncSource.accessToken.isEmpty()) {
+            applyStatusStyle(statusStatus, "Not configured", R.color.status_incomplete)
+        } else {
+            if (syncSource.isActive) {
+                applyStatusStyle(statusStatus, "Active", R.color.status_complete)
+            } else {
+                applyStatusStyle(statusStatus, "Inactive", R.color.status_incomplete)
+
+            }
+        }
 
         itemView.setOnClickListener {
             listener.onItemClick(syncSource)
         }
+    }
+
+    private fun applyStatusStyle(statusView: TextView, caption: String, @ColorRes color: Int) {
+        statusView.text = caption
+        statusView.backgroundTintList = this.itemView.context.getColorStateList(color)
+        statusView.visibility = View.VISIBLE
     }
 }

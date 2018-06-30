@@ -10,4 +10,8 @@
     <color name="goal_slot_time">#cc5588AA</color>
     <color name="darker_background">#75000000</color>
     <color name="darker_background_text">#aaFFFFFF</color>
+
+
+    <color name="status_complete">#aa009688</color>
+    <color name="status_incomplete">#22FFFFFF</color>
 </resources>

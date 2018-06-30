@@ -3,7 +3,7 @@
     android:minWidth="80dp"
     android:minHeight="120dp"
     android:updatePeriodMillis="43200000"
-    android:previewImage="@drawable/preview"
+    android:previewImage="@drawable/ic_progress_24"
     android:initialLayout="@layout/goal_widget"
     android:configure="au.com.beba.runninggoal.feature.GoalActivity"
     android:resizeMode="horizontal|vertical"

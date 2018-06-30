@@ -12,8 +12,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import au.com.beba.runninggoal.feature.GoalActivity
+import au.com.beba.runninggoal.feature.base.AdapterListener
 import au.com.beba.runninggoal.feature.goals.RunningGoalsAdapter
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesActivity
+import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
@@ -92,7 +94,11 @@ class MainActivity : AppCompatActivity() {
         val decoration = DividerItemDecoration(applicationContext, VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        recyclerAdapter = RunningGoalsAdapter(mutableListOf())
+        recyclerAdapter = RunningGoalsAdapter(mutableListOf(), object : AdapterListener<RunningGoal> {
+            override fun onItemClick(item: RunningGoal) {
+                editRunningGoal(item)
+            }
+        })
         recyclerView.adapter = recyclerAdapter
     }
 
@@ -103,5 +109,10 @@ class MainActivity : AppCompatActivity() {
             recyclerAdapter.setItems(goals)
             recyclerAdapter.notifyDataSetChanged()
         }
+    }
+
+    private fun editRunningGoal(runningGoal: RunningGoal) {
+        val intent = GoalActivity.buildIntent(this, runningGoal.id)
+        startActivity(intent)
     }
 }

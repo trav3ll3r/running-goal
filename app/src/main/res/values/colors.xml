@@ -14,4 +14,5 @@
 
     <color name="status_complete">#aa009688</color>
     <color name="status_incomplete">#22FFFFFF</color>
+    <color name="status_error">#44FF0000</color>
 </resources>

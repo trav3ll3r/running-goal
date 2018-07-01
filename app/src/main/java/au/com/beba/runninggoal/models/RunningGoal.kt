@@ -23,11 +23,13 @@ data class GoalProgress(
         var daysLapsed: Int = 0,
         var distanceExpected: Distance = Distance(),
         var positionInDistance: Distance = Distance(),
-        var positionInDays: Float = 0.0f)
+        var positionInDays: Float = 0.0f,
+        var status: GoalStatus = GoalStatus.UNKNOWN)
 
 data class GoalProjection(val distancePerDay: Distance = Distance(), val daysLapsed: Int = 0)
 
-data class GoalView(var viewType: GoalViewType = GoalViewType.PROGRESS_BAR) {
+data class GoalView(
+        var viewType: GoalViewType = GoalViewType.PROGRESS_BAR) {
     fun toggle() {
         viewType = if (viewType == GoalViewType.PROGRESS_BAR) {
             GoalViewType.NUMBERS
@@ -50,5 +52,11 @@ enum class GoalViewType(private val dbValue: Int) {
     fun asDbValue(): Int {
         return dbValue
     }
+}
 
+enum class GoalStatus {
+    UNKNOWN,
+    NOT_STARTED,
+    ONGOING,
+    EXPIRED
 }

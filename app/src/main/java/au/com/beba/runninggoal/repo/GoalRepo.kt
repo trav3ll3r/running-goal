@@ -5,6 +5,7 @@ import android.util.Log
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalProgress
 import au.com.beba.runninggoal.models.GoalProjection
+import au.com.beba.runninggoal.models.GoalStatus
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.GoalView
 import au.com.beba.runninggoal.models.GoalViewType
@@ -107,12 +108,21 @@ class GoalRepo private constructor(
         runningGoal.progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
         runningGoal.progress.positionInDistance = Distance(currentDistance - expectedDistance)
         runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance.value / linearDistancePerDay
+        runningGoal.progress.status = getStatus(runningGoal, today)
 
         runningGoal.projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
     }
 
     private fun getLapsedEndDate(runningGoal: RunningGoal, today: LocalDate): LocalDate {
         return if (runningGoal.target.end.isAfter(today)) today else runningGoal.target.end
+    }
+
+    private fun getStatus(runningGoal: RunningGoal, today: LocalDate): GoalStatus {
+        return when {
+            today.isBefore(runningGoal.target.start) -> GoalStatus.NOT_STARTED
+            today.isAfter(runningGoal.target.end) -> GoalStatus.EXPIRED
+            else -> GoalStatus.ONGOING
+        }
     }
 
     override suspend fun save(goal: RunningGoal, appWidgetId: Int) = withContext(coroutineContext) {

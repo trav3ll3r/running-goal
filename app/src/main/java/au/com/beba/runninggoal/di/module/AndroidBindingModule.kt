@@ -1,5 +1,6 @@
 package au.com.beba.runninggoal.di.module
 
+import au.com.beba.runninggoal.MainActivity
 import au.com.beba.runninggoal.di.ActivityScope
 import au.com.beba.runninggoal.di.FragmentScope
 import au.com.beba.runninggoal.di.ServiceScope
@@ -13,6 +14,10 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class AndroidBindingModule {
+
+    @ActivityScope
+    @ContributesAndroidInjector
+    abstract fun mainActivity(): MainActivity
 
     @FragmentScope
     @ContributesAndroidInjector

@@ -9,8 +9,9 @@
     <string name="btn_edit">Edit goal</string>
     <string name="local_separator">.</string>
     <string name="measure_unit_sign">km</string>
-    <string name="running_goals">Running Goals</string>
-    <string name="sync_sources">Sync Sources</string>
+    <string name="running_goals">Running goals</string>
+    <string name="sync_sources">Sync sources</string>
+    <string name="sync_now">Sync now</string>
     <string name="edit_sync_source">Edit Sync Source</string>
     <string name="access_token">Access Token</string>
 

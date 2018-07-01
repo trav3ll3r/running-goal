@@ -4,28 +4,62 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import au.com.beba.runninggoal.feature.GoalActivity
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
+import au.com.beba.runninggoal.feature.progressSync.ApiSourceIntentService
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
+import au.com.beba.runninggoal.repo.GoalRepository
+import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.find
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(),
         SyncSourcesFragment.SyncSourceListener,
         RunningGoalsFragment.RunningGoalListener {
 
+    @Inject
+    lateinit var goalRepository: GoalRepository
+
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
+    }
+
     private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initBottomNavigation()
 
         bottomNavigationView.selectedItemId = R.id.action_running_goals
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.action_sync_now -> {
+                syncNow()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun initBottomNavigation() {
@@ -74,13 +108,8 @@ class MainActivity : AppCompatActivity(),
         startActivity(intent)
     }
 
-/*
-    private fun initFAB() {
-        refreshFromDataSource()
-    }
-
-    private fun refreshFromDataSource() {
-        Log.i(TAG, "refreshFromDataSource")
+    private fun syncNow() {
+        Log.i(TAG, "syncNow")
         val jobId = 1000
 
         val ctx = this
@@ -92,5 +121,4 @@ class MainActivity : AppCompatActivity(),
             }
         }
     }
-*/
 }

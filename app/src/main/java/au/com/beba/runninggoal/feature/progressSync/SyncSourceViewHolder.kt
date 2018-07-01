@@ -24,8 +24,8 @@ class SyncSourceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         if (syncSource.accessToken.isEmpty()) {
             applyStatusStyle(statusStatus, "Not configured", R.color.status_incomplete)
         } else {
-            if (syncSource.isActive) {
-                applyStatusStyle(statusStatus, "Active", R.color.status_complete)
+            if (syncSource.isDefault) {
+                applyStatusStyle(statusStatus, "Default", R.color.status_complete)
             } else {
                 applyStatusStyle(statusStatus, "Inactive", R.color.status_incomplete)
 

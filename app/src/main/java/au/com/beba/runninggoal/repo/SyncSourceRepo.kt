@@ -46,12 +46,17 @@ class SyncSourceRepo private constructor(
         entity2model(entity)
     }
 
+    override suspend fun getDefaultSyncSource(): SyncSource = withContext(coroutineContext) {
+        val entity = syncSourceDao.getDefault()
+        entity2model(entity)
+    }
+
     override suspend fun save(syncSource: SyncSource) = withContext(coroutineContext) {
         val syncEntity = SyncSourceEntity(
                 syncSource.id,
                 syncSource.type,
                 syncSource.accessToken,
-                syncSource.isActive,
+                syncSource.isDefault,
                 LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         )
         val id: Long = syncSourceDao.insert(syncEntity)

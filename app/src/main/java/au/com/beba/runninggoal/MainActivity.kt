@@ -3,6 +3,7 @@ package au.com.beba.runninggoal
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -15,8 +16,9 @@ import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.repo.GoalRepository
+import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
-import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.find
 import javax.inject.Inject
@@ -28,6 +30,8 @@ class MainActivity : AppCompatActivity(),
 
     @Inject
     lateinit var goalRepository: GoalRepository
+    @Inject
+    lateinit var syncSourceRepository: SyncSourceRepository
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
@@ -114,10 +118,27 @@ class MainActivity : AppCompatActivity(),
 
         val ctx = this
         launch {
-            val goals = goalRepository.getGoals()
-            goals.forEach {
-                // Starts the JobIntentService
-                ApiSourceIntentService.enqueueWork(ctx, ApiSourceIntentService.buildIntent(it.id, "STRAVA"), jobId)
+            val syncSource = syncSourceRepository.getDefaultSyncSource()
+            if (syncSource.isDefault) {
+                val goals = goalRepository.getGoals()
+                goals.forEach {
+                    // Enqueues new JobIntentService
+                    ApiSourceIntentService.enqueueWork(ctx, ApiSourceIntentService.buildIntent(it.id), jobId)
+                }
+            } else {
+                launch(UI) {
+                    // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
+                    val dialog = AlertDialog.Builder(ctx)
+                            .setCancelable(true)
+                            .setTitle(R.string.sync_now_error)
+                            .setMessage(R.string.message_no_default_sync_sources)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .create()
+
+                    if (!isFinishing) {
+                        dialog.show()
+                    }
+                }
             }
         }
     }

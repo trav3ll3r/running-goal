@@ -34,13 +34,11 @@ class ApiSourceIntentService : JobIntentService() {
     companion object {
         private val TAG = ApiSourceIntentService::class.java.simpleName
 
-        private val SYNC_SOURCE_TYPE = "SYNC_SOURCE_TYPE"
-        private val SYNC_GOAL_ID = "SYNC_GOAL_ID"
+        private const val SYNC_GOAL_ID = "SYNC_GOAL_ID"
 
-        fun buildIntent(goalId: Int, syncSourceType: String): Intent {
+        fun buildIntent(goalId: Int): Intent {
             val serviceIntent = Intent()
             serviceIntent.putExtra(SYNC_GOAL_ID, goalId)
-            serviceIntent.putExtra(SYNC_SOURCE_TYPE, syncSourceType)
             return serviceIntent
         }
 
@@ -58,21 +56,24 @@ class ApiSourceIntentService : JobIntentService() {
 
         launch {
             val syncGoalId = intent.getIntExtra(SYNC_GOAL_ID, 0)
-            val syncType = intent.getStringExtra(SYNC_SOURCE_TYPE)
             Log.d(TAG, "onHandleWork | syncGoalId=$syncGoalId")
-            Log.d(TAG, "onHandleWork | syncType=$syncType")
 
             val goal = goalRepository.getGoalForWidget(syncGoalId)
-            val syncSource = syncSourceRepository.getSyncSourceForType(syncType)
+            val syncSource = syncSourceRepository.getDefaultSyncSource()
+            if (syncSource.isDefault) {
+                Log.d(TAG, "onHandleWork | syncType=${syncSource.type}")
 
-            val distanceInMetre = getDistanceFromSource(goal, syncSource)
-            if (distanceInMetre > -1f) {
-                val df = DecimalFormat("0.#")
-                df.roundingMode = RoundingMode.HALF_EVEN
-                val roundedDistance = df.format(distanceInMetre / 1000).toFloat()
-                updateGoalWithNewDistance(goal, Distance(roundedDistance), syncSource)
+                val distanceInMetre = getDistanceFromSource(goal, syncSource)
+                if (distanceInMetre > -1f) {
+                    val df = DecimalFormat("0.#")
+                    df.roundingMode = RoundingMode.HALF_EVEN
+                    val roundedDistance = df.format(distanceInMetre / 1000).toFloat()
+                    updateGoalWithNewDistance(goal, Distance(roundedDistance), syncSource)
+                }
+                Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
+            } else {
+                Log.e(TAG, "onHandleWork | no Default Sync Source found")
             }
-            Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
         }
     }
 

@@ -55,7 +55,7 @@ class EditSyncSourceActivity : AppCompatActivity() {
         Log.i(TAG, "bindData")
         sync_source_type.text = syncSource.type
         sync_source_access_token.setText(syncSource.accessToken)
-        sync_source_is_active.isChecked = syncSource.isActive
+        sync_source_is_active.isChecked = syncSource.isDefault
         btn_ok.setOnClickListener {
             launch(UI) {
                 updateAndClose()
@@ -67,7 +67,7 @@ class EditSyncSourceActivity : AppCompatActivity() {
     private suspend fun updateAndClose() {
         Log.i(TAG, "updateAndClose")
         syncSource.accessToken = sync_source_access_token.text.toString()
-        syncSource.isActive = sync_source_is_active.isChecked
+        syncSource.isDefault = sync_source_is_active.isChecked
         withContext(DefaultDispatcher) { syncSourceRepository.save(syncSource) }
     }
 }

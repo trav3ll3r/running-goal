@@ -1,5 +1,7 @@
 package au.com.beba.runninggoal.repo
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.util.Log
 import au.com.beba.runninggoal.models.Distance
@@ -42,7 +44,13 @@ class GoalRepo private constructor(
         }
     }
 
-    override suspend fun getGoals(): List<RunningGoal> = withContext(coroutineContext) {
+    private val cachedGoals = MutableLiveData<List<RunningGoal>>()
+
+    override fun getGoals(): LiveData<List<RunningGoal>> {
+        return cachedGoals
+    }
+
+    override suspend fun fetchGoals(): List<RunningGoal> = withContext(coroutineContext) {
         val goalEntities = runningGoalDao.getAll()
 
         val goals = goalEntities.map {
@@ -64,6 +72,7 @@ class GoalRepo private constructor(
 
         Log.d(TAG, "goals=%s".format(goals.size))
 
+        cachedGoals.postValue(goals)
         goals
     }
 
@@ -126,6 +135,9 @@ class GoalRepo private constructor(
     }
 
     override suspend fun save(goal: RunningGoal, appWidgetId: Int) = withContext(coroutineContext) {
+        Log.d(TAG, "save")
+        Log.d(TAG, "mapFrom | id=%s, distance=%s".format(goal.id, goal.progress.distanceToday.value))
+
         val goalEntity = RunningGoalEntity(appWidgetId)
         goalEntity.goalName = goal.name
         goalEntity.targetDistance = goal.target.distance.value
@@ -137,8 +149,29 @@ class GoalRepo private constructor(
 
         val id: Long = runningGoalDao.insert(goalEntity)
         if (id < 0L) {
+            Log.d(TAG, "update")
+            Log.d(TAG, "update | uid=%s, distance=%s".format(goalEntity.uid, goalEntity.currentDistance))
             runningGoalDao.update(goalEntity)
         }
+        cachedGoals.postValue(placeGoalInLiveData(goal))
+    }
+
+    /**
+     * Puts [goal] in the list.
+     *
+     * If [goal] id exists, [goal] will replace it
+     *
+     * If [goal] id does not exist, [goal] will be appended to the list
+     */
+    private fun placeGoalInLiveData(goal: RunningGoal): List<RunningGoal> {
+        val currentGoals = cachedGoals.value as MutableList
+        val index = currentGoals.indexOfFirst { it.id == goal.id }
+        if (index > -1) {
+            currentGoals[index] = goal
+        } else {
+            currentGoals.add(goal)
+        }
+        return currentGoals
     }
 
     private fun getTotalDaysBetween(from: LocalDate, to: LocalDate): Int {

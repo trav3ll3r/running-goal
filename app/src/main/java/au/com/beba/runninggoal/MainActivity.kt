@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity(),
         launch {
             val syncSource = syncSourceRepository.getDefaultSyncSource()
             if (syncSource.isDefault) {
-                val goals = goalRepository.getGoals()
+                val goals = goalRepository.fetchGoals()
                 goals.forEach {
                     // Enqueues new JobIntentService
                     ApiSourceIntentService.enqueueWork(ctx, ApiSourceIntentService.buildIntent(it.id), jobId)

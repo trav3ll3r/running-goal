@@ -12,6 +12,13 @@ class Distance : Displayable {
 
     private val numberFormat: NumberFormat = NumberFormat.getInstance(Locale.ENGLISH)
 
+    companion object {
+        fun fromMetres(metres: Float): Distance {
+            val roundedDistance: Float = "%.1f".format(metres / 1000).toFloat()
+            return Distance(roundedDistance)
+        }
+    }
+
     constructor(stringValue: String, units: String = "km") {
         // PARSE
         this.value = numberFormat.parse(stringValue).toFloat()

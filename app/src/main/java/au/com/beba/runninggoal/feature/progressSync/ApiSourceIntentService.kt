@@ -13,9 +13,9 @@ import au.com.beba.runninggoal.networking.source.StravaApiSource
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.launch
-import java.math.RoundingMode
-import java.text.DecimalFormat
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 
@@ -65,10 +65,7 @@ class ApiSourceIntentService : JobIntentService() {
 
                 val distanceInMetre = getDistanceFromSource(goal, syncSource)
                 if (distanceInMetre > -1f) {
-                    val df = DecimalFormat("0.#")
-                    df.roundingMode = RoundingMode.HALF_EVEN
-                    val roundedDistance = df.format(distanceInMetre / 1000).toFloat()
-                    updateGoalWithNewDistance(goal, Distance(roundedDistance), syncSource)
+                    updateGoalWithNewDistance(goal, Distance.fromMetres(distanceInMetre), syncSource)
                 }
                 Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
             } else {
@@ -86,6 +83,7 @@ class ApiSourceIntentService : JobIntentService() {
 
     private suspend fun updateGoalWithNewDistance(goal: RunningGoal, distance: Distance, syncSource: SyncSource) {
         Log.i(TAG, "updateGoalWithNewDistance")
+        Log.i(TAG, "updateGoalWithNewDistance | newDistance=${distance.value}")
         goal.progress.distanceToday = distance
         goalRepository.save(goal, goal.id)
 

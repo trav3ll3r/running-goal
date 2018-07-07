@@ -37,7 +37,7 @@ class SyncSourceRepo private constructor(
     override suspend fun getSyncSources(): List<SyncSource> = withContext(coroutineContext) {
         val entities = syncSourceDao.getAll()
         val sources = entities.map { entity2model(it) }.toList()
-        Log.d(TAG, "goals=%s".format(sources.size))
+        Log.d(TAG, "syncSources=%s".format(sources.size))
         sources
     }
 

@@ -1,5 +1,8 @@
 package au.com.beba.runninggoal.feature.goals
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -16,8 +19,6 @@ import au.com.beba.runninggoal.feature.base.AdapterListener
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.support.v4.find
 import javax.inject.Inject
 
@@ -30,7 +31,13 @@ class RunningGoalsFragment : Fragment() {
     }
 
     @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    @Inject
     lateinit var goalRepository: GoalRepository
+
+    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelProviders.of(this, factory).get(RunningGoalViewModel::class.java)
+    }
 
     companion object {
         private val TAG = RunningGoalsFragment::class.java.simpleName
@@ -45,6 +52,12 @@ class RunningGoalsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+
+        viewModel.fetchGoals().observe(this, Observer {
+            it?.let { updateList(it) }
+        })
+        viewModel.fetchGoals()
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,11 +78,6 @@ class RunningGoalsFragment : Fragment() {
         } else {
             throw RuntimeException(context.toString() + " must implement %s".format(RunningGoalListener::class.java.simpleName))
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        refreshList()
     }
 
     override fun onDetach() {
@@ -98,12 +106,10 @@ class RunningGoalsFragment : Fragment() {
         recyclerView.adapter = recyclerAdapter
     }
 
-    private fun refreshList() {
-        Log.i(TAG, "refreshList")
-        launch(UI) {
-            val goals = goalRepository.getGoals()
-            recyclerAdapter.setItems(goals)
-            recyclerAdapter.notifyDataSetChanged()
-        }
+    private fun updateList(items: List<RunningGoal>) {
+        Log.i(TAG, "updateList")
+        recyclerAdapter.setItems(items)
+        recyclerAdapter.notifyDataSetChanged()
     }
+
 }

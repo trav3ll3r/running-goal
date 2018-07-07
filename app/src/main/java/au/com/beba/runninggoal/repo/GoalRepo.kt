@@ -156,6 +156,16 @@ class GoalRepo private constructor(
         cachedGoals.postValue(placeGoalInLiveData(goal))
     }
 
+    override suspend fun delete(goal: RunningGoal): Int = withContext(coroutineContext) {
+        val goalEntity = RunningGoalEntity(goal.id)
+        val deletedRows = runningGoalDao.delete(goalEntity)
+
+        // TODO: UPDATE cachedGoals LIVE DATA
+        //cachedGoals.postValue(removeGoalFromLiveData(goal))
+
+        deletedRows
+    }
+
     /**
      * Puts [goal] in the list.
      *
@@ -164,7 +174,7 @@ class GoalRepo private constructor(
      * If [goal] id does not exist, [goal] will be appended to the list
      */
     private fun placeGoalInLiveData(goal: RunningGoal): List<RunningGoal> {
-        val currentGoals = cachedGoals.value as MutableList
+        val currentGoals = cachedGoals.value?.toMutableList() ?: mutableListOf()
         val index = currentGoals.indexOfFirst { it.id == goal.id }
         if (index > -1) {
             currentGoals[index] = goal

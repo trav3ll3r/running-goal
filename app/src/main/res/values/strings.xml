@@ -7,6 +7,7 @@
 
     <string name="btn_flip">Turn Over</string>
     <string name="btn_edit">Edit goal</string>
+    <string name="delete">Delete</string>
     <string name="local_separator">.</string>
     <string name="measure_unit_sign">km</string>
     <string name="running_goals">Running goals</string>
@@ -17,4 +18,5 @@
 
     <string name="sync_now_error">Sync failed</string>
     <string name="message_no_default_sync_sources" formatted="false">No Default Sync Sources found.\nPlease configure one first.</string>
+
 </resources>

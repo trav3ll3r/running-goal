@@ -2,6 +2,7 @@ package au.com.beba.runninggoal.persistence
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 
 
@@ -22,4 +23,6 @@ data class SyncSourceEntity(
 
         @ColumnInfo(name = "synced_at")
         var syncedAt: Long = 0
-)
+) {
+    @Ignore constructor() : this(0)
+}

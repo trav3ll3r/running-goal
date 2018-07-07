@@ -59,6 +59,7 @@ class GoalActivity : AppCompatActivity() {
             val goal = goalRepository.getGoalForWidget(appWidgetId)
             populateGoal(goal)
             findViewById<View>(R.id.btn_ok).setOnClickListener { saveGoal(goal) }
+            findViewById<View>(R.id.btn_delete).setOnClickListener { deleteGoal(goal) }
         }
     }
 
@@ -119,6 +120,19 @@ class GoalActivity : AppCompatActivity() {
         val updatedGoal = goalRepository.getGoalForWidget(appWidgetId)
 
         updateWidgetView(updatedGoal)
+    }
+
+    private fun deleteGoal(goal: RunningGoal) = launchSilent(UI) {
+        Log.i(TAG, "deleteGoal")
+
+        Log.d(TAG, "deleteGoal | goalId=%s".format(goal.id))
+        if (goalRepository.delete(goal) == 1) {
+
+            //TODO: DELETE ALL RELATED Widgets IF goal.DELETE IS SUCCESSFUL
+            //updateWidgetView(updatedGoal)
+        }
+
+        finish()    //TODO: OR closeWidgetConfig()
     }
 
     private fun updateWidgetView(runningGoal: RunningGoal) {

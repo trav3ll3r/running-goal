@@ -29,7 +29,8 @@ data class GoalProgress(
 data class GoalProjection(val distancePerDay: Distance = Distance(), val daysLapsed: Int = 0)
 
 data class GoalView(
-        var viewType: GoalViewType = GoalViewType.PROGRESS_BAR) {
+        var viewType: GoalViewType = GoalViewType.PROGRESS_BAR,
+        var updating: Boolean = false) {
     fun toggle() {
         viewType = if (viewType == GoalViewType.PROGRESS_BAR) {
             GoalViewType.NUMBERS

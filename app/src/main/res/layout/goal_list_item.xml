@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    >
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/goal_item_name"
         style="@style/Text.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Goal Name"
-        />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Goal Name" />
 
     <TextView
         android:id="@+id/goal_item_goal_period"
@@ -25,8 +22,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/goal_item_name"
-        tools:text="01/01/2018 - 31/12/2018 (365 days)"
-        />
+        tools:text="01/01/2018 - 31/12/2018 (365 days)" />
 
     <TextView
         android:id="@+id/sync_source_item_status"
@@ -36,30 +32,40 @@
         android:background="@drawable/status_rounded"
         android:paddingHorizontal="8dp"
         android:textColor="@color/darker_background"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Ongoing"
-        android:visibility="visible"/>
+        tools:text="Ongoing" />
 
     <TextView
         android:id="@+id/goal_item_goal_distance"
         style="@style/Text.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBaseline_toBaselineOf="@id/goal_item_current_distance"
-        tools:text="/50"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="/50" />
 
     <TextView
         android:id="@+id/goal_item_current_distance"
         style="@style/Text.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toStartOf="@id/goal_item_goal_distance"
         app:layout_constraintTop_toBottomOf="@id/sync_source_item_status"
-        android:layout_marginTop="4dp"
-        tools:text="100"
-        />
+        tools:text="100" />
+
+    <ProgressBar
+        android:id="@+id/goal_item_updating_status"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>

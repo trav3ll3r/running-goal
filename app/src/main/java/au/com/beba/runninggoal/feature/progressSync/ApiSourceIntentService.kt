@@ -58,6 +58,7 @@ class ApiSourceIntentService : JobIntentService() {
             Log.d(TAG, "onHandleWork | syncGoalId=$syncGoalId")
 
             val goal = goalRepository.getGoalForWidget(syncGoalId)
+            goalRepository.markGoalUpdateStatus(true, goal)
             val syncSource = syncSourceRepository.getDefaultSyncSource()
             if (syncSource.isDefault) {
                 Log.d(TAG, "onHandleWork | syncType=${syncSource.type}")
@@ -66,6 +67,7 @@ class ApiSourceIntentService : JobIntentService() {
                 if (distanceInMetre > -1f) {
                     updateGoalWithNewDistance(goal, Distance.fromMetres(distanceInMetre), syncSource)
                 }
+                goalRepository.markGoalUpdateStatus(false, goal)
                 Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
             } else {
                 Log.e(TAG, "onHandleWork | no Default Sync Source found")

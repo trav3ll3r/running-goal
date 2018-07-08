@@ -2,6 +2,7 @@ package au.com.beba.runninggoal.feature.goals
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.AdapterListener
@@ -16,6 +17,7 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val lblDistance: TextView = itemView.find(R.id.goal_item_goal_distance)
     private val lblCurrent: TextView = itemView.find(R.id.goal_item_current_distance)
     private val lblStatus: TextView = itemView.find(R.id.sync_source_item_status)
+    private val progressUpdating: ProgressBar = itemView.find(R.id.goal_item_updating_status)
 
     fun bindView(runningGoal: RunningGoal, listener: AdapterListener<RunningGoal>) {
         lblName.text = runningGoal.name
@@ -38,6 +40,7 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 }
             }
         }
+        progressUpdating.visibility = if (runningGoal.view.updating) View.VISIBLE else View.GONE
         itemView.setOnClickListener {
             listener.onItemClick(runningGoal)
         }

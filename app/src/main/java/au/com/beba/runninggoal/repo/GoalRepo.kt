@@ -102,6 +102,11 @@ class GoalRepo private constructor(
         goal
     }
 
+    override suspend fun markGoalUpdateStatus(updating: Boolean, runningGoal: RunningGoal) = withContext(coroutineContext) {
+        runningGoal.view.updating = updating
+        cachedGoals.postValue(placeGoalInLiveData(runningGoal))
+    }
+
     private fun setProgress(runningGoal: RunningGoal, today: LocalDate) {
         val currentDistance = runningGoal.progress.distanceToday.value
         val endLapsedDate = getLapsedEndDate(runningGoal, today)

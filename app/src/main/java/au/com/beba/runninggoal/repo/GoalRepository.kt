@@ -10,6 +10,8 @@ interface GoalRepository {
 
     suspend fun getGoalForWidget(appWidgetId: Int): RunningGoal
 
+    suspend fun markGoalUpdateStatus(updating: Boolean, runningGoal: RunningGoal)
+
     suspend fun save(goal: RunningGoal, appWidgetId: Int)
 
     suspend fun delete(goal: RunningGoal): Int

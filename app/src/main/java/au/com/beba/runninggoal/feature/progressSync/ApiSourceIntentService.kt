@@ -8,14 +8,11 @@ import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
-import au.com.beba.runninggoal.networking.source.ApiSource
-import au.com.beba.runninggoal.networking.source.StravaApiSource
+import au.com.beba.runninggoal.networking.source.SyncSourceProvider
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 
@@ -25,6 +22,8 @@ class ApiSourceIntentService : JobIntentService() {
     lateinit var goalRepository: GoalRepository
     @Inject
     lateinit var syncSourceRepository: SyncSourceRepository
+    @Inject
+    lateinit var syncSourceProvider: SyncSourceProvider
 
     override fun onCreate() {
         AndroidInjection.inject(this)
@@ -77,8 +76,8 @@ class ApiSourceIntentService : JobIntentService() {
     private suspend fun getDistanceFromSource(goal: RunningGoal, syncSource: SyncSource): Float {
         Log.i(TAG, "getDistanceFromSource")
 
-        val source: ApiSource = StravaApiSource(sourceProfile = ApiSourceProfile(syncSource.accessToken))
-        return source.getDistanceForDateRange(goal.target.start, goal.target.end)
+        syncSourceProvider.setSyncSourceProfile(ApiSourceProfile(syncSource.accessToken))
+        return syncSourceProvider.getDistanceForDateRange(goal.target.start, goal.target.end)
     }
 
     private suspend fun updateGoalWithNewDistance(goal: RunningGoal, distance: Distance, syncSource: SyncSource) {

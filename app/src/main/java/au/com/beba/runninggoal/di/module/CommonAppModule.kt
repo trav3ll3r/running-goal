@@ -12,7 +12,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class AppModule {
+class CommonAppModule {
 
     @Provides
     @Singleton
@@ -25,12 +25,4 @@ class AppModule {
     @Provides
     @Singleton
     fun syncSourceRepository(application: App): SyncSourceRepository = SyncSourceRepo.getInstance(application.applicationContext)
-
-    //TODO: USE
-//    @Provides @Singleton
-//    fun apiSource(localStorage: LocalPreferences): ApiSource {
-//        val stravaAccessToken = localStorage.getValueByKey("ACCESS_TOKEN")
-//
-//        return StravaApiSource(sourceProfile = ApiSourceProfile(stravaAccessToken))
-//    }
 }

@@ -14,12 +14,17 @@ import java.time.ZoneOffset
 import kotlin.coroutines.experimental.CoroutineContext
 
 
-class StravaApiSource
-constructor(private val networkingContext: CoroutineContext = DefaultDispatcher,
-            private val sourceProfile: ApiSourceProfile) : CommonApiSource(networkingContext) {
+class StravaSyncSourceProvider
+constructor(private val networkingContext: CoroutineContext = DefaultDispatcher) : CommonSyncSourceProvider(networkingContext) {
 
     companion object {
-        private val TAG = StravaApiSource::class.java.simpleName
+        private val TAG = StravaSyncSourceProvider::class.java.simpleName
+    }
+
+    private var sourceProfile: ApiSourceProfile? = null
+
+    override fun setSyncSourceProfile(apiSourceProfile: ApiSourceProfile) {
+        sourceProfile = apiSourceProfile
     }
 
     override suspend fun getDistanceForDateRange(start: LocalDate, end: LocalDate): Float = withContext(networkingContext) {
@@ -37,7 +42,8 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher,
 
         val request = Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer %s".format(sourceProfile.accessToken))
+                .addHeader("Authorization", "Bearer %s".format(sourceProfile?.accessToken
+                        ?: "NOT SET"))
                 .addHeader("accept", "application/json")
                 .build()
 

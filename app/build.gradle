@@ -41,6 +41,17 @@ android {
         }
     }
 
+    flavorDimensions "dataSource"
+    productFlavors {
+        real {
+            dimension "dataSource"
+        }
+
+        mock {
+            dimension "dataSource"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -67,13 +78,9 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$libs.roomVer"
 
     // FIREBASE AND MAPS
-
     //    implementation "com.google.firebase:firebase-core:${libs.firebaseCoreVer}"
-
     //    implementation "com.google.firebase:firebase-database:${libs.firebaseDatabaseVer}"
-
     //    implementation "com.google.firebase:firebase-auth:${libs.firebaseAuthVer}"
-
     //    implementation "com.google.android.gms:play-services-auth:${libs.playServicesAuthVer}"
 
     // DAGGER2 dependencies
@@ -119,8 +126,3 @@ dependencies {
 
 // ADD THIS AT THE BOTTOM
 //apply plugin: 'com.google.gms.google-services'
-
-
-dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:+'
-}

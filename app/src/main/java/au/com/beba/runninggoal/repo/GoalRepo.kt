@@ -5,9 +5,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.util.Log
 import au.com.beba.runninggoal.models.Distance
-import au.com.beba.runninggoal.models.GoalProgress
-import au.com.beba.runninggoal.models.GoalProjection
-import au.com.beba.runninggoal.models.GoalStatus
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.GoalView
 import au.com.beba.runninggoal.models.GoalViewType
@@ -17,7 +14,6 @@ import au.com.beba.runninggoal.persistence.RunningGoalDao
 import au.com.beba.runninggoal.persistence.RunningGoalEntity
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.withContext
-import java.time.Duration
 import java.time.LocalDate
 import kotlin.coroutines.experimental.CoroutineContext
 
@@ -65,8 +61,8 @@ class GoalRepo private constructor(
                     view = GoalView(GoalViewType.fromDbValue(it.viewType))
             )
             goal.progress.distanceToday = Distance(it.currentDistance)
+            goal.updateProgressValues()
 
-            setProgress(goal, LocalDate.now())
             goal
         }.toList()
 
@@ -96,8 +92,7 @@ class GoalRepo private constructor(
             Log.e(TAG, "Goal for appWidgetId=%s not found!!!".format(appWidgetId))
             goal = RunningGoal()
         }
-
-        setProgress(goal, LocalDate.now())
+        goal.updateProgressValues()
 
         goal
     }
@@ -105,38 +100,6 @@ class GoalRepo private constructor(
     override suspend fun markGoalUpdateStatus(updating: Boolean, runningGoal: RunningGoal) = withContext(coroutineContext) {
         runningGoal.view.updating = updating
         cachedGoals.postValue(placeGoalInLiveData(runningGoal))
-    }
-
-    private fun setProgress(runningGoal: RunningGoal, today: LocalDate) {
-        val currentDistance = runningGoal.progress.distanceToday.value
-        val endLapsedDate = getLapsedEndDate(runningGoal, today)
-
-        val daysTotal = getTotalDaysBetween(runningGoal.target.start, runningGoal.target.end)
-        Log.d(TAG, "startDate=%s endDate=%s".format(runningGoal.target.start, endLapsedDate))
-        val daysLapsed = getTotalDaysBetween(runningGoal.target.start, endLapsedDate)
-        Log.d(TAG, "daysTotal=%s daysLapsed=%s".format(daysTotal, daysLapsed))
-
-        val linearDistancePerDay = (runningGoal.target.distance.value / daysTotal)
-        val expectedDistance = linearDistancePerDay * daysLapsed
-
-        runningGoal.progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
-        runningGoal.progress.positionInDistance = Distance(currentDistance - expectedDistance)
-        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance.value / linearDistancePerDay
-        runningGoal.progress.status = getStatus(runningGoal, today)
-
-        runningGoal.projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
-    }
-
-    private fun getLapsedEndDate(runningGoal: RunningGoal, today: LocalDate): LocalDate {
-        return if (runningGoal.target.end.isAfter(today)) today else runningGoal.target.end
-    }
-
-    private fun getStatus(runningGoal: RunningGoal, today: LocalDate): GoalStatus {
-        return when {
-            today.isBefore(runningGoal.target.start) -> GoalStatus.NOT_STARTED
-            today.isAfter(runningGoal.target.end) -> GoalStatus.EXPIRED
-            else -> GoalStatus.ONGOING
-        }
     }
 
     override suspend fun save(goal: RunningGoal, appWidgetId: Int) = withContext(coroutineContext) {
@@ -158,6 +121,7 @@ class GoalRepo private constructor(
             Log.d(TAG, "update | uid=%s, distance=%s".format(goalEntity.uid, goalEntity.currentDistance))
             runningGoalDao.update(goalEntity)
         }
+        goal.updateProgressValues()
         cachedGoals.postValue(placeGoalInLiveData(goal))
     }
 
@@ -187,12 +151,5 @@ class GoalRepo private constructor(
             currentGoals.add(goal)
         }
         return currentGoals
-    }
-
-    private fun getTotalDaysBetween(from: LocalDate, to: LocalDate): Int {
-        if (from.isBefore(to)) {
-            return Duration.between(from.atTime(0, 0), to.atTime(0, 0)).toDays().toInt() + 1
-        }
-        return 0
     }
 }

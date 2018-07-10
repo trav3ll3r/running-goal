@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
 import au.com.beba.runninggoal.models.Distance
+import au.com.beba.runninggoal.models.GoalStatus
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
@@ -12,11 +13,13 @@ import au.com.beba.runninggoal.networking.source.SyncSourceProvider
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 
-class ApiSourceIntentService : JobIntentService() {
+class SyncSourceIntentService : JobIntentService() {
 
     @Inject
     lateinit var goalRepository: GoalRepository
@@ -25,20 +28,11 @@ class ApiSourceIntentService : JobIntentService() {
     @Inject
     lateinit var syncSourceProvider: SyncSourceProvider
 
-    override fun onCreate() {
-        AndroidInjection.inject(this)
-        super.onCreate()
-    }
-
     companion object {
-        private val TAG = ApiSourceIntentService::class.java.simpleName
+        private val TAG = SyncSourceIntentService::class.java.simpleName
 
-        private const val SYNC_GOAL_ID = "SYNC_GOAL_ID"
-
-        fun buildIntent(goalId: Int): Intent {
-            val serviceIntent = Intent()
-            serviceIntent.putExtra(SYNC_GOAL_ID, goalId)
-            return serviceIntent
+        fun buildIntent(): Intent {
+            return Intent()
         }
 
         /**
@@ -46,29 +40,37 @@ class ApiSourceIntentService : JobIntentService() {
          */
         fun enqueueWork(context: Context, work: Intent, jobId: Int) {
             Log.d(TAG, "enqueueWork")
-            enqueueWork(context, ApiSourceIntentService::class.java, jobId, work)
+            enqueueWork(context, SyncSourceIntentService::class.java, jobId, work)
         }
+    }
+
+    override fun onCreate() {
+        AndroidInjection.inject(this)
+        super.onCreate()
     }
 
     override fun onHandleWork(intent: Intent) {
         Log.i(TAG, "onHandleWork")
 
         launch {
-            val syncGoalId = intent.getIntExtra(SYNC_GOAL_ID, 0)
-            Log.d(TAG, "onHandleWork | syncGoalId=$syncGoalId")
 
-            val goal = goalRepository.getGoalForWidget(syncGoalId)
-            goalRepository.markGoalUpdateStatus(true, goal)
             val syncSource = syncSourceRepository.getDefaultSyncSource()
             if (syncSource.isDefault) {
                 Log.d(TAG, "onHandleWork | syncType=${syncSource.type}")
 
-                val distanceInMetre = getDistanceFromSource(goal, syncSource)
-                if (distanceInMetre > -1f) {
-                    updateGoalWithNewDistance(goal, Distance.fromMetres(distanceInMetre), syncSource)
+                val goals = getGoalForUpdate()
+
+                goals.forEach {
+                    Log.d(TAG, "onHandleWork | syncGoalId=${it.id}")
+                    goalRepository.markGoalUpdateStatus(true, it)
+
+                    val distanceInMetre = getDistanceFromSource(it, syncSource)
+                    if (distanceInMetre > -1f) {
+                        updateGoalWithNewDistance(it, Distance.fromMetres(distanceInMetre), syncSource)
+                    }
+                    goalRepository.markGoalUpdateStatus(false, it)
+                    Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
                 }
-                goalRepository.markGoalUpdateStatus(false, goal)
-                Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
             } else {
                 Log.e(TAG, "onHandleWork | no Default Sync Source found")
             }
@@ -80,6 +82,11 @@ class ApiSourceIntentService : JobIntentService() {
 
         syncSourceProvider.setSyncSourceProfile(ApiSourceProfile(syncSource.accessToken))
         return syncSourceProvider.getDistanceForDateRange(goal.target.start, goal.target.end)
+    }
+
+    private suspend fun getGoalForUpdate(): List<RunningGoal> {
+        val goals = withContext(DefaultDispatcher) { goalRepository.fetchGoals() }
+        return goals.filter { it.progress.status in listOf(GoalStatus.NOT_STARTED, GoalStatus.ONGOING) }
     }
 
     private suspend fun updateGoalWithNewDistance(goal: RunningGoal, distance: Distance, syncSource: SyncSource) {

@@ -10,12 +10,11 @@ import android.view.Menu
 import android.view.MenuItem
 import au.com.beba.runninggoal.feature.GoalActivity
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
-import au.com.beba.runninggoal.feature.progressSync.ApiSourceIntentService
+import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
-import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
@@ -28,8 +27,6 @@ class MainActivity : AppCompatActivity(),
         SyncSourcesFragment.SyncSourceListener,
         RunningGoalsFragment.RunningGoalListener {
 
-    @Inject
-    lateinit var goalRepository: GoalRepository
     @Inject
     lateinit var syncSourceRepository: SyncSourceRepository
 
@@ -120,11 +117,8 @@ class MainActivity : AppCompatActivity(),
         launch {
             val syncSource = syncSourceRepository.getDefaultSyncSource()
             if (syncSource.isDefault) {
-                val goals = goalRepository.fetchGoals()
-                goals.forEach {
-                    // Enqueues new JobIntentService
-                    ApiSourceIntentService.enqueueWork(ctx, ApiSourceIntentService.buildIntent(it.id), jobId)
-                }
+                // Enqueues new JobIntentService
+                SyncSourceIntentService.enqueueWork(ctx, SyncSourceIntentService.buildIntent(), jobId)
             } else {
                 launch(UI) {
                     // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE

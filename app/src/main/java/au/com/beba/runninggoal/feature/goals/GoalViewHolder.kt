@@ -21,7 +21,7 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bindView(runningGoal: RunningGoal, listener: AdapterListener<RunningGoal>) {
         lblName.text = runningGoal.name
-        lblPeriod.text = "%s - %s (%s / %s days)".format(runningGoal.target.start, runningGoal.target.end, runningGoal.progress.daysLapsed, runningGoal.progress.daysTotal)
+        lblPeriod.text = "%s - %s (%s / %s days)".format(runningGoal.target.period.from, runningGoal.target.period.to, runningGoal.progress.daysLapsed, runningGoal.progress.daysTotal)
         lblCurrent.text = runningGoal.progress.distanceToday.display()
         lblDistance.text = "/ %s".format(runningGoal.target.distance.display())
         lblStatus.let {

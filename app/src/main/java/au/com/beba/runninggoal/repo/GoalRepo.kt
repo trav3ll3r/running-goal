@@ -8,6 +8,7 @@ import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.GoalView
 import au.com.beba.runninggoal.models.GoalViewType
+import au.com.beba.runninggoal.models.Period
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.RunningGoalDao
@@ -55,8 +56,7 @@ class GoalRepo private constructor(
                     it.goalName,
                     GoalTarget(
                             Distance(it.targetDistance),
-                            LocalDate.ofEpochDay(it.startDate),
-                            LocalDate.ofEpochDay(it.endDate)
+                            Period(LocalDate.ofEpochDay(it.startDate), LocalDate.ofEpochDay(it.endDate))
                     ),
                     view = GoalView(GoalViewType.fromDbValue(it.viewType))
             )
@@ -82,8 +82,7 @@ class GoalRepo private constructor(
                     goalEntity.goalName,
                     GoalTarget(
                             Distance(goalEntity.targetDistance),
-                            LocalDate.ofEpochDay(goalEntity.startDate),
-                            LocalDate.ofEpochDay(goalEntity.endDate)
+                            Period(LocalDate.ofEpochDay(goalEntity.startDate), LocalDate.ofEpochDay(goalEntity.endDate))
                     ),
                     view = GoalView(GoalViewType.fromDbValue(goalEntity.viewType))
             )
@@ -110,8 +109,8 @@ class GoalRepo private constructor(
         goalEntity.goalName = goal.name
         goalEntity.targetDistance = goal.target.distance.value
         goalEntity.currentDistance = goal.progress.distanceToday.value
-        goalEntity.startDate = goal.target.start.toEpochDay()
-        goalEntity.endDate = goal.target.end.toEpochDay()
+        goalEntity.startDate = goal.target.period.from.toEpochDay()
+        goalEntity.endDate = goal.target.period.to.toEpochDay()
         goalEntity.widgetId = appWidgetId
         goalEntity.viewType = goal.view.viewType.asDbValue()
 

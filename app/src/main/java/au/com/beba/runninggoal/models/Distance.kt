@@ -58,6 +58,26 @@ class Distance : Displayable {
         val sign = if (value > 0) "+" else ""
         return "%s%s".format(sign, numberFormat.format(value))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Distance
+
+        if (value != other.value) return false
+        if (units != other.units) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = value.hashCode()
+        result = 31 * result + units.hashCode()
+        return result
+    }
+
+
 }
 
 interface Displayable {

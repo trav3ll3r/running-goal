@@ -18,6 +18,7 @@ import au.com.beba.runninggoal.feature.widget.GoalWidgetRenderer
 import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalTarget
+import au.com.beba.runninggoal.models.Period
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepo
 import au.com.beba.runninggoal.repo.GoalRepository
@@ -83,8 +84,8 @@ class GoalActivity : AppCompatActivity() {
         val goalName = goal.name
         val distance = goal.target.distance.display()
         val currentDistance = goal.progress.distanceToday.display()
-        val startDate = (goal.target.start)
-        val endDate = (goal.target.end)
+        val startDate = (goal.target.period.from)
+        val endDate = (goal.target.period.to)
 
         goal_name.setText(goalName, TextView.BufferType.EDITABLE)
         goal_distance.setText(distance, TextView.BufferType.EDITABLE)
@@ -109,8 +110,7 @@ class GoalActivity : AppCompatActivity() {
         goal.name = goal_name.text.toString()
         goal.target = GoalTarget(
                 Distance(goal_distance.text.toString()),
-                startDate,
-                endDate
+                Period(startDate, endDate)
         )
         goal.progress.distanceToday = Distance(current_distance.text.toString())
 

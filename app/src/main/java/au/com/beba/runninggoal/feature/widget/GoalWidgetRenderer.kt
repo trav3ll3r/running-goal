@@ -8,9 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Paint.ANTI_ALIAS_FLAG
-import android.graphics.Paint.DITHER_FLAG
-import android.graphics.Paint.FILTER_BITMAP_FLAG
+import android.graphics.Paint.*
 import android.graphics.Path
 import android.graphics.Point
 import android.graphics.RectF
@@ -43,8 +41,8 @@ object GoalWidgetRenderer {
         Log.d(TAG, "updateUi")
         rootView.setTextViewText(R.id.goal_name, "%s".format(runningGoal.name))
         rootView.setTextViewText(R.id.goal_period, "%s to %s (%s days)".format(
-                DateRenderer.asFullDate(runningGoal.target.start),
-                DateRenderer.asFullDate(runningGoal.target.end),
+                DateRenderer.asFullDate(runningGoal.target.period.from),
+                DateRenderer.asFullDate(runningGoal.target.period.to),
                 runningGoal.progress.daysTotal
         ))
 

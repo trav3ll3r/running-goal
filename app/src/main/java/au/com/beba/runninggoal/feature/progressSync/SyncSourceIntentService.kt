@@ -81,7 +81,7 @@ class SyncSourceIntentService : JobIntentService() {
         Log.i(TAG, "getDistanceFromSource")
 
         syncSourceProvider.setSyncSourceProfile(ApiSourceProfile(syncSource.accessToken))
-        return syncSourceProvider.getDistanceForDateRange(goal.target.start, goal.target.end)
+        return syncSourceProvider.getDistanceForDateRange(goal.target.period.from, goal.target.period.to)
     }
 
     private suspend fun getGoalForUpdate(): List<RunningGoal> {

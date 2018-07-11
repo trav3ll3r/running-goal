@@ -28,15 +28,15 @@ data class RunningGoal(
         runningGoal.progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
         runningGoal.progress.positionInDistance = Distance(currentDistance - expectedDistance)
         runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance.value / linearDistancePerDay
-        runningGoal.progress.status = getStatus(runningGoal, today)
+        runningGoal.progress.status = runningGoal.getStatus(today)
 
         runningGoal.projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
     }
 
-    private fun getStatus(runningGoal: RunningGoal, today: LocalDate): GoalStatus {
+    private fun getStatus(onDate: LocalDate): GoalStatus {
         return when {
-            today.isBefore(runningGoal.target.period.from) -> GoalStatus.NOT_STARTED
-            today.isAfter(runningGoal.target.period.to) -> GoalStatus.EXPIRED
+            onDate.isBefore(target.period.from) -> GoalStatus.NOT_STARTED
+            onDate.isAfter(target.period.to) -> GoalStatus.EXPIRED
             else -> GoalStatus.ONGOING
         }
     }

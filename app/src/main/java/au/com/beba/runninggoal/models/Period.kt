@@ -17,7 +17,8 @@ class Period(val from: LocalDate = LocalDate.now(), val to: LocalDate = LocalDat
 
     private fun daysBetween(from: LocalDate, to: LocalDate): Int {
         var daysBetween = 0
-        if (from == to || from.isBefore(to)) {
+        // CALCULATE WHEN from==to OR from IS BEFORE to
+        if (!from.isAfter(to)) {
             daysBetween = Duration.between(from.atTime(0, 0), to.atTime(23, 59)).toDays().toInt()
             daysBetween++
         }

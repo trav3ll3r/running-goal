@@ -10,11 +10,10 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.RemoteViews
 import android.widget.TextView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.DistancePickerDialog
-import au.com.beba.runninggoal.feature.widget.GoalWidgetRenderer
+import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalTarget
@@ -136,14 +135,7 @@ class GoalActivity : AppCompatActivity() {
     }
 
     private fun updateWidgetView(runningGoal: RunningGoal) {
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-
-        val rootView = RemoteViews(packageName, R.layout.goal_widget)
-
-        GoalWidgetRenderer.updateUi(this, rootView, runningGoal)
-
-        Log.i(TAG, "updateWidgetView | appWidgetId=%s".format(appWidgetId))
-        appWidgetManager.updateAppWidget(appWidgetId, rootView)
+        GoalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
 
         closeWidgetConfig()
     }

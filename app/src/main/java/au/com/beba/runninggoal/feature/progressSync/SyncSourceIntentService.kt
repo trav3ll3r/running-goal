@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
 import android.util.Log
+import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalStatus
 import au.com.beba.runninggoal.models.RunningGoal
@@ -58,7 +59,7 @@ class SyncSourceIntentService : JobIntentService() {
             if (syncSource.isDefault) {
                 Log.d(TAG, "onHandleWork | syncType=${syncSource.type}")
 
-                val goals = getGoalForUpdate()
+                val goals = getGoalsForUpdate()
 
                 goals.forEach {
                     Log.d(TAG, "onHandleWork | syncGoalId=${it.id}")
@@ -84,17 +85,19 @@ class SyncSourceIntentService : JobIntentService() {
         return syncSourceProvider.getDistanceForDateRange(goal.target.period.from, goal.target.period.to)
     }
 
-    private suspend fun getGoalForUpdate(): List<RunningGoal> {
+    private suspend fun getGoalsForUpdate(): List<RunningGoal> {
         val goals = withContext(DefaultDispatcher) { goalRepository.fetchGoals() }
         return goals.filter { it.progress.status in listOf(GoalStatus.NOT_STARTED, GoalStatus.ONGOING) }
     }
 
-    private suspend fun updateGoalWithNewDistance(goal: RunningGoal, distance: Distance, syncSource: SyncSource) {
+    private suspend fun updateGoalWithNewDistance(runningGoal: RunningGoal, distance: Distance, syncSource: SyncSource) {
         Log.i(TAG, "updateGoalWithNewDistance")
-        Log.i(TAG, "updateGoalWithNewDistance | newDistance=${distance.value}")
-        goal.progress.distanceToday = distance
-        goalRepository.save(goal, goal.id)
+        Log.d(TAG, "updateGoalWithNewDistance | newDistance=${distance.value}")
+        runningGoal.progress.distanceToday = distance
+        goalRepository.save(runningGoal, runningGoal.id)
 
         syncSourceRepository.save(syncSource)
+
+        GoalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
     }
 }

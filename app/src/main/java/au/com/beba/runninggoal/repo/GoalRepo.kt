@@ -72,8 +72,8 @@ class GoalRepo private constructor(
         goals
     }
 
-    override suspend fun getGoalForWidget(appWidgetId: Int): RunningGoal = withContext(coroutineContext) {
-        val goalEntity = runningGoalDao.getById(appWidgetId)
+    override suspend fun getById(goalId: Long): RunningGoal = withContext(coroutineContext) {
+        val goalEntity = runningGoalDao.getById(goalId)
 
         val goal: RunningGoal
         if (goalEntity != null) {
@@ -88,7 +88,7 @@ class GoalRepo private constructor(
             )
             goal.progress.distanceToday = Distance(goalEntity.currentDistance)
         } else {
-            Log.e(TAG, "Goal for appWidgetId=%s not found!!!".format(appWidgetId))
+            Log.e(TAG, "Goal for goalId=%s not found!!!".format(goalId))
             goal = RunningGoal()
         }
         goal.updateProgressValues()
@@ -101,17 +101,16 @@ class GoalRepo private constructor(
         cachedGoals.postValue(placeGoalInLiveData(runningGoal))
     }
 
-    override suspend fun save(goal: RunningGoal, appWidgetId: Int) = withContext(coroutineContext) {
+    override suspend fun save(goal: RunningGoal): Long = withContext(coroutineContext) {
         Log.d(TAG, "save")
         Log.d(TAG, "mapFrom | id=%s, distance=%s".format(goal.id, goal.progress.distanceToday.value))
 
-        val goalEntity = RunningGoalEntity(appWidgetId)
+        val goalEntity = RunningGoalEntity(goal.id)
         goalEntity.goalName = goal.name
         goalEntity.targetDistance = goal.target.distance.value
         goalEntity.currentDistance = goal.progress.distanceToday.value
         goalEntity.startDate = goal.target.period.from.toEpochDay()
         goalEntity.endDate = goal.target.period.to.toEpochDay()
-        goalEntity.widgetId = appWidgetId
         goalEntity.viewType = goal.view.viewType.asDbValue()
 
         val id: Long = runningGoalDao.insert(goalEntity)
@@ -120,8 +119,11 @@ class GoalRepo private constructor(
             Log.d(TAG, "update | uid=%s, distance=%s".format(goalEntity.uid, goalEntity.currentDistance))
             runningGoalDao.update(goalEntity)
         }
+
         goal.updateProgressValues()
+
         cachedGoals.postValue(placeGoalInLiveData(goal))
+        id
     }
 
     override suspend fun delete(goal: RunningGoal): Int = withContext(coroutineContext) {

@@ -9,20 +9,20 @@ import android.arch.persistence.room.Update
 
 
 @Dao
-interface RunningGoalDao {
+interface WidgetDao {
 
-    @Query("SELECT * FROM running_goal")
-    fun getAll(): List<RunningGoalEntity>
+    @Query("SELECT * FROM widget WHERE uid = :widgetId")
+    fun getByWidgetId(widgetId: Int): WidgetEntity?
 
-    @Query("SELECT * FROM running_goal WHERE uid = :goalId")
-    fun getById(goalId: Long): RunningGoalEntity?
+    @Query("SELECT * FROM widget WHERE goal_id = :goalId")
+    fun getAllForGoal(goalId: Long): List<WidgetEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(runningGoal: RunningGoalEntity): Long
+    fun insert(widget: WidgetEntity): Long
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun update(runningGoal: RunningGoalEntity)
+    fun update(widget: WidgetEntity)
 
     @Delete
-    fun delete(runningGoal: RunningGoalEntity): Int
+    fun delete(widget: WidgetEntity): Int
 }

@@ -19,59 +19,95 @@ import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.Period
 import au.com.beba.runninggoal.models.RunningGoal
-import au.com.beba.runninggoal.repo.GoalRepo
 import au.com.beba.runninggoal.repo.GoalRepository
+import au.com.beba.runninggoal.repo.WidgetRepository
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_goal.*
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.inject.Inject
 
 
 class GoalActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = GoalActivity::class.java.simpleName
+        private const val EXTRA_GOAL_ID = "EXTRA_GOAL_ID"
 
-        fun buildIntent(context: Context, goalId: Int): Intent {
+        fun buildIntent(context: Context, goalId: Long): Intent {
             val intent = Intent(context, GoalActivity::class.java)
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goalId)
+            intent.putExtra(EXTRA_GOAL_ID, goalId)
+            //intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goalId)
             return intent
         }
     }
 
     private var appWidgetId: Int = -1
-    private lateinit var goalRepository: GoalRepository
+
+    @Inject
+    lateinit var goalRepository: GoalRepository
+    @Inject
+    lateinit var widgetRepository: WidgetRepository
+    @Inject
+    lateinit var goalWidgetUpdater: GoalWidgetUpdater
 
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_goal)
 
-        extractIntentData(intent)
+        val goalId = extractIntentData(intent)
 
-        goalRepository = GoalRepo.getInstance(this)
+        initForm()
 
-        @Suppress("DeferredResultUnused")
-        async(UI) {
-            val goal = goalRepository.getGoalForWidget(appWidgetId)
+        launch(UI) {
+            val goal = resolveGoal(goalId)
             populateGoal(goal)
             findViewById<View>(R.id.btn_ok).setOnClickListener { saveGoal(goal) }
             findViewById<View>(R.id.btn_delete).setOnClickListener { deleteGoal(goal) }
         }
     }
 
-    private fun extractIntentData(intent: Intent) {
+    private suspend fun resolveGoal(goalId: Long): RunningGoal {
+        Log.d(TAG, "resolveGoal")
+        return withContext(DefaultDispatcher) {
+            if (goalId > 0) {
+                Log.d(TAG, "resolveGoal | from goalId")
+                goalRepository.getById(goalId)
+            } else {
+                val widget = widgetRepository.getByWidgetId(appWidgetId)
+                if (widget != null) {
+                    Log.d(TAG, "resolveGoal | linked to widgetId")
+                    goalRepository.getById(widget.goalId)
+                } else {
+                    Log.d(TAG, "resolveGoal | new blank goal")
+                    RunningGoal()
+                }
+            }
+        }
+    }
+
+    private fun extractIntentData(intent: Intent): Long {
+        var goalId: Long = 0
         val extras = intent.extras
         if (extras != null) {
-            appWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID)
+            goalId = extras.getLong(EXTRA_GOAL_ID, 0)
+            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+            Log.d(TAG, "extractIntentData | goalId=%s".format(goalId))
             Log.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
         }
 
+        return goalId
+    }
+
+    private fun initForm() {
         initDistancePicker(findViewById(R.id.goal_distance))
         initDistancePicker(findViewById(R.id.current_distance))
 
@@ -113,10 +149,15 @@ class GoalActivity : AppCompatActivity() {
         )
         goal.progress.distanceToday = Distance(current_distance.text.toString())
 
-        Log.d(TAG, "saveGoal | appWidgetId=%s".format(appWidgetId))
-        goalRepository.save(goal, appWidgetId)
+        val goalId = goalRepository.save(goal)
 
-        val updatedGoal = goalRepository.getGoalForWidget(appWidgetId)
+        // CHECK IF THIS IS NEEDED, USE goal
+        val updatedGoal = goalRepository.getById(goalId)
+
+        // SAVE GOAL:WIDGET RELATIONSHIP
+        if (appWidgetId > 0) {
+            widgetRepository.save(updatedGoal.id, appWidgetId)
+        }
 
         updateWidgetView(updatedGoal)
     }
@@ -134,8 +175,8 @@ class GoalActivity : AppCompatActivity() {
         finish()    //TODO: OR closeWidgetConfig()
     }
 
-    private fun updateWidgetView(runningGoal: RunningGoal) {
-        GoalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
+    private suspend fun updateWidgetView(runningGoal: RunningGoal) = withContext(DefaultDispatcher) {
+        goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
 
         closeWidgetConfig()
     }

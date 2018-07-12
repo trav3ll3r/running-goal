@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 
 data class RunningGoal(
-        val id: Int = 0,
+        val id: Long = 0,
         var name: String = "",
         var target: GoalTarget = GoalTarget(),
         var progress: GoalProgress = GoalProgress(),

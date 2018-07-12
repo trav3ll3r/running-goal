@@ -6,13 +6,19 @@ import android.util.Log
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.repo.WidgetRepository
+import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.withContext
+import javax.inject.Inject
 
 
-object GoalWidgetUpdater {
+class GoalWidgetUpdater @Inject constructor(var widgetRepo: WidgetRepository) {
 
-    private val TAG = GoalWidgetUpdater::class.java.simpleName
+    companion object {
+        private val TAG = GoalWidgetUpdater::class.java.simpleName
+    }
 
-    fun updateAllWidgetsForGoal(context: Context, runningGoal: RunningGoal) {
+    suspend fun updateAllWidgetsForGoal(context: Context, runningGoal: RunningGoal) {
         Log.i(TAG, "updateAllWidgetsForGoal")
 
         val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -21,9 +27,15 @@ object GoalWidgetUpdater {
 
         GoalWidgetRenderer.updateUi(context, rootView, runningGoal)
 
-        val appWidgetId = runningGoal.id
-        Log.d(TAG, "updateAllWidgetsForGoal | appWidgetId=%s".format(appWidgetId))
-        appWidgetManager.updateAppWidget(appWidgetId, rootView)
+        withContext(DefaultDispatcher) {
+            val widgets = widgetRepo.getAllForGoal(runningGoal.id)
+
+            widgets.forEach {
+                Log.d(TAG, "updateAllWidgetsForGoal | appWidgetId=%s".format(it.id))
+                appWidgetManager.updateAppWidget(it.id, rootView)
+            }
+        }
+
     }
 
 }

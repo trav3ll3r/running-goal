@@ -69,11 +69,11 @@ object GoalWidgetRenderer {
         // Create the "edit" Intent to launch Activity
         val intent = Intent(context, GoalActivity::class.java)
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, runningGoal.id)
-        val pendingIntentEdit = PendingIntent.getActivity(context, runningGoal.id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntentEdit = PendingIntent.getActivity(context, runningGoal.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
         rootView.setOnClickPendingIntent(R.id.widget_root, pendingIntentEdit)
 
         // Create an Intent to change Goal's GoalViewType
-        rootView.setOnClickPendingIntent(R.id.btn_flip, getPendingSelfIntent(context, FLIP_CLICKED, runningGoal.id))
+        rootView.setOnClickPendingIntent(R.id.btn_flip, getPendingSelfIntent(context, FLIP_CLICKED, runningGoal.id.toInt()))
     }
 
     private fun getPendingSelfIntent(context: Context, action: String, appWidgetId: Int): PendingIntent {

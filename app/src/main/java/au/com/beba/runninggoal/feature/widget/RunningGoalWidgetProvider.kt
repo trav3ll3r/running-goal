@@ -8,7 +8,11 @@ import android.util.Log
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.launchSilent
+import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepo
+import au.com.beba.runninggoal.repo.GoalRepository
+import au.com.beba.runninggoal.repo.WidgetRepository
+import javax.inject.Inject
 
 
 open class RunningGoalWidgetProvider : AppWidgetProvider() {
@@ -16,6 +20,11 @@ open class RunningGoalWidgetProvider : AppWidgetProvider() {
     companion object {
         private val TAG = RunningGoalWidgetProvider::class.java.simpleName
     }
+
+    @Inject
+    lateinit var goalRepo: GoalRepository
+    @Inject
+    lateinit var widgetRepo: WidgetRepository
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray) {
         Log.i(TAG, "onUpdate")
@@ -29,16 +38,17 @@ open class RunningGoalWidgetProvider : AppWidgetProvider() {
 
     private fun bindRemoteViews(context: Context, appWidgetManager: AppWidgetManager?, appWidgetId: Int) {
         Log.i(TAG, "bindRemoteViews")
-        val goalRepo = GoalRepo.getInstance(context)
         // Get the layout for the App Widget and attach an on-click listener to the button
         val rootView = RemoteViews(context.packageName, R.layout.goal_widget)
 
         launchSilent {
             Log.d(TAG, "bindRemoteViews | appWidgetId=%s".format(appWidgetId))
-            val goal = goalRepo.getGoalForWidget(appWidgetId)
-            GoalWidgetRenderer.updateUi(context, rootView, goal)
-            // Tell the AppWidgetManager to perform an update on the current app widget
-            appWidgetManager?.updateAppWidget(appWidgetId, rootView)
+            val goal = getGoalForWidget(appWidgetId)
+            if (goal != null) {
+                GoalWidgetRenderer.updateUi(context, rootView, goal)
+                // Tell the AppWidgetManager to perform an update on the current app widget
+                appWidgetManager?.updateAppWidget(appWidgetId, rootView)
+            }
         }
     }
 
@@ -54,18 +64,24 @@ open class RunningGoalWidgetProvider : AppWidgetProvider() {
                 val appWidgetManager = AppWidgetManager.getInstance(context)
 
                 launchSilent {
-                    val goal = goalRepo.getGoalForWidget(appWidgetId)
+                    val goal = getGoalForWidget(appWidgetId)
                     if (goal != null) {
-
                         // UPDATE Goal's ViewType AND STORE IT IN DATABASE
                         goal.view.toggle()
-                        goalRepo.save(goal, appWidgetId)
-
+                        goalRepo.save(goal)
                         bindRemoteViews(context, appWidgetManager, appWidgetId)
                     }
                 }
             }
         }
+    }
+
+    private suspend fun getGoalForWidget(widgetId: Int): RunningGoal? {
+        val widget = widgetRepo.getByWidgetId(widgetId)
+        if (widget != null) {
+            return goalRepo.getById(widget.goalId)
+        }
+        return null
     }
 
     private fun getWidgetIdFromIntent(intent: Intent): Int {

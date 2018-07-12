@@ -4,6 +4,7 @@ import au.com.beba.runninggoal.MainActivity
 import au.com.beba.runninggoal.di.ActivityScope
 import au.com.beba.runninggoal.di.FragmentScope
 import au.com.beba.runninggoal.di.ServiceScope
+import au.com.beba.runninggoal.feature.GoalActivity
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
@@ -18,6 +19,10 @@ abstract class AndroidBindingModule {
     @ActivityScope
     @ContributesAndroidInjector
     abstract fun mainActivity(): MainActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector
+    abstract fun goalActivity(): GoalActivity
 
     @FragmentScope
     @ContributesAndroidInjector

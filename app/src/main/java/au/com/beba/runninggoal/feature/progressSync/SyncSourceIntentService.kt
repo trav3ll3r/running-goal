@@ -28,6 +28,8 @@ class SyncSourceIntentService : JobIntentService() {
     lateinit var syncSourceRepository: SyncSourceRepository
     @Inject
     lateinit var syncSourceProvider: SyncSourceProvider
+    @Inject
+    lateinit var goalWidgetUpdater: GoalWidgetUpdater
 
     companion object {
         private val TAG = SyncSourceIntentService::class.java.simpleName
@@ -94,10 +96,10 @@ class SyncSourceIntentService : JobIntentService() {
         Log.i(TAG, "updateGoalWithNewDistance")
         Log.d(TAG, "updateGoalWithNewDistance | newDistance=${distance.value}")
         runningGoal.progress.distanceToday = distance
-        goalRepository.save(runningGoal, runningGoal.id)
+        goalRepository.save(runningGoal)
 
         syncSourceRepository.save(syncSource)
 
-        GoalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
+        goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
     }
 }

@@ -58,32 +58,7 @@ data class GoalProgress(
 
 data class GoalProjection(val distancePerDay: Distance = Distance(), val daysLapsed: Int = 0)
 
-data class GoalView(
-        var viewType: GoalViewType = GoalViewType.PROGRESS_BAR,
-        var updating: Boolean = false) {
-    fun toggle() {
-        viewType = if (viewType == GoalViewType.PROGRESS_BAR) {
-            GoalViewType.NUMBERS
-        } else {
-            GoalViewType.PROGRESS_BAR
-        }
-    }
-}
-
-enum class GoalViewType(private val dbValue: Int) {
-    PROGRESS_BAR(0),
-    NUMBERS(1);
-
-    companion object {
-        fun fromDbValue(value: Int): GoalViewType {
-            return GoalViewType.values().find { it.dbValue == value }!!
-        }
-    }
-
-    fun asDbValue(): Int {
-        return dbValue
-    }
-}
+data class GoalView(var updating: Boolean = false)
 
 enum class GoalStatus {
     UNKNOWN,

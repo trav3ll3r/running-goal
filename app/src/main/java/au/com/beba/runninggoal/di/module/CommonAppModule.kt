@@ -19,21 +19,26 @@ class CommonAppModule {
 
     @Provides
     @Singleton
-    fun localPreferences(application: App): LocalPreferences = LocalPreferencesImpl(application.applicationContext)
+    fun localPreferences(application: App): LocalPreferences =
+            LocalPreferencesImpl(application.applicationContext)
 
     @Provides
     @Singleton
-    fun goalRepository(application: App): GoalRepository = GoalRepo.getInstance(application.applicationContext)
+    fun goalRepository(application: App): GoalRepository =
+            GoalRepo.getInstance(application.applicationContext)
 
     @Provides
     @Singleton
-    fun syncSourceRepository(application: App): SyncSourceRepository = SyncSourceRepo.getInstance(application.applicationContext)
+    fun syncSourceRepository(application: App): SyncSourceRepository =
+            SyncSourceRepo.getInstance(application.applicationContext)
 
     @Provides
     @Singleton
-    fun widgetRepository(application: App): WidgetRepository = WidgetRepo.getInstance(application.applicationContext)
+    fun widgetRepository(application: App): WidgetRepository =
+            WidgetRepo.getInstance(application.applicationContext)
 
     @Provides
     @Singleton
-    fun goalWidgetUpdater(widgetRepository: WidgetRepository): GoalWidgetUpdater = GoalWidgetUpdater(widgetRepository)
+    fun goalWidgetUpdater(goalRepo: GoalRepository, widgetRepo: WidgetRepository): GoalWidgetUpdater =
+            GoalWidgetUpdater(goalRepo, widgetRepo)
 }

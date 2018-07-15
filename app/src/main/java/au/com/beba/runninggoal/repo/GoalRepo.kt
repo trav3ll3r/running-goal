@@ -6,8 +6,6 @@ import android.content.Context
 import android.util.Log
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalTarget
-import au.com.beba.runninggoal.models.GoalView
-import au.com.beba.runninggoal.models.GoalViewType
 import au.com.beba.runninggoal.models.Period
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.persistence.AppDatabase
@@ -57,8 +55,8 @@ class GoalRepo private constructor(
                     GoalTarget(
                             Distance(it.targetDistance),
                             Period(LocalDate.ofEpochDay(it.startDate), LocalDate.ofEpochDay(it.endDate))
-                    ),
-                    view = GoalView(GoalViewType.fromDbValue(it.viewType))
+                    )
+                    //view = GoalView(GoalViewType.fromDbValue(it.viewType))
             )
             goal.progress.distanceToday = Distance(it.currentDistance)
             goal.updateProgressValues()
@@ -83,8 +81,8 @@ class GoalRepo private constructor(
                     GoalTarget(
                             Distance(goalEntity.targetDistance),
                             Period(LocalDate.ofEpochDay(goalEntity.startDate), LocalDate.ofEpochDay(goalEntity.endDate))
-                    ),
-                    view = GoalView(GoalViewType.fromDbValue(goalEntity.viewType))
+                    )
+                    //view = GoalView(GoalViewType.fromDbValue(goalEntity.viewType))
             )
             goal.progress.distanceToday = Distance(goalEntity.currentDistance)
         } else {
@@ -102,7 +100,7 @@ class GoalRepo private constructor(
     }
 
     override suspend fun save(goal: RunningGoal): Long = withContext(coroutineContext) {
-        Log.d(TAG, "save")
+        Log.i(TAG, "pairWithGoal")
         Log.d(TAG, "mapFrom | id=%s, distance=%s".format(goal.id, goal.progress.distanceToday.value))
 
         val goalEntity = RunningGoalEntity(goal.id)
@@ -111,13 +109,13 @@ class GoalRepo private constructor(
         goalEntity.currentDistance = goal.progress.distanceToday.value
         goalEntity.startDate = goal.target.period.from.toEpochDay()
         goalEntity.endDate = goal.target.period.to.toEpochDay()
-        goalEntity.viewType = goal.view.viewType.asDbValue()
 
-        val id: Long = runningGoalDao.insert(goalEntity)
+        var id: Long = runningGoalDao.insert(goalEntity)
         if (id < 0L) {
-            Log.d(TAG, "update")
-            Log.d(TAG, "update | uid=%s, distance=%s".format(goalEntity.uid, goalEntity.currentDistance))
+            Log.i(TAG, "pairWithGoal | update")
+            Log.d(TAG, "pairWithGoal | update | uid=%s, distance=%s".format(goalEntity.uid, goalEntity.currentDistance))
             runningGoalDao.update(goalEntity)
+            id = goalEntity.uid
         }
 
         goal.updateProgressValues()

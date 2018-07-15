@@ -1,6 +1,5 @@
 package au.com.beba.runninggoal.feature
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -42,7 +41,6 @@ class GoalActivity : AppCompatActivity() {
         fun buildIntent(context: Context, goalId: Long): Intent {
             val intent = Intent(context, GoalActivity::class.java)
             intent.putExtra(EXTRA_GOAL_ID, goalId)
-            //intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, goalId)
             return intent
         }
     }
@@ -75,8 +73,21 @@ class GoalActivity : AppCompatActivity() {
         }
     }
 
+    private fun extractIntentData(intent: Intent): Long {
+        var goalId: Long = 0
+        val extras = intent.extras
+        if (extras != null) {
+            goalId = extras.getLong(EXTRA_GOAL_ID, 0)
+            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+            Log.d(TAG, "extractIntentData | goalId=%s".format(goalId))
+            Log.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
+        }
+
+        return goalId
+    }
+
     private suspend fun resolveGoal(goalId: Long): RunningGoal {
-        Log.d(TAG, "resolveGoal")
+        Log.i(TAG, "resolveGoal")
         return withContext(DefaultDispatcher) {
             if (goalId > 0) {
                 Log.d(TAG, "resolveGoal | from goalId")
@@ -94,18 +105,6 @@ class GoalActivity : AppCompatActivity() {
         }
     }
 
-    private fun extractIntentData(intent: Intent): Long {
-        var goalId: Long = 0
-        val extras = intent.extras
-        if (extras != null) {
-            goalId = extras.getLong(EXTRA_GOAL_ID, 0)
-            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-            Log.d(TAG, "extractIntentData | goalId=%s".format(goalId))
-            Log.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
-        }
-
-        return goalId
-    }
 
     private fun initForm() {
         initDistancePicker(findViewById(R.id.goal_distance))
@@ -154,12 +153,9 @@ class GoalActivity : AppCompatActivity() {
         // CHECK IF THIS IS NEEDED, USE goal
         val updatedGoal = goalRepository.getById(goalId)
 
-        // SAVE GOAL:WIDGET RELATIONSHIP
-        if (appWidgetId > 0) {
-            widgetRepository.save(updatedGoal.id, appWidgetId)
-        }
-
         updateWidgetView(updatedGoal)
+
+        finish()
     }
 
     private fun deleteGoal(goal: RunningGoal) = launchSilent(UI) {
@@ -169,7 +165,6 @@ class GoalActivity : AppCompatActivity() {
         if (goalRepository.delete(goal) == 1) {
 
             //TODO: DELETE ALL RELATED Widgets IF goal.DELETE IS SUCCESSFUL
-            //updateWidgetView(updatedGoal)
         }
 
         finish()    //TODO: OR closeWidgetConfig()
@@ -177,16 +172,6 @@ class GoalActivity : AppCompatActivity() {
 
     private suspend fun updateWidgetView(runningGoal: RunningGoal) = withContext(DefaultDispatcher) {
         goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
-
-        closeWidgetConfig()
-    }
-
-    private fun closeWidgetConfig() {
-        Log.i(TAG, "closeWidgetConfig | appWidgetId=%s".format(appWidgetId))
-        val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(Activity.RESULT_OK, resultValue)
-        finish()
     }
 
     private fun initDistancePicker(editText: EditText) {

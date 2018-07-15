@@ -13,7 +13,10 @@ data class WidgetEntity(
         var uid: Int = 0,
 
         @ColumnInfo(name = "goal_id")
-        var goalId: Long = 0L
+        var goalId: Long = 0L,
+
+        @ColumnInfo(name = "view_type")
+        var viewType: Int = 0
 ) {
     @Ignore constructor() : this(0)
 }

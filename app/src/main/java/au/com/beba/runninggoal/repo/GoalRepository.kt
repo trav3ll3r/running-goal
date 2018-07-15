@@ -13,6 +13,11 @@ interface GoalRepository {
 
     suspend fun markGoalUpdateStatus(updating: Boolean, runningGoal: RunningGoal)
 
+    /**
+     * Inserts or Updates the RunningGoal
+     *
+     * @return Unique ID of the RunningGoal (Primary Key)
+     */
     suspend fun save(goal: RunningGoal): Long
 
     suspend fun delete(goal: RunningGoal): Int

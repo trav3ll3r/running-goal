@@ -26,10 +26,7 @@ data class RunningGoalEntity(
         var startDate: Long = 0,
 
         @ColumnInfo(name = "end_date")
-        var endDate: Long = 0,
-
-        @ColumnInfo(name = "view_type")
-        var viewType: Int = 0
+        var endDate: Long = 0
 ) {
     @Ignore constructor() : this(0)
 }

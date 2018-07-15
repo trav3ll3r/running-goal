@@ -3,9 +3,9 @@
     android:minWidth="80dp"
     android:minHeight="120dp"
     android:updatePeriodMillis="43200000"
-    android:previewImage="@drawable/ic_progress_24"
+    android:previewImage="@drawable/ic_stat_name"
     android:initialLayout="@layout/goal_widget"
-    android:configure="au.com.beba.runninggoal.feature.GoalActivity"
+    android:configure="au.com.beba.runninggoal.feature.widget.SelectGoalActivity"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">
 </appwidget-provider>

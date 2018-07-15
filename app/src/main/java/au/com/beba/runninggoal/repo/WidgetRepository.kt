@@ -9,7 +9,9 @@ interface WidgetRepository {
 
     suspend fun getAllForGoal(goalId: Long): List<Widget>
 
-    suspend fun save(goalId: Long, appWidgetId: Int)
+    suspend fun pairWithGoal(goalId: Long, appWidgetId: Int)
+
+    suspend fun save(widget: Widget)
 
     suspend fun delete(widget: Widget): Int
 }

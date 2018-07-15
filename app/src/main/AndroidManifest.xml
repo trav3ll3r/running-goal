@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="au.com.beba.runninggoal">
 
     <permission android:name="android.permission.BIND_JOB_SERVICE" />
@@ -7,11 +8,13 @@
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <!-- LAUNCHER ACTIVITY -->
         <activity android:name=".MainActivity">
@@ -22,15 +25,20 @@
             </intent-filter>
         </activity>
 
-        <!-- android:theme="@style/ActivityDialog" -->
-        <!-- android:theme="@style/Theme.AppCompat.NoActionBar" -->
         <activity android:name=".feature.GoalActivity">
+            <!--<intent-filter>-->
+            <!--<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <activity
+            android:name=".feature.syncSources.EditSyncSourceActivity"
+            android:label="@string/edit_sync_source" />
+        <activity android:name=".feature.widget.SelectGoalActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".feature.syncSources.EditSyncSourceActivity" android:label="@string/edit_sync_source"/>
 
         <receiver android:name=".feature.widget.RunningGoalWidgetProvider">
             <intent-filter>
@@ -44,8 +52,8 @@
 
         <service
             android:name=".feature.progressSync.SyncSourceIntentService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

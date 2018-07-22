@@ -56,8 +56,6 @@ class RunningGoalsFragment : Fragment() {
         viewModel.fetchGoals().observe(this, Observer {
             it?.let { updateList(it) }
         })
-        viewModel.fetchGoals()
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,6 +76,11 @@ class RunningGoalsFragment : Fragment() {
         } else {
             throw RuntimeException(context.toString() + " must implement %s".format(RunningGoalListener::class.java.simpleName))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchGoals()
     }
 
     override fun onDetach() {

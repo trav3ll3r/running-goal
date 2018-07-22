@@ -15,7 +15,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="false"
         android:layout_alignParentTop="true"
-        android:contentDescription="@string/btn_flip" />
+        android:contentDescription="@string/btn_flip"
+        tools:visibility="gone" />
 
     <!--HEADING (GOAL NAME)-->
     <LinearLayout
@@ -33,9 +34,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="GOAL NAME"
             android:textColor="@color/darker_background_text"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="GOAL NAME" />
 
         <TextView
             android:id="@+id/goal_period"
@@ -43,9 +44,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Jan 2018 - Dec 2018"
             android:textColor="@color/darker_background_text"
-            />
+            tools:text="Jan 2018 - Dec 2018" />
 
     </LinearLayout>
 

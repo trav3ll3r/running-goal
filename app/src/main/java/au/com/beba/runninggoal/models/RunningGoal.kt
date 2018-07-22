@@ -4,12 +4,13 @@ import java.time.LocalDate
 
 
 data class RunningGoal(
-        val id: Int = 0,
+        val id: Long = 0,
         var name: String = "",
         var target: GoalTarget = GoalTarget(),
         var progress: GoalProgress = GoalProgress(),
         var projection: GoalProjection = GoalProjection(),
-        var view: GoalView = GoalView()
+        var view: GoalView = GoalView(),
+        var deleted: Boolean = false
 ) {
     fun updateProgressValues(onDate: LocalDate = LocalDate.now()) {
         target.period = Period(target.period.from, target.period.to, onDate)
@@ -25,12 +26,13 @@ data class RunningGoal(
         val linearDistancePerDay = (runningGoal.target.distance.value / daysTotal)
         val expectedDistance = linearDistancePerDay * daysLapsed
 
-        runningGoal.progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
-        runningGoal.progress.positionInDistance = Distance(currentDistance - expectedDistance)
-        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance.value / linearDistancePerDay
-        runningGoal.progress.status = runningGoal.getStatus(today)
-
-        runningGoal.projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
+        runningGoal.let {
+            progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
+            progress.positionInDistance = Distance(currentDistance - expectedDistance)
+            progress.positionInDays = progress.positionInDistance.value / linearDistancePerDay
+            progress.status = getStatus(today)
+            projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
+        }
     }
 
     private fun getStatus(onDate: LocalDate): GoalStatus {
@@ -58,32 +60,7 @@ data class GoalProgress(
 
 data class GoalProjection(val distancePerDay: Distance = Distance(), val daysLapsed: Int = 0)
 
-data class GoalView(
-        var viewType: GoalViewType = GoalViewType.PROGRESS_BAR,
-        var updating: Boolean = false) {
-    fun toggle() {
-        viewType = if (viewType == GoalViewType.PROGRESS_BAR) {
-            GoalViewType.NUMBERS
-        } else {
-            GoalViewType.PROGRESS_BAR
-        }
-    }
-}
-
-enum class GoalViewType(private val dbValue: Int) {
-    PROGRESS_BAR(0),
-    NUMBERS(1);
-
-    companion object {
-        fun fromDbValue(value: Int): GoalViewType {
-            return GoalViewType.values().find { it.dbValue == value }!!
-        }
-    }
-
-    fun asDbValue(): Int {
-        return dbValue
-    }
-}
+data class GoalView(var updating: Boolean = false)
 
 enum class GoalStatus {
     UNKNOWN,

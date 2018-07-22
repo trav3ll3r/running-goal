@@ -19,9 +19,10 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.GoalActivity
-import au.com.beba.runninggoal.models.GoalViewType
+import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.models.Widget
+import au.com.beba.runninggoal.models.WidgetViewType
 import org.intellij.lang.annotations.Identifier
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -37,8 +38,14 @@ object GoalWidgetRenderer {
 
     const val FLIP_CLICKED = "au.com.beba.runninggoal.FLIP_CLICKED"
 
-    fun updateUi(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
-        Log.d(TAG, "updateUi")
+    fun updateUi(context: Context, rootView: RemoteViews, runningGoal: RunningGoal?, widget: Widget) {
+        Log.i(TAG, "updateUi")
+
+        if (runningGoal?.deleted != false || runningGoal.id < 1) {
+            GoalDeletedRenderer.render(context, rootView)
+            return
+        }
+
         rootView.setTextViewText(R.id.goal_name, "%s".format(runningGoal.name))
         rootView.setTextViewText(R.id.goal_period, "%s to %s (%s days)".format(
                 DateRenderer.asFullDate(runningGoal.target.period.from),
@@ -46,8 +53,8 @@ object GoalWidgetRenderer {
                 runningGoal.progress.daysTotal
         ))
 
-        when (runningGoal.view.viewType) {
-            GoalViewType.PROGRESS_BAR -> {
+        when (widget.view.viewType) {
+            WidgetViewType.PROGRESS_BAR -> {
                 Log.d(TAG, "updateUi | PROGRESS_BAR | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.VISIBLE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.GONE)
@@ -55,7 +62,7 @@ object GoalWidgetRenderer {
 
                 GoalAsProgressRenderer.render(context, rootView, runningGoal)
             }
-            GoalViewType.NUMBERS -> {
+            WidgetViewType.NUMBERS -> {
                 Log.d(TAG, "updateUi | NUMBERS | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.GONE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.VISIBLE)
@@ -67,27 +74,28 @@ object GoalWidgetRenderer {
 
         // ENTIRE Widget CATCHES CLICK AND FIRES "edit" INTENT
         // Create the "edit" Intent to launch Activity
-        val intent = Intent(context, GoalActivity::class.java)
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, runningGoal.id)
-        val pendingIntentEdit = PendingIntent.getActivity(context, runningGoal.id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intent = GoalActivity.buildIntent(context, runningGoal.id)
+        val pendingIntentEdit = PendingIntent.getActivity(context, runningGoal.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
         rootView.setOnClickPendingIntent(R.id.widget_root, pendingIntentEdit)
 
         // Create an Intent to change Goal's GoalViewType
-        rootView.setOnClickPendingIntent(R.id.btn_flip, getPendingSelfIntent(context, FLIP_CLICKED, runningGoal.id))
+        rootView.setOnClickPendingIntent(R.id.btn_flip, getPendingSelfIntent(context, FLIP_CLICKED, widget.id))
     }
 
-    private fun getPendingSelfIntent(context: Context, action: String, appWidgetId: Int): PendingIntent {
+    private fun getPendingSelfIntent(context: Context, action: String, widgetId: Int): PendingIntent {
         val intent = Intent(context, RunningGoalWidgetProvider::class.java)
         intent.action = action
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+        return PendingIntent.getBroadcast(context, widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }
 
 object GoalInNumbersRenderer {
 
-    fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
+    private val TAG = GoalInNumbersRenderer::class.java.simpleName
 
+    fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
+        Log.i(TAG, "render")
         val progress = runningGoal.progress
         val projections = runningGoal.projection
 
@@ -118,11 +126,12 @@ object GoalInNumbersRenderer {
 
         rootView.removeAllViews(holderViewId)
         rootView.addView(holderViewId, view)
-
     }
 }
 
 object GoalAsProgressRenderer {
+
+    private val TAG = GoalAsProgressRenderer::class.java.simpleName
 
     private const val gapAngle = 30f
     private const val startAngle = 90f + gapAngle
@@ -145,6 +154,8 @@ object GoalAsProgressRenderer {
     }
 
     fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
+        Log.i(TAG, "render")
+        Log.d(TAG, "render | runningGoal=%s".format(runningGoal.id))
         widthMax = context.resources.getDimensionPixelSize(R.dimen.max_width)
         heightMax = context.resources.getDimensionPixelSize(R.dimen.max_height)
 
@@ -319,6 +330,21 @@ object GoalAsProgressRenderer {
         drawableIcon.draw(canvas)
 
         return bitmap
+    }
+}
+
+object GoalDeletedRenderer {
+
+    private val TAG = GoalDeletedRenderer::class.java.simpleName
+
+    fun render(context: Context, rootView: RemoteViews) {
+        Log.i(TAG, "render")
+//        rootView.setViewVisibility(R.id.btn_flip, View.GONE)
+//        rootView.setViewVisibility(R.id.goal_heading, View.VISIBLE)
+        rootView.setViewVisibility(R.id.goal_period, View.GONE)
+        rootView.setTextViewText(R.id.goal_name, context.getString(R.string.warning_goal_for_widget_deleted))
+        rootView.removeAllViews(R.id.goal_in_visuals)
+        rootView.removeAllViews(R.id.goal_in_numbers)
     }
 }
 

@@ -9,7 +9,8 @@ data class RunningGoal(
         var target: GoalTarget = GoalTarget(),
         var progress: GoalProgress = GoalProgress(),
         var projection: GoalProjection = GoalProjection(),
-        var view: GoalView = GoalView()
+        var view: GoalView = GoalView(),
+        var deleted: Boolean = false
 ) {
     fun updateProgressValues(onDate: LocalDate = LocalDate.now()) {
         target.period = Period(target.period.from, target.period.to, onDate)
@@ -25,12 +26,13 @@ data class RunningGoal(
         val linearDistancePerDay = (runningGoal.target.distance.value / daysTotal)
         val expectedDistance = linearDistancePerDay * daysLapsed
 
-        runningGoal.progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
-        runningGoal.progress.positionInDistance = Distance(currentDistance - expectedDistance)
-        runningGoal.progress.positionInDays = runningGoal.progress.positionInDistance.value / linearDistancePerDay
-        runningGoal.progress.status = runningGoal.getStatus(today)
-
-        runningGoal.projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
+        runningGoal.let {
+            progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
+            progress.positionInDistance = Distance(currentDistance - expectedDistance)
+            progress.positionInDays = progress.positionInDistance.value / linearDistancePerDay
+            progress.status = getStatus(today)
+            projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
+        }
     }
 
     private fun getStatus(onDate: LocalDate): GoalStatus {

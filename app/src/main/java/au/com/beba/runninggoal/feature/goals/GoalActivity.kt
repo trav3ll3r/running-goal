@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.feature
+package au.com.beba.runninggoal.feature.goals
 
 import android.app.DatePickerDialog
 import android.appwidget.AppWidgetManager
@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_goal.*
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -88,7 +89,7 @@ class GoalActivity : AppCompatActivity() {
 
     private suspend fun resolveGoal(goalId: Long): RunningGoal {
         Log.i(TAG, "resolveGoal")
-        return withContext(DefaultDispatcher) {
+        val goal: RunningGoal? = withContext(DefaultDispatcher) {
             if (goalId > 0) {
                 Log.d(TAG, "resolveGoal | from goalId")
                 goalRepository.getById(goalId)
@@ -98,11 +99,12 @@ class GoalActivity : AppCompatActivity() {
                     Log.d(TAG, "resolveGoal | linked to widgetId")
                     goalRepository.getById(widget.goalId)
                 } else {
-                    Log.d(TAG, "resolveGoal | new blank goal")
-                    RunningGoal()
+                    null
                 }
             }
         }
+
+        return goal ?: RunningGoal()
     }
 
 
@@ -155,23 +157,31 @@ class GoalActivity : AppCompatActivity() {
 
         updateWidgetView(updatedGoal)
 
-        finish()
+        exit()
     }
 
-    private fun deleteGoal(goal: RunningGoal) = launchSilent(UI) {
+    private fun deleteGoal(runningGoal: RunningGoal) = launchSilent(DefaultDispatcher) {
         Log.i(TAG, "deleteGoal")
 
-        Log.d(TAG, "deleteGoal | goalId=%s".format(goal.id))
-        if (goalRepository.delete(goal) == 1) {
+        Log.d(TAG, "deleteGoal | goalId=%s".format(runningGoal.id))
+        if (goalRepository.delete(runningGoal) == 1) {
+            // DELETE ALL RELATED Widgets IF DELETING runningGoal IS SUCCESSFUL
+            runningGoal.deleted = true
 
-            //TODO: DELETE ALL RELATED Widgets IF goal.DELETE IS SUCCESSFUL
+            updateWidgetView(runningGoal)
         }
 
-        finish()    //TODO: OR closeWidgetConfig()
+        exit()
     }
 
-    private suspend fun updateWidgetView(runningGoal: RunningGoal) = withContext(DefaultDispatcher) {
-        goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
+    private suspend fun updateWidgetView(runningGoal: RunningGoal?) = withContext(DefaultDispatcher) {
+        Log.i(TAG, "updateWidgetView")
+        val context = this
+        if (runningGoal != null) {
+            runBlocking {
+                goalWidgetUpdater.updateAllWidgetsForGoal(context, runningGoal)
+            }
+        }
     }
 
     private fun initDistancePicker(editText: EditText) {
@@ -198,5 +208,9 @@ class GoalActivity : AppCompatActivity() {
             dpd.datePicker.firstDayOfWeek = Calendar.MONDAY
             dpd.show()
         }
+    }
+
+    private fun exit() {
+        finish()
     }
 }

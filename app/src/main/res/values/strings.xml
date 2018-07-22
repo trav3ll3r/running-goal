@@ -18,5 +18,6 @@
 
     <string name="sync_now_error">Sync failed</string>
     <string name="message_no_default_sync_sources" formatted="false">No Default Sync Sources found.\nPlease configure one first.</string>
+    <string name="warning_goal_for_widget_deleted">Goal for this widget has been deleted!</string>
 
 </resources>

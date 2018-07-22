@@ -19,7 +19,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.GoalActivity
+import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.Widget
 import au.com.beba.runninggoal.models.WidgetViewType
@@ -38,8 +38,14 @@ object GoalWidgetRenderer {
 
     const val FLIP_CLICKED = "au.com.beba.runninggoal.FLIP_CLICKED"
 
-    fun updateUi(context: Context, rootView: RemoteViews, runningGoal: RunningGoal, widget: Widget) {
-        Log.d(TAG, "updateUi")
+    fun updateUi(context: Context, rootView: RemoteViews, runningGoal: RunningGoal?, widget: Widget) {
+        Log.i(TAG, "updateUi")
+
+        if (runningGoal?.deleted != false || runningGoal.id < 1) {
+            GoalDeletedRenderer.render(context, rootView)
+            return
+        }
+
         rootView.setTextViewText(R.id.goal_name, "%s".format(runningGoal.name))
         rootView.setTextViewText(R.id.goal_period, "%s to %s (%s days)".format(
                 DateRenderer.asFullDate(runningGoal.target.period.from),
@@ -86,8 +92,10 @@ object GoalWidgetRenderer {
 
 object GoalInNumbersRenderer {
 
-    fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
+    private val TAG = GoalInNumbersRenderer::class.java.simpleName
 
+    fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
+        Log.i(TAG, "render")
         val progress = runningGoal.progress
         val projections = runningGoal.projection
 
@@ -118,11 +126,12 @@ object GoalInNumbersRenderer {
 
         rootView.removeAllViews(holderViewId)
         rootView.addView(holderViewId, view)
-
     }
 }
 
 object GoalAsProgressRenderer {
+
+    private val TAG = GoalAsProgressRenderer::class.java.simpleName
 
     private const val gapAngle = 30f
     private const val startAngle = 90f + gapAngle
@@ -145,6 +154,8 @@ object GoalAsProgressRenderer {
     }
 
     fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
+        Log.i(TAG, "render")
+        Log.d(TAG, "render | runningGoal=%s".format(runningGoal.id))
         widthMax = context.resources.getDimensionPixelSize(R.dimen.max_width)
         heightMax = context.resources.getDimensionPixelSize(R.dimen.max_height)
 
@@ -319,6 +330,21 @@ object GoalAsProgressRenderer {
         drawableIcon.draw(canvas)
 
         return bitmap
+    }
+}
+
+object GoalDeletedRenderer {
+
+    private val TAG = GoalDeletedRenderer::class.java.simpleName
+
+    fun render(context: Context, rootView: RemoteViews) {
+        Log.i(TAG, "render")
+//        rootView.setViewVisibility(R.id.btn_flip, View.GONE)
+//        rootView.setViewVisibility(R.id.goal_heading, View.VISIBLE)
+        rootView.setViewVisibility(R.id.goal_period, View.GONE)
+        rootView.setTextViewText(R.id.goal_name, context.getString(R.string.warning_goal_for_widget_deleted))
+        rootView.removeAllViews(R.id.goal_in_visuals)
+        rootView.removeAllViews(R.id.goal_in_numbers)
     }
 }
 

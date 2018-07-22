@@ -9,7 +9,7 @@ interface GoalRepository {
 
     suspend fun fetchGoals(): List<RunningGoal>
 
-    suspend fun getById(goalId: Long): RunningGoal
+    suspend fun getById(goalId: Long): RunningGoal?
 
     suspend fun markGoalUpdateStatus(updating: Boolean, runningGoal: RunningGoal)
 

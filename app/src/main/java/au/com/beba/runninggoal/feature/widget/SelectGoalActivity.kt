@@ -8,11 +8,11 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
-import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.WidgetRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
@@ -61,11 +61,9 @@ class SelectGoalActivity : AppCompatActivity(),
     }
 
     private fun bindGoalToWidget(runningGoal: RunningGoal, appWidgetId: Int) {
-        launchSilent {
-            widgetRepo.pairWithGoal(runningGoal.id, appWidgetId)
-            updateWidgetView(runningGoal)
-            closeWidgetConfig()
-        }
+        runBlocking { widgetRepo.pairWithGoal(runningGoal.id, appWidgetId) }
+        runBlocking { updateWidgetView(runningGoal) }
+        runBlocking { closeWidgetConfig() }
     }
 
     private fun closeWidgetConfig() {

@@ -9,6 +9,7 @@ import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.WidgetDao
 import au.com.beba.runninggoal.persistence.WidgetEntity
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
 import kotlin.coroutines.experimental.CoroutineContext
 
@@ -51,16 +52,20 @@ class WidgetRepo private constructor(
     override suspend fun pairWithGoal(goalId: Long, appWidgetId: Int) = withContext(coroutineContext) {
         Log.i(TAG, "pairWithGoal")
         if (appWidgetId > 0) {
-            // FIND EXISTING
-            var entity: WidgetEntity? = widgetDao.getByWidgetId(appWidgetId)
+            runBlocking {
+                // FIND EXISTING
+                var entity: WidgetEntity? = widgetDao.getByWidgetId(appWidgetId)
 
-            if (entity == null) {
-                entity = WidgetEntity(appWidgetId, goalId)
-                widgetDao.insert(entity)
-            } else {
-                if (entity.goalId != goalId) {
-                    entity.goalId = goalId
-                    widgetDao.update(entity)
+                if (entity == null) {
+                    entity = WidgetEntity(appWidgetId, goalId)
+                    widgetDao.insert(entity)
+                } else {
+                    if (entity.goalId != goalId) {
+                        entity.goalId = goalId
+                        widgetDao.update(entity)
+                    } else {
+                        Unit
+                    }
                 }
             }
         }

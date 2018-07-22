@@ -1,9 +1,7 @@
 package au.com.beba.runninggoal.feature.widget
 
 import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
@@ -32,12 +30,6 @@ class GoalWidgetUpdater @Inject constructor(var goalRepo: GoalRepository, var wi
             val widgetIds: IntArray = widgets.map { it.id }.toIntArray()
             Log.d(TAG, "updateAllWidgetsForGoal | widgetIds=%s".format(widgetIds.joinToString(", ")))
 
-//            val rootView = RemoteViews(context.packageName, R.layout.goal_widget)
-//            widgets.forEach { widget ->
-//                GoalWidgetRenderer.updateUi(context, rootView, runningGoal, widget)
-//            }
-//            triggerWidgetUpdate(context, widgetIds)
-
             widgets.forEach { widget ->
                 refreshWidget(context, widget.id)
             }
@@ -58,34 +50,19 @@ class GoalWidgetUpdater @Inject constructor(var goalRepo: GoalRepository, var wi
         launchSilent {
             Log.d(TAG, "updateWidgetView | appWidgetId=%s".format(appWidgetId))
             val goal = getGoalForWidget(appWidgetId)
-            if (goal != null) {
-                Log.d(TAG, "updateWidgetView | appWidgetId=%s | goalId=%s".format(appWidgetId, goal.id))
-
-                val widget = widgetRepo.getByWidgetId(appWidgetId)
-                if (widget != null) {
-                    GoalWidgetRenderer.updateUi(context, rootView, goal, widget)
-                    // Tell the AppWidgetManager to perform an update on the current app widget
-                    appWidgetManager.updateAppWidget(appWidgetId, rootView)
-                }
-            } else {
+            if (goal == null) {
                 Log.d(TAG, "updateWidgetView | appWidgetId=%s | goal not found".format(appWidgetId))
             }
+
+            Log.d(TAG, "updateWidgetView | appWidgetId=%s | goalId=%s".format(appWidgetId, goal?.id))
+
+            val widget = widgetRepo.getByWidgetId(appWidgetId)
+            if (widget != null) {
+                GoalWidgetRenderer.updateUi(context, rootView, goal, widget)
+                // Tell the AppWidgetManager to perform an update on the current app widget
+                appWidgetManager.updateAppWidget(appWidgetId, rootView)
+            }
         }
-    }
-
-    private fun triggerWidgetUpdate(context: Context, widgetIds: IntArray) {
-        Log.i(TAG, "triggerWidgetUpdate")
-        val intent = Intent(context, RunningGoalWidgetProvider::class.java)
-        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-
-        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-        // since it seems the onUpdate() is only fired on that:
-        val componentName = ComponentName(context, RunningGoalWidgetProvider::class.java)
-        val ids: IntArray = AppWidgetManager.getInstance(context).getAppWidgetIds(componentName)
-        val idsForUpdate = ids.filter { it in widgetIds }.toIntArray()
-        Log.d(TAG, "triggerWidgetUpdate | idsForUpdate=%s".format(idsForUpdate.joinToString(", ")))
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, idsForUpdate)
-        context.sendBroadcast(intent)
     }
 
     private suspend fun getGoalForWidget(widgetId: Int): RunningGoal? {
@@ -95,13 +72,4 @@ class GoalWidgetUpdater @Inject constructor(var goalRepo: GoalRepository, var wi
         }
         return null
     }
-
-//    private fun triggerWidgetUpdate(context: Context, widgetId: Int) {
-//        val intent = Intent(context, RunningGoalWidgetProvider::class.java)
-//        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-//
-//        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-//        context.sendBroadcast(intent)
-//    }
-
 }

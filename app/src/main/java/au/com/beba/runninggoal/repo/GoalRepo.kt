@@ -70,10 +70,10 @@ class GoalRepo private constructor(
         goals
     }
 
-    override suspend fun getById(goalId: Long): RunningGoal = withContext(coroutineContext) {
+    override suspend fun getById(goalId: Long): RunningGoal? = withContext(coroutineContext) {
         val goalEntity = runningGoalDao.getById(goalId)
 
-        val goal: RunningGoal
+        val goal: RunningGoal?
         if (goalEntity != null) {
             goal = RunningGoal(
                     goalEntity.uid,
@@ -82,14 +82,13 @@ class GoalRepo private constructor(
                             Distance(goalEntity.targetDistance),
                             Period(LocalDate.ofEpochDay(goalEntity.startDate), LocalDate.ofEpochDay(goalEntity.endDate))
                     )
-                    //view = GoalView(GoalViewType.fromDbValue(goalEntity.viewType))
             )
             goal.progress.distanceToday = Distance(goalEntity.currentDistance)
+            goal.updateProgressValues()
         } else {
-            Log.e(TAG, "Goal for goalId=%s not found!!!".format(goalId))
-            goal = RunningGoal()
+            Log.e(TAG, "Goal for goalId=%s not found!".format(goalId))
+            goal = null
         }
-        goal.updateProgressValues()
 
         goal
     }

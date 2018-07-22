@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import au.com.beba.runninggoal.feature.GoalActivity
+import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity

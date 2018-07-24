@@ -61,9 +61,11 @@ class SelectGoalActivity : AppCompatActivity(),
     }
 
     private fun bindGoalToWidget(runningGoal: RunningGoal, appWidgetId: Int) {
-        runBlocking { widgetRepo.pairWithGoal(runningGoal.id, appWidgetId) }
-        runBlocking { updateWidgetView(runningGoal) }
-        runBlocking { closeWidgetConfig() }
+        runBlocking {
+            widgetRepo.pairWithGoal(runningGoal.id, appWidgetId)
+            updateWidgetView(runningGoal)
+            closeWidgetConfig()
+        }
     }
 
     private fun closeWidgetConfig() {

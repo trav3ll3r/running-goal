@@ -14,6 +14,12 @@ import java.time.ZoneOffset
 import kotlin.coroutines.experimental.CoroutineContext
 
 
+/**
+ * Simple model to map JSON payload into AthleteActivity model
+ */
+data class AthleteActivity(val distance: Float)
+
+
 class StravaSyncSourceProvider
 constructor(private val networkingContext: CoroutineContext = DefaultDispatcher) : CommonSyncSourceProvider(networkingContext) {
 
@@ -31,6 +37,8 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
         val startTime = start.atTime(0, 0, 0).toEpochSecond(ZoneOffset.UTC)
         val endTime = end.atTime(23, 59, 59).toEpochSecond(ZoneOffset.UTC)
 
+        val allActivities = mutableListOf<AthleteActivity>()
+
         val url = HttpUrl.Builder()
                 .scheme("https")
                 .host("www.strava.com")
@@ -38,37 +46,58 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
                 .addPathSegments("athlete/activities")
                 .setQueryParameter("after", startTime.toString())
                 .addQueryParameter("before", endTime.toString())
-                .build()
+                .addQueryParameter("per_page", "100") // DEFAULT=30; MAX=200
 
+        var page = 0
+        do {
+            page += 1
+            url.setQueryParameter("page", page.toString())
+            val activities = getActivitiesForUrl(url)
+            allActivities.addAll(activities)
+        } while (activities.isNotEmpty())
+
+        distanceForAllActivities(allActivities)
+    }
+
+    private suspend fun getActivitiesForUrl(url: HttpUrl.Builder): List<AthleteActivity> {
+        Log.i(TAG, "getActivitiesForUrl")
         val request = Request.Builder()
-                .url(url)
+                .url(url.build())
                 .addHeader("Authorization", "Bearer %s".format(sourceProfile?.accessToken
                         ?: "NOT SET"))
                 .addHeader("accept", "application/json")
                 .build()
 
-        Log.v(TAG, "request url=%s".format(request.url()))
+        Log.v(TAG, "getActivitiesForUrl | request url=%s".format(request.url()))
 
         val responseDef = executeRequest(request)
 
-        processResponse(responseDef.await())
+        return extractActivities(responseDef.await())
     }
 
-    private fun processResponse(response: Response?): Float {
-        Log.v(TAG, "processResponse")
-        Log.v(TAG, "processResponse | code=%s".format(response?.code() ?: "UNKNOWN"))
-        val responseBody = response?.body()?.string()
-        Log.v(TAG, "processResponse | body=%s".format(responseBody ?: "NULL BODY"))
+    private fun extractActivities(response: Response?): List<AthleteActivity> {
+        Log.i(TAG, "extractActivities")
+        Log.v(TAG, "extractActivities | code=%s".format(response?.code() ?: "UNKNOWN"))
+        val responseBody = response?.body()?.string() ?: ""
+        logBody(responseBody)
 
-        var distanceMetre = -1f
-        if (response != null) {
+        return if (response != null) {
             val listType = object : TypeToken<ArrayList<AthleteActivity>>() {}.type
-            val activities: List<AthleteActivity> = Gson().fromJson(responseBody ?: "", listType)
-            distanceMetre = activities.map { it.distance }.sum()
+            Gson().fromJson(responseBody, listType)
+        } else {
+            emptyList()
         }
-        Log.v(TAG, "processResponse | distanceMetre=$distanceMetre")
+    }
+
+    private fun distanceForAllActivities(activities: List<AthleteActivity>): Float {
+        Log.v(TAG, "distanceForAllActivities")
+        val distanceMetre: Float = activities.map { it.distance }.sum()
+        Log.v(TAG, "distanceForAllActivities | distanceMetre=$distanceMetre")
         return distanceMetre
     }
-}
 
-data class AthleteActivity(val distance: Float)
+    private fun logBody(body: String) {
+        Log.i(TAG, "logBody")
+        Log.v(TAG, "logBody | body=%s".format(body))
+    }
+}

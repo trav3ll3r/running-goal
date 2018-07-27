@@ -99,8 +99,8 @@ class GoalRepo private constructor(
     }
 
     override suspend fun save(goal: RunningGoal): Long = withContext(coroutineContext) {
-        Log.i(TAG, "pairWithGoal")
-        Log.d(TAG, "mapFrom | id=%s, distance=%s".format(goal.id, goal.progress.distanceToday.value))
+        Log.i(TAG, "save")
+        Log.d(TAG, "save | mapFrom | id=%s, distance=%s".format(goal.id, goal.progress.distanceToday.value))
 
         val goalEntity = RunningGoalEntity(goal.id)
         goalEntity.goalName = goal.name
@@ -111,8 +111,8 @@ class GoalRepo private constructor(
 
         var id: Long = runningGoalDao.insert(goalEntity)
         if (id < 0L) {
-            Log.i(TAG, "pairWithGoal | update")
-            Log.d(TAG, "pairWithGoal | update | uid=%s, distance=%s".format(goalEntity.uid, goalEntity.currentDistance))
+            Log.i(TAG, "save | update")
+            Log.d(TAG, "save | update | uid=%s, distance=%s".format(goalEntity.uid, goalEntity.currentDistance))
             runningGoalDao.update(goalEntity)
             id = goalEntity.uid
         }

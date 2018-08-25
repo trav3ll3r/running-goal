@@ -16,7 +16,7 @@ buildscript {
              archLifecycleVer        : "1.1.1",
         ]
         kotlin = [
-            kotlinVer                : "1.2.51",
+            kotlinVer                : "1.2.61",
             ankoVer                  : "0.10.1",
             kotlinCoroutinesVer      : "0.22.5",
         ]
@@ -32,7 +32,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-beta04'
+        classpath 'com.android.tools.build:gradle:3.2.0-rc02'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin.kotlinVer}"
 
         // NOTE: Do not place your application dependencies here; they belong

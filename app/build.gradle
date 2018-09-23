@@ -9,7 +9,6 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.0-rc2"
     defaultConfig {
         applicationId "au.com.beba.runninggoal"
         minSdkVersion 26

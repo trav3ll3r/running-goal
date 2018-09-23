@@ -9,15 +9,13 @@ import kotlinx.coroutines.experimental.withContext
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.Response
-import java.time.LocalDate
-import java.time.ZoneOffset
 import kotlin.coroutines.experimental.CoroutineContext
 
 
 /**
  * Simple model to map JSON payload into AthleteActivity model
  */
-data class AthleteActivity(val distance: Float)
+data class AthleteActivity(val name: String, val distance: Float, val private: Boolean)
 
 
 class StravaSyncSourceProvider
@@ -33,19 +31,18 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
         sourceProfile = apiSourceProfile
     }
 
-    override suspend fun getDistanceForDateRange(start: LocalDate, end: LocalDate): Float = withContext(networkingContext) {
-        val startTime = start.atTime(0, 0, 0).toEpochSecond(ZoneOffset.UTC)
-        val endTime = end.atTime(23, 59, 59).toEpochSecond(ZoneOffset.UTC)
-
+    override suspend fun getDistanceForDateRange(startTime: Long, endTime: Long): Float = withContext(networkingContext) {
         val allActivities = mutableListOf<AthleteActivity>()
 
+        Log.i(TAG, "getDistanceForDateRange | startTime=%s".format(startTime))
+        Log.i(TAG, "getDistanceForDateRange | endTime=%s".format(endTime))
         val url = HttpUrl.Builder()
                 .scheme("https")
                 .host("www.strava.com")
                 .addPathSegments("api/v3")
                 .addPathSegments("athlete/activities")
-                .setQueryParameter("after", startTime.toString())
-                .addQueryParameter("before", endTime.toString())
+                .setQueryParameter("after", "%s".format(startTime))
+                .addQueryParameter("before", "%s".format(endTime))
                 .addQueryParameter("per_page", "100") // DEFAULT=30; MAX=200
 
         var page = 0
@@ -72,7 +69,17 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
 
         val responseDef = executeRequest(request)
 
-        return extractActivities(responseDef.await())
+
+        val activities = extractActivities(responseDef.await())
+        Log.v(TAG, "distanceForActivities | page | activities=%s".format(activities.size))
+
+        activities.forEach {
+            Log.v(TAG, "distanceForActivities | run {name=%s distance=%s private=%b}".format(it.name, it.distance, it.private))
+        }
+
+
+        Log.v(TAG, "distanceForActivities | page | distanceMetre=%s".format(activities.map { it.distance }.sum()))
+        return activities
     }
 
     private fun extractActivities(response: Response?): List<AthleteActivity> {
@@ -97,7 +104,7 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
     }
 
     private fun logBody(body: String) {
-        Log.i(TAG, "logBody")
-        Log.v(TAG, "logBody | body=%s".format(body))
+//        Log.i(TAG, "logBody")
+//        Log.v(TAG, "logBody | body=%s".format(body))
     }
 }

@@ -27,7 +27,7 @@ class RunningGoalsAdapter(private val items: MutableList<RunningGoal>, private v
     }
 
     override fun getItemId(position: Int): Long {
-        return items[position].id.toLong()
+        return items[position].id
     }
 
     override fun getItemCount(): Int {

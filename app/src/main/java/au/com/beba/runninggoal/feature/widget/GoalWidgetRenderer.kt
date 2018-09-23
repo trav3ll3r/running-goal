@@ -20,6 +20,7 @@ import android.view.View
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.goals.GoalActivity
+import au.com.beba.runninggoal.models.GoalDate
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.Widget
 import au.com.beba.runninggoal.models.WidgetViewType
@@ -27,8 +28,6 @@ import org.intellij.lang.annotations.Identifier
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -339,8 +338,6 @@ object GoalDeletedRenderer {
 
     fun render(context: Context, rootView: RemoteViews) {
         Log.i(TAG, "render")
-//        rootView.setViewVisibility(R.id.btn_flip, View.GONE)
-//        rootView.setViewVisibility(R.id.goal_heading, View.VISIBLE)
         rootView.setViewVisibility(R.id.goal_period, View.GONE)
         rootView.setTextViewText(R.id.goal_name, context.getString(R.string.warning_goal_for_widget_deleted))
         rootView.removeAllViews(R.id.goal_in_visuals)
@@ -349,8 +346,8 @@ object GoalDeletedRenderer {
 }
 
 object DateRenderer {
-    fun asFullDate(date: LocalDate): String {
-        return date.format(DateTimeFormatter.ofPattern("dd MMM"))
+    fun asFullDate(date: GoalDate): String {
+        return date.asDisplayLocalShort()
     }
 }
 

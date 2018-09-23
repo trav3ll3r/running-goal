@@ -1,7 +1,5 @@
 package au.com.beba.runninggoal.models
 
-import java.time.LocalDate
-
 
 data class RunningGoal(
         val id: Long = 0,
@@ -12,12 +10,12 @@ data class RunningGoal(
         var view: GoalView = GoalView(),
         var deleted: Boolean = false
 ) {
-    fun updateProgressValues(onDate: LocalDate = LocalDate.now()) {
+    fun updateProgressValues(onDate: GoalDate = GoalDate()) {
         target.period = Period(target.period.from, target.period.to, onDate)
         setProgress(this, onDate)
     }
 
-    private fun setProgress(runningGoal: RunningGoal, today: LocalDate) {
+    private fun setProgress(runningGoal: RunningGoal, today: GoalDate) {
         val currentDistance = runningGoal.progress.distanceToday.value
 
         val daysTotal = runningGoal.target.period.totalDays
@@ -35,7 +33,7 @@ data class RunningGoal(
         }
     }
 
-    private fun getStatus(onDate: LocalDate): GoalStatus {
+    private fun getStatus(onDate: GoalDate): GoalStatus {
         return when {
             onDate.isBefore(target.period.from) -> GoalStatus.NOT_STARTED
             onDate.isAfter(target.period.to) -> GoalStatus.EXPIRED

@@ -20,4 +20,14 @@
     <string name="message_no_default_sync_sources" formatted="false">No Default Sync Sources found.\nPlease configure one first.</string>
     <string name="warning_goal_for_widget_deleted">Goal for this widget has been deleted!</string>
 
+    <!--GOAL STATUS-->
+    <string name="status_ongoing">Ongoing</string>
+    <string name="status_not_started">Not started</string>
+    <string name="status_expired">Expired</string>
+    <string name="status_unknown">Unknown</string>
+
+    <!--LIST OF GOALS-->
+    <string name="goal_period_summary" formatted="true">%1$s - %2$s (%3$d / %4$d days)</string>
+    <string name="goal_target_distance">/ %1$s</string>
+
 </resources>

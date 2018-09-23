@@ -12,7 +12,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 
-@Database(entities = [RunningGoalEntity::class, SyncSourceEntity::class, WidgetEntity::class], version = 1)
+@Database(entities = [RunningGoalEntity::class, SyncSourceEntity::class, WidgetEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {

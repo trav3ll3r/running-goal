@@ -15,6 +15,7 @@ import au.com.beba.runninggoal.component.DistancePickerDialog
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.Distance
+import au.com.beba.runninggoal.models.GoalDate
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.Period
 import au.com.beba.runninggoal.models.RunningGoal
@@ -27,8 +28,6 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 
@@ -54,8 +53,6 @@ class GoalActivity : AppCompatActivity() {
     lateinit var widgetRepository: WidgetRepository
     @Inject
     lateinit var goalWidgetUpdater: GoalWidgetUpdater
-
-    private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -107,7 +104,6 @@ class GoalActivity : AppCompatActivity() {
         return goal ?: RunningGoal()
     }
 
-
     private fun initForm() {
         initDistancePicker(findViewById(R.id.goal_distance))
         initDistancePicker(findViewById(R.id.current_distance))
@@ -126,22 +122,14 @@ class GoalActivity : AppCompatActivity() {
         goal_name.setText(goalName, TextView.BufferType.EDITABLE)
         goal_distance.setText(distance, TextView.BufferType.EDITABLE)
         current_distance.setText(currentDistance, TextView.BufferType.EDITABLE)
-        goal_start.setText(formatDate(startDate), TextView.BufferType.EDITABLE)
-        goal_end.setText(formatDate(endDate), TextView.BufferType.EDITABLE)
-    }
-
-    private fun parseDate(value: String): LocalDate {
-        return LocalDate.parse(value, dateFormatter)
-    }
-
-    private fun formatDate(value: LocalDate): String {
-        return dateFormatter.format(value)
+        goal_start.setText(startDate.asDisplayLocalLong(), TextView.BufferType.EDITABLE)
+        goal_end.setText(endDate.asDisplayLocalLong(), TextView.BufferType.EDITABLE)
     }
 
     private fun saveGoal(goal: RunningGoal) = launchSilent(UI) {
         Log.i(TAG, "saveGoal")
-        val startDate = parseDate(goal_start.text.toString())
-        val endDate = parseDate(goal_end.text.toString())
+        val startDate = GoalDate(goal_start.text.toString(), GoalDate.EARLIEST)
+        val endDate = GoalDate(goal_end.text.toString())
 
         goal.name = goal_name.text.toString()
         goal.target = GoalTarget(
@@ -199,12 +187,18 @@ class GoalActivity : AppCompatActivity() {
 
     private fun initDatePicker(editText: EditText) {
         val dateListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            editText.setText(dateFormatter.format(LocalDate.of(year, monthOfYear + 1, dayOfMonth)))
+            val selectedDate = GoalDate(year, monthOfYear + 1, dayOfMonth)
+            editText.setText(selectedDate.asDisplayLocalLong())
         }
 
         editText.setOnClickListener {
-            val currentDate = parseDate(editText.text.toString())
-            val dpd = DatePickerDialog(this, dateListener, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
+            val currentDate = GoalDate(editText.text.toString())
+            val dpd = DatePickerDialog(
+                    this,
+                    dateListener,
+                    currentDate.yearLocal,
+                    currentDate.monthLocal - 1,
+                    currentDate.dayOfMonthLocal)
             dpd.datePicker.firstDayOfWeek = Calendar.MONDAY
             dpd.show()
         }

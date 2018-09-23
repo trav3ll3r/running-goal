@@ -20,23 +20,29 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val progressUpdating: ProgressBar = itemView.find(R.id.goal_item_updating_status)
 
     fun bindView(runningGoal: RunningGoal, listener: AdapterListener<RunningGoal>) {
+        val context = this.itemView.context
+
         lblName.text = runningGoal.name
-        lblPeriod.text = "%s - %s (%s / %s days)".format(runningGoal.target.period.from, runningGoal.target.period.to, runningGoal.progress.daysLapsed, runningGoal.progress.daysTotal)
+        lblPeriod.text = context.getString(R.string.goal_period_summary,
+                runningGoal.target.period.from.asDisplayLocalLong(),
+                runningGoal.target.period.to.asDisplayLocalLong(),
+                runningGoal.progress.daysLapsed,
+                runningGoal.progress.daysTotal)
         lblCurrent.text = runningGoal.progress.distanceToday.display()
-        lblDistance.text = "/ %s".format(runningGoal.target.distance.display())
+        lblDistance.text = context.getString(R.string.goal_target_distance, runningGoal.target.distance.display())
         lblStatus.let {
             when (runningGoal.progress.status) {
                 GoalStatus.ONGOING -> {
-                    it.text = "Ongoing"; it.backgroundTintList = this.itemView.context.getColorStateList(R.color.status_complete)
+                    it.text = context.getString(R.string.status_ongoing); it.backgroundTintList = context.getColorStateList(R.color.status_complete)
                 }
                 GoalStatus.NOT_STARTED -> {
-                    it.text = "Not started"; it.backgroundTintList = this.itemView.context.getColorStateList(R.color.status_incomplete)
+                    it.text = context.getString(R.string.status_not_started); it.backgroundTintList = context.getColorStateList(R.color.status_incomplete)
                 }
                 GoalStatus.EXPIRED -> {
-                    it.text = "Expired"; it.backgroundTintList = this.itemView.context.getColorStateList(R.color.status_error)
+                    it.text = context.getString(R.string.status_expired); it.backgroundTintList = context.getColorStateList(R.color.status_error)
                 }
                 GoalStatus.UNKNOWN -> {
-                    it.text = "Unknown"; it.backgroundTintList = this.itemView.context.getColorStateList(R.color.status_incomplete)
+                    it.text = context.getString(R.string.status_unknown); it.backgroundTintList = context.getColorStateList(R.color.status_incomplete)
                 }
             }
         }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.util.Log
 import au.com.beba.runninggoal.models.Distance
+import au.com.beba.runninggoal.models.GoalDate
 import au.com.beba.runninggoal.models.GoalTarget
 import au.com.beba.runninggoal.models.Period
 import au.com.beba.runninggoal.models.RunningGoal
@@ -13,7 +14,6 @@ import au.com.beba.runninggoal.persistence.RunningGoalDao
 import au.com.beba.runninggoal.persistence.RunningGoalEntity
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.withContext
-import java.time.LocalDate
 import kotlin.coroutines.experimental.CoroutineContext
 
 
@@ -54,9 +54,8 @@ class GoalRepo private constructor(
                     it.goalName,
                     GoalTarget(
                             Distance(it.targetDistance),
-                            Period(LocalDate.ofEpochDay(it.startDate), LocalDate.ofEpochDay(it.endDate))
+                            buildUtcPeriod(it)
                     )
-                    //view = GoalView(GoalViewType.fromDbValue(it.viewType))
             )
             goal.progress.distanceToday = Distance(it.currentDistance)
             goal.updateProgressValues()
@@ -80,9 +79,10 @@ class GoalRepo private constructor(
                     goalEntity.goalName,
                     GoalTarget(
                             Distance(goalEntity.targetDistance),
-                            Period(LocalDate.ofEpochDay(goalEntity.startDate), LocalDate.ofEpochDay(goalEntity.endDate))
+                            buildUtcPeriod(goalEntity)
                     )
             )
+
             goal.progress.distanceToday = Distance(goalEntity.currentDistance)
             goal.updateProgressValues()
         } else {
@@ -106,8 +106,9 @@ class GoalRepo private constructor(
         goalEntity.goalName = goal.name
         goalEntity.targetDistance = goal.target.distance.value
         goalEntity.currentDistance = goal.progress.distanceToday.value
-        goalEntity.startDate = goal.target.period.from.toEpochDay()
-        goalEntity.endDate = goal.target.period.to.toEpochDay()
+
+        goalEntity.startDate = goal.target.period.from.asEpochUtc()
+        goalEntity.endDate = goal.target.period.to.asEpochUtc()
 
         var id: Long = runningGoalDao.insert(goalEntity)
         if (id < 0L) {
@@ -131,6 +132,10 @@ class GoalRepo private constructor(
         //cachedGoals.postValue(removeGoalFromLiveData(goal))
 
         deletedRows
+    }
+
+    private fun buildUtcPeriod(goalEntity: RunningGoalEntity): Period {
+        return Period(GoalDate(goalEntity.startDate), GoalDate(goalEntity.endDate))
     }
 
     /**

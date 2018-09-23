@@ -3,20 +3,20 @@
 buildscript {
     ext {
         libs = [
-             supportLibVersion       : "27.1.1",
+             supportLibVersion       : "28.0.0-rc01",
              playServicesAuthVer     : "15.0.1",
              firebaseCoreVer         : "16.0.0",
              firebaseDatabaseVer     : "16.0.1",
              firebaseAuthVer         : "16.0.1",
              constraintLayoutVer     : "1.1.2",
-             daggerVersion           : "2.14.1",
+             daggerVersion           : "2.15",
              javaxInjectVersion      : "1",
              gsonVer                 : "2.8.0",
              roomVer                 : "1.1.1", // or, for latest rc, use "1.1.1-rc1"
              archLifecycleVer        : "1.1.1",
         ]
         kotlin = [
-            kotlinVer                : "1.2.61",
+            kotlinVer                : "1.2.70",
             ankoVer                  : "0.10.1",
             kotlinCoroutinesVer      : "0.22.5",
         ]
@@ -32,7 +32,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-rc02'
+        classpath 'com.android.tools.build:gradle:3.2.0-rc03'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin.kotlinVer}"
 
         // NOTE: Do not place your application dependencies here; they belong

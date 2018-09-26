@@ -5,11 +5,11 @@ import android.content.Context
 import android.util.Log
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.WidgetRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
@@ -47,7 +47,7 @@ class GoalWidgetUpdater @Inject constructor(var goalRepo: GoalRepository, var wi
         // Get the layout for the App Widget and attach an on-click listener to the button
         val rootView = RemoteViews(context.packageName, R.layout.goal_widget)
 
-        launchSilent {
+        async {
             Log.d(TAG, "updateWidgetView | appWidgetId=%s".format(appWidgetId))
             val goal = getGoalForWidget(appWidgetId)
             if (goal == null) {

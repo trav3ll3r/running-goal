@@ -2,12 +2,11 @@ package au.com.beba.runninggoal
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
@@ -16,6 +15,7 @@ import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.repo.SyncSourceRepository
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch

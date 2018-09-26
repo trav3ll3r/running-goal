@@ -1,7 +1,7 @@
 package au.com.beba.runninggoal.feature.goals
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher

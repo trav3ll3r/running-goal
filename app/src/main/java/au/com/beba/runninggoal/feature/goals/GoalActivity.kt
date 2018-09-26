@@ -5,15 +5,14 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.DistancePickerDialog
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
-import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalDate
 import au.com.beba.runninggoal.models.GoalTarget
@@ -22,12 +21,13 @@ import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.WidgetRepository
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_goal.*
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
+import org.jetbrains.anko.find
 import java.util.*
 import javax.inject.Inject
 
@@ -105,38 +105,38 @@ class GoalActivity : AppCompatActivity() {
     }
 
     private fun initForm() {
-        initDistancePicker(findViewById(R.id.goal_distance))
-        initDistancePicker(findViewById(R.id.current_distance))
+        initDistancePicker(find(R.id.goal_distance))
+        initDistancePicker(find(R.id.current_distance))
 
-        initDatePicker(findViewById(R.id.goal_start))
-        initDatePicker(findViewById(R.id.goal_end))
+        initDatePicker(find(R.id.goal_start))
+        initDatePicker(find(R.id.goal_end))
     }
 
-    private fun populateGoal(goal: RunningGoal) = launchSilent(UI) {
+    private fun populateGoal(goal: RunningGoal) = async(UI) {
         val goalName = goal.name
         val distance = goal.target.distance.display()
         val currentDistance = goal.progress.distanceToday.display()
         val startDate = (goal.target.period.from)
         val endDate = (goal.target.period.to)
 
-        goal_name.setText(goalName, TextView.BufferType.EDITABLE)
-        goal_distance.setText(distance, TextView.BufferType.EDITABLE)
-        current_distance.setText(currentDistance, TextView.BufferType.EDITABLE)
-        goal_start.setText(startDate.asDisplayLocalLong(), TextView.BufferType.EDITABLE)
-        goal_end.setText(endDate.asDisplayLocalLong(), TextView.BufferType.EDITABLE)
+        find<TextView>(R.id.goal_name).setText(goalName, TextView.BufferType.EDITABLE)
+        find<TextView>(R.id.goal_distance).setText(distance, TextView.BufferType.EDITABLE)
+        find<TextView>(R.id.current_distance).setText(currentDistance, TextView.BufferType.EDITABLE)
+        find<TextView>(R.id.goal_start).setText(startDate.asDisplayLocalLong(), TextView.BufferType.EDITABLE)
+        find<TextView>(R.id.goal_end).setText(endDate.asDisplayLocalLong(), TextView.BufferType.EDITABLE)
     }
 
-    private fun saveGoal(goal: RunningGoal) = launchSilent(UI) {
+    private fun saveGoal(goal: RunningGoal) = async(UI) {
         Log.i(TAG, "saveGoal")
-        val startDate = GoalDate(goal_start.text.toString(), GoalDate.EARLIEST)
-        val endDate = GoalDate(goal_end.text.toString())
+        val startDate = GoalDate(find<TextView>(R.id.goal_start).text.toString(), GoalDate.EARLIEST)
+        val endDate = GoalDate(find<TextView>(R.id.goal_end).text.toString())
 
-        goal.name = goal_name.text.toString()
+        goal.name = find<TextView>(R.id.goal_name).text.toString()
         goal.target = GoalTarget(
-                Distance(goal_distance.text.toString()),
+                Distance(find<TextView>(R.id.goal_distance).text.toString()),
                 Period(startDate, endDate)
         )
-        goal.progress.distanceToday = Distance(current_distance.text.toString())
+        goal.progress.distanceToday = Distance(find<TextView>(R.id.current_distance).text.toString())
 
         val goalId = goalRepository.save(goal)
 
@@ -148,7 +148,7 @@ class GoalActivity : AppCompatActivity() {
         exit()
     }
 
-    private fun deleteGoal(runningGoal: RunningGoal) = launchSilent(DefaultDispatcher) {
+    private fun deleteGoal(runningGoal: RunningGoal) = async(DefaultDispatcher) {
         Log.i(TAG, "deleteGoal")
 
         Log.d(TAG, "deleteGoal | goalId=%s".format(runningGoal.id))

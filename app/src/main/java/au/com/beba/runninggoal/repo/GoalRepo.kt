@@ -1,9 +1,9 @@
 package au.com.beba.runninggoal.repo
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalDate
 import au.com.beba.runninggoal.models.GoalTarget

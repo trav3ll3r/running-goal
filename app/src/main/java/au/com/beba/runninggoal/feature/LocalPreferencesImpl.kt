@@ -8,7 +8,7 @@ private const val sharedPrefId: String = "RUNNING_GOAL_SHARED_PREFS"
 class LocalPreferencesImpl(private val context: Context) : LocalPreferences {
 
     override fun getValueByKey(key: String): String {
-        return preferences.getString(key, "")
+        return preferences.getString(key, "")!!
     }
 
     override fun setValueForKey(key: String, value: String?) {

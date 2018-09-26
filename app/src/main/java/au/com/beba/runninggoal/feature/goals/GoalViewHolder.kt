@@ -1,9 +1,9 @@
 package au.com.beba.runninggoal.feature.goals
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.AdapterListener
 import au.com.beba.runninggoal.models.GoalStatus

@@ -2,7 +2,7 @@ package au.com.beba.runninggoal.component
 
 import android.app.Dialog
 import android.content.Context
-import android.support.v7.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatButton
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.models.Distance
 

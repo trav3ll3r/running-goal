@@ -1,6 +1,6 @@
 package au.com.beba.runninggoal.repo
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import au.com.beba.runninggoal.models.RunningGoal
 
 

@@ -1,3 +1,4 @@
+def androidx = rootProject.ext.androidx
 def libs = rootProject.ext.libs
 def kotlin = rootProject.ext.kotlin
 def test = rootProject.ext.testing
@@ -15,7 +16,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -59,28 +60,18 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:design:${libs.supportLibVersion}"
-    implementation "com.android.support:appcompat-v7:${libs.supportLibVersion}"
-    implementation "com.android.support:recyclerview-v7:${libs.supportLibVersion}"
+    implementation "com.google.android.material:material:${androidx.materialVer}"
+    implementation "androidx.appcompat:appcompat:${androidx.appcompatVer}"
+    implementation "androidx.recyclerview:recyclerview:${androidx.recyclerViewVer}"
 
-    //implementation "com.android.support:cardview-v7:${libs.supportLibVersion}"
-    implementation "com.android.support.constraint:constraint-layout:${libs.constraintLayoutVer}"
+    implementation "androidx.constraintlayout:constraintlayout:${androidx.constraintLayoutVer}"
 
-    //    implementation "com.android.support:support-vector-drawable:${libs.supportLibVersion}"
-
-    //    implementation "com.android.support:animated-vector-drawable:${libs.supportLibVersion}"
-    implementation "android.arch.lifecycle:extensions:$libs.archLifecycleVer"
-    kapt "android.arch.lifecycle:compiler:$libs.archLifecycleVer"
+    implementation "androidx.lifecycle:lifecycle-extensions:${androidx.archLifecycleVer}"
+    kapt "androidx.lifecycle:lifecycle-compiler:${androidx.archLifecycleVer}"
 
     // Room (ORM)
-    implementation "android.arch.persistence.room:runtime:$libs.roomVer"
-    kapt "android.arch.persistence.room:compiler:$libs.roomVer"
-
-    // FIREBASE AND MAPS
-    //    implementation "com.google.firebase:firebase-core:${libs.firebaseCoreVer}"
-    //    implementation "com.google.firebase:firebase-database:${libs.firebaseDatabaseVer}"
-    //    implementation "com.google.firebase:firebase-auth:${libs.firebaseAuthVer}"
-    //    implementation "com.google.android.gms:play-services-auth:${libs.playServicesAuthVer}"
+    implementation "androidx.room:room-runtime:${androidx.roomVer}"
+    kapt "androidx.room:room-compiler:${androidx.roomVer}"
 
     // DAGGER2 dependencies
     implementation "com.google.dagger:dagger:${libs.daggerVersion}"
@@ -91,11 +82,10 @@ dependencies {
     implementation "javax.inject:javax.inject:${libs.javaxInjectVersion}"
 
     // UTILS
-    //implementation "com.google.code.gson:gson:${libs.gsonVer}"
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    implementation("com.crashlytics.sdk.android:crashlytics:${libs.crashlytics}") {
         transitive = true
     }
-    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation "com.facebook.stetho:stetho:${libs.stetho}"
 }
 
 // KOTLIN, ANKO, KTX
@@ -118,10 +108,7 @@ dependencies {
 // TESTING
 dependencies {
     testImplementation "junit:junit:${test.junit}"
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
 
 }
-
-// ADD THIS AT THE BOTTOM
-//apply plugin: 'com.google.gms.google-services'

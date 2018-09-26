@@ -2,8 +2,8 @@ package au.com.beba.runninggoal.feature.progressSync
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.JobIntentService
 import android.util.Log
+import androidx.core.app.JobIntentService
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.models.Distance
 import au.com.beba.runninggoal.models.GoalStatus

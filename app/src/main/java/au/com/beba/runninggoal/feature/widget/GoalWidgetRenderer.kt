@@ -14,10 +14,10 @@ import android.graphics.Point
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
-import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.models.GoalDate

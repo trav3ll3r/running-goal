@@ -5,10 +5,10 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import au.com.beba.runninggoal.launchSilent
 import au.com.beba.runninggoal.models.Widget
 import au.com.beba.runninggoal.repo.WidgetRepository
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
@@ -47,7 +47,7 @@ open class RunningGoalWidgetProvider : AppWidgetProvider() {
             val appWidgetId = getWidgetIdFromIntent(intent)
             Log.d(TAG, "onReceive | FLIP_CLICKED | appWidgetId=%s".format(appWidgetId))
             if (appWidgetId > 0) {
-                launchSilent {
+                async {
                     val widget = widgetRepo.getByWidgetId(appWidgetId)
 
                     if (widget != null) {

@@ -1,7 +1,7 @@
 package au.com.beba.runninggoal.di.module
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import au.com.beba.runninggoal.feature.goals.RunningGoalViewModel
 import dagger.Binds
 import dagger.Module

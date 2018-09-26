@@ -14,7 +14,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -29,22 +29,20 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
-    implementation "org.jetbrains.anko:anko:${kotlin.ankoVer}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5"
-    implementation "org.jetbrains.anko:anko-coroutines:${kotlin.ankoVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
 }
 
 // NETWORKING/COMMS
 dependencies {
-    implementation "com.squareup.okhttp3:okhttp:3.9.1"
+    implementation "com.squareup.okhttp3:okhttp:3.10.0"
     implementation "com.google.code.gson:gson:${libs.gsonVer}"
 }
 
 // TESTING
 dependencies {
     testImplementation "junit:junit:${test.junit}"
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
 
 }
 repositories {

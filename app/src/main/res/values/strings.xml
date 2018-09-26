@@ -13,6 +13,7 @@
     <string name="running_goals">Running goals</string>
     <string name="sync_sources">Sync sources</string>
     <string name="sync_now">Sync now</string>
+    <string name="sync">Sync</string>
     <string name="edit_sync_source">Edit Sync Source</string>
     <string name="access_token">Access Token</string>
 

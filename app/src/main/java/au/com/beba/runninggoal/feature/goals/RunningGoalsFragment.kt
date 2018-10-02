@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +16,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.base.AdapterListener
+import au.com.beba.runninggoal.feature.base.ListListener
+import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import com.google.android.material.button.MaterialButton
@@ -26,18 +29,13 @@ import javax.inject.Inject
 
 class RunningGoalsFragment : Fragment() {
 
-    interface RunningGoalListener {
-        fun onAddRunningGoal()
-        fun onRunningGoalClicked(runningGoal: RunningGoal)
-    }
-
     @Inject
     lateinit var factory: ViewModelProvider.Factory
     @Inject
     lateinit var goalRepository: GoalRepository
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this, factory).get(RunningGoalViewModel::class.java)
+        ViewModelProviders.of(this, factory).get(RunningGoalsViewModel::class.java)
     }
 
     companion object {
@@ -48,34 +46,43 @@ class RunningGoalsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: RunningGoalsAdapter
 
-    private var listener: RunningGoalListener? = null
+    private var goalActionListener: GoalActionListener? = null
+    private var listItemListener: ListListener<RunningGoal>? = null
 
+    /* ********* */
+    /* LIFECYCLE */
+    /* ********* */
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-
-        viewModel.fetchGoals().observe(this, Observer {
-            it?.let { updateList(it) }
-        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_running_goals, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         initFAB()
         initRecyclerView()
+        initLiveData()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is RunningGoalListener) {
-            listener = context
+        if (context is GoalActionListener) {
+            goalActionListener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement %s".format(RunningGoalListener::class.java.simpleName))
+            Log.d(TAG, context.toString() + " must implement %s".format(GoalActionListener::class.java.simpleName))
+        }
+
+        if (context is ListListener<*>) {
+            listItemListener = context as ListListener<RunningGoal>
+        } else {
+            Log.d(TAG, context.toString() + " must implement %s".format(ListListener::class.java.simpleName))
         }
     }
 
@@ -86,12 +93,26 @@ class RunningGoalsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+        goalActionListener = null
+        listItemListener = null
+    }
+
+    /* ************ */
+    /* INITIALISERS */
+    /* ************ */
+    private fun initToolbar() {
+        find<Toolbar>(R.id.toolbar).apply {
+            inflateMenu(R.menu.main_menu)
+            setTitle(R.string.running_goals)
+            toolbar.setOnMenuItemClickListener {
+                handleToolbarOptionsItemSelected(it)
+            }
+        }
     }
 
     private fun initFAB() {
         fab = find(R.id.fab_sync)
-        fab.setOnClickListener { listener?.onAddRunningGoal() }
+//        fab.setOnClickListener { listener?.onAddRunningGoal() }
     }
 
     private fun initRecyclerView() {
@@ -102,12 +123,49 @@ class RunningGoalsFragment : Fragment() {
         val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        recyclerAdapter = RunningGoalsAdapter(mutableListOf(), object : AdapterListener<RunningGoal> {
-            override fun onItemClick(item: RunningGoal) {
-                listener?.onRunningGoalClicked(item)
+        recyclerAdapter = RunningGoalsAdapter(mutableListOf(), object : ListListener<GoalViewHolder> {
+            override fun onItemClick(item: GoalViewHolder) {
+                goalActionListener?.showGoalDetails(item.itemView.tag as RunningGoal, item)
+                listItemListener?.onItemClick(item.itemView.tag as RunningGoal)
             }
         })
         recyclerView.adapter = recyclerAdapter
+    }
+
+    private fun initLiveData() {
+        viewModel.goals.observe(this, Observer {
+            if (it != null) {
+                updateList(it)
+            }
+        })
+        viewModel.fetchGoals()
+    }
+
+    /* ******* */
+    /* ACTIONS */
+    /* ******* */
+    //EMPTY
+
+    /* ********* */
+    /* REACTIONS */
+    /* ********* */
+    private fun handleToolbarOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.action_sync_all -> {
+                //syncAllGoals()
+                return true
+            }
+            R.id.action_create_goal -> {
+                goalActionListener?.createGoal()
+                return true
+            }
+            R.id.action_manage_sync_sources -> {
+                //showSyncSources()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun updateList(items: List<RunningGoal>) {
@@ -115,5 +173,4 @@ class RunningGoalsFragment : Fragment() {
         recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()
     }
-
 }

@@ -2,7 +2,8 @@ package au.com.beba.runninggoal.di.module
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import au.com.beba.runninggoal.feature.goals.RunningGoalViewModel
+import au.com.beba.runninggoal.feature.goal.GoalViewModel
+import au.com.beba.runninggoal.feature.goals.RunningGoalsViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -15,8 +16,13 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RunningGoalViewModel::class)
-    internal abstract fun runningGoalViewModel(viewModel: RunningGoalViewModel): ViewModel
+    @ViewModelKey(RunningGoalsViewModel::class)
+    internal abstract fun runningGoalViewModel(viewModel: RunningGoalsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GoalViewModel::class)
+    internal abstract fun goalViewModel(viewModel: GoalViewModel): ViewModel
 
     //Add more ViewModels here
 }

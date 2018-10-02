@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.base.AdapterListener
+import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.progressSync.SyncSourcesAdapter
 import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.repo.GoalRepository
@@ -84,7 +84,7 @@ class SyncSourcesFragment : Fragment() {
         val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        recyclerAdapter = SyncSourcesAdapter(mutableListOf(), object : AdapterListener<SyncSource> {
+        recyclerAdapter = SyncSourcesAdapter(mutableListOf(), object : ListListener<SyncSource> {
             override fun onItemClick(item: SyncSource) {
                 listener?.onSyncSourceClicked(item)
             }

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+    android:shape="oval">
 
     <size
-        android:width="24dp"
-        android:height="8dp" />
+        android:width="16dp"
+        android:height="16dp" />
 
-    <corners android:radius="24dp" />
     <!--PLACEHOLDER SOLID COLOUR (TINTED WHEN USED)-->
     <solid android:color="@android:color/white" />
 

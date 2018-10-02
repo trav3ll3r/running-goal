@@ -98,6 +98,7 @@ dependencies {
     implementation "org.jetbrains.anko:anko-coroutines:${kotlin.ankoVer}"
     implementation "org.jetbrains.anko:anko-support-v4:${kotlin.ankoVer}"
     implementation "org.jetbrains.anko:anko-appcompat-v7:${kotlin.ankoVer}"
+    implementation 'androidx.core:core-ktx:1.0.0'
 }
 
 // MODULES

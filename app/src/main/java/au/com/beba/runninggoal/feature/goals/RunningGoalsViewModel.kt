@@ -10,12 +10,14 @@ import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 
-class RunningGoalViewModel @Inject constructor(private val goalRepository: GoalRepository) : ViewModel() {
+class RunningGoalsViewModel @Inject constructor(private val goalRepository: GoalRepository) : ViewModel() {
 
-    fun fetchGoals(): LiveData<List<RunningGoal>> {
+    val goals: LiveData<List<RunningGoal>>
+        get() = goalRepository.getGoals()
+
+    fun fetchGoals() {
         launch {
             withContext(DefaultDispatcher) { goalRepository.fetchGoals() }
         }
-        return goalRepository.getGoals()
     }
 }

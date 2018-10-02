@@ -7,7 +7,14 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.transition.ChangeBounds
+import androidx.transition.ChangeImageTransform
+import androidx.transition.ChangeTransform
+import androidx.transition.TransitionSet
+import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goals.GoalActivity
+import au.com.beba.runninggoal.feature.goals.GoalDetailsFragment
+import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
@@ -15,17 +22,15 @@ import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.repo.SyncSourceRepository
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.find
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(),
         SyncSourcesFragment.SyncSourceListener,
-        RunningGoalsFragment.RunningGoalListener {
+        GoalActionListener {
 
     @Inject
     lateinit var syncSourceRepository: SyncSourceRepository
@@ -34,16 +39,12 @@ class MainActivity : AppCompatActivity(),
         private val TAG = MainActivity::class.java.simpleName
     }
 
-    private lateinit var bottomNavigationView: BottomNavigationView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initBottomNavigation()
-
-        bottomNavigationView.selectedItemId = R.id.action_running_goals
+        showRunningGoals()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -55,31 +56,36 @@ class MainActivity : AppCompatActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
-            R.id.action_sync_now -> {
-                syncNow()
-                true
+            R.id.action_sync_all -> {
+                syncAllGoals()
+                return true
+            }
+            R.id.action_create_goal -> {
+                createGoal()
+                return true
+            }
+            R.id.action_manage_sync_sources -> {
+                showSyncSources()
+                return true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun initBottomNavigation() {
-        bottomNavigationView = find(R.id.bottom_navigation)
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.action_running_goals -> showRunningGoals()
-                R.id.action_sync_sources -> showSyncSources()
-            }
-            true
-        }
+    override fun createGoal() {
+        gotoCreateGoal()
     }
 
-    override fun onAddRunningGoal() {
-        createNewGoal()
+    override fun editGoal(runningGoal: RunningGoal) {
+        gotoEditGoal(runningGoal)
     }
 
-    override fun onRunningGoalClicked(runningGoal: RunningGoal) {
-        editRunningGoal(runningGoal)
+    override fun syncGoal(runningGoal: RunningGoal) {
+        syncOneGoal(runningGoal)
+    }
+
+    override fun showGoalDetails(runningGoal: RunningGoal, holder: GoalViewHolder) {
+        gotoGoalDetails(runningGoal, holder)
     }
 
     override fun onSyncSourceClicked(syncSource: SyncSource) {
@@ -90,16 +96,34 @@ class MainActivity : AppCompatActivity(),
         supportFragmentManager.beginTransaction().replace(R.id.content_container, RunningGoalsFragment()).commit()
     }
 
+    private fun gotoGoalDetails(runningGoal: RunningGoal, holder: GoalViewHolder) {
+        supportFragmentManager.beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.content_container, GoalDetailsFragment.newInstance(runningGoal).apply {
+                    this.sharedElementEnterTransition = DetailsTransition()
+                    this.enterTransition = DetailsTransition()  //ChangeBounds() //Fade()
+                    exitTransition = DetailsTransition()    //Fade()
+                    this.sharedElementReturnTransition = DetailsTransition()
+                })
+                .addToBackStack(null)
+                .apply {
+                    holder.getSharedViews().forEach {
+                        addSharedElement(it, it.transitionName)
+                    }
+                }
+                .commit()
+    }
+
     private fun showSyncSources() {
         supportFragmentManager.beginTransaction().replace(R.id.content_container, SyncSourcesFragment()).commit()
     }
 
-    private fun createNewGoal() {
+    private fun gotoCreateGoal() {
         val intent = Intent(this, GoalActivity::class.java)
         startActivity(intent)
     }
 
-    private fun editRunningGoal(runningGoal: RunningGoal) {
+    private fun gotoEditGoal(runningGoal: RunningGoal) {
         val intent = GoalActivity.buildIntent(this, runningGoal.id)
         startActivity(intent)
     }
@@ -109,16 +133,27 @@ class MainActivity : AppCompatActivity(),
         startActivity(intent)
     }
 
-    private fun syncNow() {
-        Log.i(TAG, "syncNow")
-        val jobId = 1000
+    private fun syncOneGoal(runningGoal: RunningGoal) {
+        Log.i(TAG, "syncOneGoal")
+        syncGoals(runningGoal, 1001)
+    }
 
+    private fun syncAllGoals() {
+        Log.i(TAG, "syncAllGoals")
+        syncGoals(null, 1000)
+    }
+
+    private fun syncGoals(runningGoal: RunningGoal?, jobId: Int) {
+        Log.i(TAG, "syncGoals")
         val ctx = this
         launch {
             val syncSource = syncSourceRepository.getDefaultSyncSource()
             if (syncSource.isDefault) {
                 // Enqueues new JobIntentService
-                SyncSourceIntentService.enqueueWork(ctx, SyncSourceIntentService.buildIntent(), jobId)
+                SyncSourceIntentService.enqueueWork(
+                        ctx,
+                        SyncSourceIntentService.buildIntent(runningGoal),
+                        jobId)
             } else {
                 launch(UI) {
                     // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
@@ -135,5 +170,19 @@ class MainActivity : AppCompatActivity(),
                 }
             }
         }
+    }
+}
+
+class DetailsTransition : TransitionSet() {
+    init {
+        duration = 400
+        ordering = ORDERING_TOGETHER
+        addTransition(ChangeBounds())
+                .addTransition(ChangeTransform())
+                .addTransition(ChangeImageTransform())
+
+//        ordering = ORDERING_SEQUENTIAL
+//                addTransition(AutoTransition())
+
     }
 }

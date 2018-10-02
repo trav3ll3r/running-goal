@@ -6,6 +6,7 @@ import au.com.beba.runninggoal.di.BroadcastScope
 import au.com.beba.runninggoal.di.FragmentScope
 import au.com.beba.runninggoal.di.ServiceScope
 import au.com.beba.runninggoal.feature.goals.GoalActivity
+import au.com.beba.runninggoal.feature.goals.GoalDetailsFragment
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
@@ -34,6 +35,10 @@ abstract class AndroidBindingModule {
     @FragmentScope
     @ContributesAndroidInjector
     abstract fun runningGoalsFragment(): RunningGoalsFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector
+    abstract fun goalDetailsFragment(): GoalDetailsFragment
 
     @FragmentScope
     @ContributesAndroidInjector

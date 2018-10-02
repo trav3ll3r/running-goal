@@ -4,57 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="@dimen/base_x2">
 
+    <include layout="@layout/list_item_guidelines"/>
+
+    <!--NAME-->
     <TextView
         android:id="@+id/goal_item_name"
         style="@style/Text.Large"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/MATCH_CONSTRAINTS"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start"
         tools:text="Goal Name" />
 
+    <!--STATUS BADGE-->
     <TextView
-        android:id="@+id/goal_item_goal_period"
-        style="@style/Text.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/goal_item_name"
-        tools:text="01/01/2018 - 31/12/2018 (365 days)" />
-
-    <TextView
-        android:id="@+id/sync_source_item_status"
-        style="@style/Text.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:background="@drawable/status_rounded"
-        android:paddingHorizontal="8dp"
-        android:textColor="@color/darker_background"
+        android:id="@+id/goal_item_status"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/status_circle"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Ongoing" />
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+        app:layout_constraintTop_toTopOf="@id/goal_item_name"
+        app:layout_constraintBottom_toBottomOf="@id/goal_item_name"
+        tools:visibility="visible"/>
 
-    <TextView
-        android:id="@+id/goal_item_goal_distance"
-        style="@style/Text.Small"
+    <!--PERIOD PROGRESS-->
+    <au.com.beba.runninggoal.component.NumericProgress
+        android:id="@+id/goal_period_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@id/goal_item_current_distance"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="/50" />
+        app:currentValue="50"
+        app:totalValue="100"
+        app:unitValue="days"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_name"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
+        />
 
-    <TextView
-        android:id="@+id/goal_item_current_distance"
-        style="@style/Text.Large"
+    <!--DISTANCE PROGRESS-->
+    <au.com.beba.runninggoal.component.NumericProgress
+        android:id="@+id/goal_distance_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintEnd_toStartOf="@id/goal_item_goal_distance"
-        app:layout_constraintTop_toBottomOf="@id/sync_source_item_status"
-        tools:text="100" />
+        app:currentValue="50"
+        app:totalValue="100"
+        app:unitValue="km"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_name"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+        />
 
     <ProgressBar
         android:id="@+id/goal_item_updating_status"
@@ -62,10 +61,10 @@
         android:layout_height="32dp"
         android:indeterminate="true"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

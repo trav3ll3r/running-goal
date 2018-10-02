@@ -2,6 +2,7 @@ package au.com.beba.runninggoal.networking.source
 
 import android.util.Log
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
+import au.com.beba.runninggoal.networking.model.AthleteActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.experimental.DefaultDispatcher
@@ -10,12 +11,6 @@ import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.Response
 import kotlin.coroutines.experimental.CoroutineContext
-
-
-/**
- * Simple model to map JSON payload into AthleteActivity model
- */
-data class AthleteActivity(val name: String, val distance: Float, val private: Boolean)
 
 
 class StravaSyncSourceProvider
@@ -68,8 +63,6 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
         Log.v(TAG, "getActivitiesForUrl | request url=%s".format(request.url()))
 
         val responseDef = executeRequest(request)
-
-
         val activities = extractActivities(responseDef.await())
         Log.v(TAG, "distanceForActivities | page | activities=%s".format(activities.size))
 

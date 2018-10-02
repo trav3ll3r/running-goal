@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.base.AdapterListener
+import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.models.SyncSource
 
 
-class SyncSourcesAdapter(private val items: MutableList<SyncSource>, private val listener: AdapterListener<SyncSource>) : RecyclerView.Adapter<SyncSourceViewHolder>() {
+class SyncSourcesAdapter(private val items: MutableList<SyncSource>, private val listener: ListListener<SyncSource>) : RecyclerView.Adapter<SyncSourceViewHolder>() {
 
     // BUILD ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SyncSourceViewHolder {

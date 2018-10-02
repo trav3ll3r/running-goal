@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        app:constraintSetEnd="@id/collapsed"
+        app:constraintSetStart="@id/expanded">
+        <KeyFrameSet>
+            <KeyAttribute app:target="@id/goal_item_status"
+                app:framePosition="20"
+                app:progress="80"/>
+        </KeyFrameSet>
+
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:touchAnchorId="@id/recycler_view"
+            app:touchAnchorSide="top" />
+
+    </Transition>
+
+    <ConstraintSet android:id="@+id/expanded">
+        <Constraint
+            android:id="@id/toolbar_bounds"
+            android:layout_height="@dimen/toolbar_height_goal_details_expanded"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@id/goal_item_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/status_rounded"
+            android:layout_marginStart="@dimen/base_x1"
+            android:layout_marginTop="@dimen/base_x1"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start">
+            <CustomAttribute
+                app:attributeName="textColor"
+                app:customColorValue="@color/primary_text" />
+        </Constraint>
+    </ConstraintSet>
+
+    <!--android:layout_height="?attr/actionBarSize"-->
+    <ConstraintSet android:id="@+id/collapsed">
+        <Constraint
+            android:id="@id/toolbar_bounds"
+            android:layout_height="@dimen/toolbar_height_goal_details_collapsed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@id/goal_item_status"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/status_circle"
+            android:layout_marginStart="@dimen/base_x1"
+            android:layout_marginTop="@dimen/base_x1"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start">
+            <CustomAttribute
+                app:attributeName="textColor"
+                app:customColorValue="@android:color/transparent" />
+        </Constraint>
+
+    </ConstraintSet>
+
+</MotionScene>

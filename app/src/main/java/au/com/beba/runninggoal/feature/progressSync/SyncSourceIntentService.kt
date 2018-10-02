@@ -33,9 +33,19 @@ class SyncSourceIntentService : JobIntentService() {
 
     companion object {
         private val TAG = SyncSourceIntentService::class.java.simpleName
+        private const val EXTRA_GOAL_ID = "EXTRA_GOAL_ID"
 
-        fun buildIntent(): Intent {
-            return Intent()
+        /**
+         * Builds Intent for [SyncSourceIntentService] to update one or all eligible goals
+         *
+         * @param runningGoal NULL for all eligible goals or ONE specific goal
+         */
+        fun buildIntent(runningGoal: RunningGoal?): Intent {
+            return Intent().apply {
+                if (runningGoal != null) {
+                    putExtra(EXTRA_GOAL_ID, runningGoal.id)
+                }
+            }
         }
 
         /**
@@ -61,7 +71,7 @@ class SyncSourceIntentService : JobIntentService() {
             if (syncSource.isDefault) {
                 Log.d(TAG, "onHandleWork | syncType=${syncSource.type}")
 
-                val goals = getGoalsForUpdate()
+                val goals = getGoalsForUpdate(intent.getLongExtra(EXTRA_GOAL_ID, -1L))
 
                 goals.forEach {
                     Log.d(TAG, "onHandleWork | syncGoalId=${it.id}")
@@ -89,9 +99,20 @@ class SyncSourceIntentService : JobIntentService() {
                 goal.target.period.to.asEpochUtc())
     }
 
-    private suspend fun getGoalsForUpdate(): List<RunningGoal> {
-        val goals = withContext(DefaultDispatcher) { goalRepository.fetchGoals() }
-        return goals.filter { it.progress.status in listOf(GoalStatus.NOT_STARTED, GoalStatus.ONGOING) }
+    private suspend fun getGoalsForUpdate(singleGoalId: Long): List<RunningGoal> {
+        val goals = if (singleGoalId > 0) {
+            // ONLY UPDATE SINGLE (SPECIFIC) GOAL
+            val goal = withContext(DefaultDispatcher) { goalRepository.getById(singleGoalId) }
+            if (goal != null) {
+                listOf(goal)
+            } else {
+                listOf()
+            }
+        } else {
+            // UPDATE ALL ELIGIBLE GOALS
+            withContext(DefaultDispatcher) { goalRepository.fetchGoals() }
+        }
+        return goals.filter { it.progress.status in listOf(GoalStatus.EXPIRED, GoalStatus.ONGOING) }
     }
 
     private suspend fun updateGoalWithNewDistance(runningGoal: RunningGoal, distance: Distance, syncSource: SyncSource) {

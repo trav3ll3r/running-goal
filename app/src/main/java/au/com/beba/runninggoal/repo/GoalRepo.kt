@@ -48,7 +48,7 @@ class GoalRepo private constructor(
     override suspend fun fetchGoals(): List<RunningGoal> = withContext(coroutineContext) {
         val goalEntities = runningGoalDao.getAll()
 
-        val goals = goalEntities.map {
+        val goals = goalEntities.asSequence().map {
             val goal = RunningGoal(
                     it.uid,
                     it.goalName,

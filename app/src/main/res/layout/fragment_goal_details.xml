@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/scene_goal_details_toolbar"
+    tools:showPaths="true">
+
+    <!--HEADER DETAILS-->
+    <LinearLayout
+        android:id="@+id/toolbar_bounds"
+        android:layout_width="@dimen/MATCH_CONSTRAINTS"
+        android:layout_height="@dimen/toolbar_height_goal_details_expanded"
+        android:fitsSystemWindows="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/primary_dark"
+        android:orientation="vertical" />
+
+    <include layout="@layout/list_item_guidelines" />
+
+    <!--STATUS BADGE-->
+    <TextView
+        android:id="@+id/goal_item_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/status_rounded"
+        android:visibility="visible"
+        android:layout_marginStart="@dimen/base_x1"
+        android:layout_marginTop="@dimen/base_x1"
+        android:padding="@dimen/base_x1"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start"
+        tools:visibility="visible"
+        tools:text="Ongoing"
+        android:textColor="@color/primary_text"
+        tools:backgroundTint="@color/accent" />
+
+    <!--NAME-->
+    <TextView
+        android:id="@+id/goal_item_name"
+        style="@style/Text.Large"
+        android:textColor="@color/primary_text"
+        android:layout_width="@dimen/MATCH_CONSTRAINTS"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/goal_item_status"
+        app:layout_constraintBottom_toBottomOf="@id/goal_item_status"
+        app:layout_constraintStart_toEndOf="@id/goal_item_status"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+        android:layout_marginStart="@dimen/base_x1"
+        tools:text="Goal Name" />
+
+    <!--EDIT ACTION-->
+    <ImageView
+        android:id="@+id/goal_item_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_pencil_24px"
+        app:layout_constraintTop_toTopOf="@id/goal_item_status"
+        app:layout_constraintBottom_toBottomOf="@id/goal_item_status"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+        android:layout_marginEnd="@dimen/base_x1"
+        android:contentDescription="@null"
+        />
+
+    <!--SYNC ACTION-->
+    <ImageView
+        android:id="@+id/goal_item_sync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_sync_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
+        android:layout_marginBottom="@dimen/base_x1"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+        android:layout_marginEnd="@dimen/base_x1"
+        android:contentDescription="@null"
+        />
+
+    <au.com.beba.runninggoal.component.NumericWithLabel
+        android:id="@+id/goal_distance_current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:NumericWithLabel_numericValue="0"
+        app:NumericWithLabel_unitValue="km"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_name"
+        app:layout_constraintStart_toStartOf="@id/goal_item_name" />
+
+    <au.com.beba.runninggoal.component.NumericWithLabel
+        android:id="@+id/goal_distance_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:NumericWithLabel_numericValue="250"
+        app:NumericWithLabel_unitValue="km"
+        android:layout_marginStart="@dimen/base_x2"
+        app:layout_constraintTop_toTopOf="@id/goal_distance_current"
+        app:layout_constraintBottom_toBottomOf="@id/goal_distance_current"
+        app:layout_constraintStart_toEndOf="@id/goal_distance_current" />
+
+    <!--PERIOD PROGRESS-->
+    <au.com.beba.runninggoal.component.NumericWithLabel
+        android:id="@+id/goal_days_lapsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:NumericWithLabel_numericValue="0"
+        app:NumericWithLabel_unitValue="days"
+        app:layout_constraintTop_toBottomOf="@id/goal_distance_current"
+        app:layout_constraintStart_toStartOf="@id/goal_item_name" />
+
+    <au.com.beba.runninggoal.component.NumericWithLabel
+        android:id="@+id/goal_days_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:NumericWithLabel_numericValue="30"
+        app:NumericWithLabel_unitValue="days"
+        android:layout_marginStart="@dimen/base_x2"
+        app:layout_constraintTop_toTopOf="@id/goal_days_lapsed"
+        app:layout_constraintBottom_toBottomOf="@id/goal_days_lapsed"
+        app:layout_constraintStart_toEndOf="@id/goal_days_lapsed" />
+
+    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="@dimen/MATCH_CONSTRAINTS"
+        android:layout_height="@dimen/MATCH_CONSTRAINTS"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_bounds"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

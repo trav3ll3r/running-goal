@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.WidgetRepository
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 
 class SelectGoalActivity : AppCompatActivity(),
-        RunningGoalsFragment.RunningGoalListener {
+        ListListener<RunningGoal> {
 
     companion object {
         private val TAG = SelectGoalActivity::class.java.simpleName
@@ -52,8 +53,8 @@ class SelectGoalActivity : AppCompatActivity(),
         return widgetId
     }
 
-    override fun onRunningGoalClicked(runningGoal: RunningGoal) {
-        bindGoalToWidget(runningGoal, appWidgetId)
+    override fun onItemClick(item: RunningGoal) {
+        bindGoalToWidget(item, appWidgetId)
     }
 
     private fun showRunningGoals() {
@@ -79,9 +80,4 @@ class SelectGoalActivity : AppCompatActivity(),
     private suspend fun updateWidgetView(runningGoal: RunningGoal) = withContext(DefaultDispatcher) {
         goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
     }
-
-    /**
-     * DO NOTHING
-     */
-    override fun onAddRunningGoal() {}
 }

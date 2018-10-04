@@ -5,27 +5,25 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.models.AthleteActivity
 
 
-class AthleteActivitiesAdapter(private val items: MutableList<AthleteActivity>,
-                               private val listener: ListListener<AthleteActivity>? = null)
-    : RecyclerView.Adapter<ActivityViewHolder>() {
+class WorkoutsAdapter(private val items: MutableList<AthleteActivity>)
+    : RecyclerView.Adapter<WorkoutViewHolder>() {
 
     companion object {
-        private val TAG = AthleteActivitiesAdapter::class.java.simpleName
+        private val TAG = WorkoutsAdapter::class.java.simpleName
     }
 
     // BUILD ViewHolder
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActivityViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.activity_list_item, parent, false)
-        return ActivityViewHolder(v)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item_workout, parent, false)
+        return WorkoutViewHolder(v)
     }
 
     // BIND VALUES TO THE ViewHolder
-    override fun onBindViewHolder(holder: ActivityViewHolder, position: Int) {
-        holder.bindView(getItem(position), listener)
+    override fun onBindViewHolder(holder: WorkoutViewHolder, position: Int) {
+        holder.bindView(getItem(position))
     }
 
     override fun getItemId(position: Int): Long {

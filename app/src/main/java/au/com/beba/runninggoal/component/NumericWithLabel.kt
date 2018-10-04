@@ -1,12 +1,17 @@
 package au.com.beba.runninggoal.component
 
 import android.content.Context
+import android.text.Spannable
+import android.text.SpannableString
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import au.com.beba.runninggoal.R
+import org.jetbrains.anko.textColorResource
 
 
 class NumericWithLabel : ConstraintLayout {
@@ -16,6 +21,10 @@ class NumericWithLabel : ConstraintLayout {
 
     companion object {
         private val TAG = NumericWithLabel::class.java.simpleName
+
+        private val STYLE_ATTRS = intArrayOf(android.R.attr.textSize, android.R.attr.textColor)
+        @ColorRes
+        private val DEFAULT_VALUE_COLOR: Int = R.color.primary_text
     }
 
     constructor(context: Context?) : this(context, null)
@@ -32,25 +41,40 @@ class NumericWithLabel : ConstraintLayout {
     }
 
     private fun stylise(attrs: AttributeSet?) {
-        var styledValue: String? = null
+        var styledNumericValue: String? = null
+        @ColorInt var styledNumericColor: Int = R.color.primary_text
         var styledUnit: String? = null
+
         context.theme.obtainStyledAttributes(
                 attrs,
                 R.styleable.NumericWithLabel,
                 0, 0).apply {
 
             try {
-                styledValue = getString(R.styleable.NumericWithLabel_NumericWithLabel_numericValue)
+                styledNumericValue = getString(R.styleable.NumericWithLabel_NumericWithLabel_numericValue)
+                styledNumericColor = getResourceId(R.styleable.NumericWithLabel_NumericWithLabel_numericColor, DEFAULT_VALUE_COLOR)
                 styledUnit = getString(R.styleable.NumericWithLabel_NumericWithLabel_unitValue)
             } finally {
                 recycle()
             }
         }
 
-        setValues(styledValue ?: "n/a", styledUnit ?: "n/a")
+//        // OBTAIN android:style REFERENCE
+//        @StyleRes val styleId = attrs?.styleAttribute ?: 0
+//        // APPLY @style VALUES
+//        if (styleId > 0) {
+//        }
+
+        setValues(styledNumericValue ?: "n/a", styledUnit ?: "n/a")
+        this.current.textColorResource = styledNumericColor
+        this.units.textColorResource = styledNumericColor
     }
 
     fun setValues(current: String, units: String) {
+        setValues(SpannableString(current), units)
+    }
+
+    fun setValues(current: Spannable, units: String) {
         Log.d(TAG, "setValues")
         this.current.text = current
         this.units.text = units

@@ -7,6 +7,7 @@
     <color name="hex_background_distance">#aaFFFFFF</color>
     <color name="hex_background_time">#aaFFFFFF</color>
 
+    <color name="theme_background">@android:color/transparent</color>
     <color name="darker_background">@color/secondary_background</color>
     <color name="darker_background_text">@color/secondary_text</color>
 

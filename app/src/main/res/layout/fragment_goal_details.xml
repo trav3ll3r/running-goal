@@ -15,7 +15,7 @@
         android:fitsSystemWindows="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/primary_dark"
+        android:background="@color/primary"
         android:orientation="vertical" />
 
     <include layout="@layout/list_item_guidelines" />
@@ -57,56 +57,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_pencil_24px"
-        app:layout_constraintTop_toTopOf="@id/goal_item_status"
-        app:layout_constraintBottom_toBottomOf="@id/goal_item_status"
-        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
-        android:layout_marginEnd="@dimen/base_x1"
-        android:contentDescription="@null"
-        />
+        android:paddingStart="@dimen/base_x2"
+        android:paddingBottom="@dimen/base_x2"
+        android:paddingTop="@dimen/base_x1"
+        android:paddingEnd="@dimen/base_x1"
+        android:background="@drawable/quarter_circle_start_bottom"
+        android:backgroundTint="@color/primary_dark"
+        android:contentDescription="@null" />
 
-    <!--SYNC ACTION-->
     <ImageView
         android:id="@+id/goal_item_sync"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_sync_24dp"
+        android:background="@drawable/status_circle"
+        android:backgroundTint="@color/primary_dark"
+        android:padding="@dimen/base_x1"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_bounds"
         app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
-        android:layout_marginBottom="@dimen/base_x1"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
-        android:layout_marginEnd="@dimen/base_x1"
+        android:layout_marginEnd="@dimen/base_x2"
         android:contentDescription="@null"
+        android:elevation="2dp"
         />
 
+    <!--CURRENT DISTANCE-->
     <au.com.beba.runninggoal.component.NumericWithLabel
         android:id="@+id/goal_distance_current"
         android:layout_width="wrap_content"
+        android:minWidth="@dimen/base_x2"
         android:layout_height="wrap_content"
         app:NumericWithLabel_numericValue="0"
+        app:NumericWithLabel_numericColor="@color/primary_light"
         app:NumericWithLabel_unitValue="km"
-        app:layout_constraintTop_toBottomOf="@id/goal_item_name"
-        app:layout_constraintStart_toStartOf="@id/goal_item_name" />
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+        android:layout_marginEnd="@dimen/base_x1"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
+        android:layout_marginBottom="@dimen/base_x1" />
 
+    <!--TARGET (GOAL) DISTANCE-->
     <au.com.beba.runninggoal.component.NumericWithLabel
-        android:id="@+id/goal_distance_total"
+        android:id="@+id/goal_distance_target"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:NumericWithLabel_numericValue="250"
-        app:NumericWithLabel_unitValue="km"
-        android:layout_marginStart="@dimen/base_x2"
-        app:layout_constraintTop_toTopOf="@id/goal_distance_current"
-        app:layout_constraintBottom_toBottomOf="@id/goal_distance_current"
-        app:layout_constraintStart_toEndOf="@id/goal_distance_current" />
+        app:NumericWithLabel_numericColor="@color/primary_text"
+        app:NumericWithLabel_unitValue="Target km"
+        android:layout_marginEnd="@dimen/base_x1"
+        app:layout_constraintBottom_toTopOf="@id/goal_distance_current"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end" />
 
-    <!--PERIOD PROGRESS-->
+    <!--PERIOD LAPSED DAYS-->
     <au.com.beba.runninggoal.component.NumericWithLabel
         android:id="@+id/goal_days_lapsed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:NumericWithLabel_numericValue="0"
         app:NumericWithLabel_unitValue="days"
-        app:layout_constraintTop_toBottomOf="@id/goal_distance_current"
-        app:layout_constraintStart_toStartOf="@id/goal_item_name" />
+        app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
+        android:layout_marginBottom="@dimen/base_x1" />
 
+    <!--PERIOD (GOAL) DAYS-->
     <au.com.beba.runninggoal.component.NumericWithLabel
         android:id="@+id/goal_days_total"
         android:layout_width="wrap_content"
@@ -117,8 +130,6 @@
         app:layout_constraintTop_toTopOf="@id/goal_days_lapsed"
         app:layout_constraintBottom_toBottomOf="@id/goal_days_lapsed"
         app:layout_constraintStart_toEndOf="@id/goal_days_lapsed" />
-
-    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

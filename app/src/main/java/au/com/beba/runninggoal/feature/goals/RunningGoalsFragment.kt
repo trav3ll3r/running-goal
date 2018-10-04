@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
+import au.com.beba.runninggoal.feature.router.NavigationInteractor
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import com.google.android.material.button.MaterialButton
@@ -48,6 +49,7 @@ class RunningGoalsFragment : Fragment() {
 
     private var goalActionListener: GoalActionListener? = null
     private var listItemListener: ListListener<RunningGoal>? = null
+    private var navigationInteractor: NavigationInteractor? = null
 
     /* ********* */
     /* LIFECYCLE */
@@ -76,13 +78,19 @@ class RunningGoalsFragment : Fragment() {
         if (context is GoalActionListener) {
             goalActionListener = context
         } else {
-            Log.d(TAG, context.toString() + " must implement %s".format(GoalActionListener::class.java.simpleName))
+            Log.i(TAG, context.toString() + " does not implement %s".format(GoalActionListener::class.java.simpleName))
+        }
+
+        if (context is NavigationInteractor) {
+            navigationInteractor = context
+        } else {
+            Log.i(TAG, context.toString() + " does not implement %s".format(NavigationInteractor::class.java.simpleName))
         }
 
         if (context is ListListener<*>) {
             listItemListener = context as ListListener<RunningGoal>
         } else {
-            Log.d(TAG, context.toString() + " must implement %s".format(ListListener::class.java.simpleName))
+            Log.i(TAG, context.toString() + " does not implement %s".format(ListListener::class.java.simpleName))
         }
     }
 
@@ -161,7 +169,7 @@ class RunningGoalsFragment : Fragment() {
                 return true
             }
             R.id.action_manage_sync_sources -> {
-                //showSyncSources()
+                navigationInteractor?.onSyncSourcesRequested()
                 return true
             }
             else -> super.onOptionsItemSelected(item)

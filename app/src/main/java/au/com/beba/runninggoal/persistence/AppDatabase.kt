@@ -12,7 +12,14 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 
-@Database(entities = [RunningGoalEntity::class, SyncSourceEntity::class, WidgetEntity::class], version = 1, exportSchema = false)
+@Database(
+        entities = [
+            RunningGoalEntity::class,
+            SyncSourceEntity::class,
+            WidgetEntity::class,
+            AthleteActivityEntity::class],
+        version = 1,
+        exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
@@ -70,5 +77,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun runningGoalDao(): RunningGoalDao
     abstract fun syncSourceDao(): SyncSourceDao
     abstract fun widgetDao(): WidgetDao
+    abstract fun athleteActivityDao(): AthleteActivityDao
 }
-

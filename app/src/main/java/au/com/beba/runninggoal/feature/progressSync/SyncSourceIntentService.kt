@@ -10,7 +10,9 @@ import au.com.beba.runninggoal.models.GoalStatus
 import au.com.beba.runninggoal.models.RunningGoal
 import au.com.beba.runninggoal.models.SyncSource
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
+import au.com.beba.runninggoal.networking.model.AthleteActivity
 import au.com.beba.runninggoal.networking.source.SyncSourceProvider
+import au.com.beba.runninggoal.repo.AthleteActivityRepository
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
@@ -23,11 +25,15 @@ import javax.inject.Inject
 class SyncSourceIntentService : JobIntentService() {
 
     @Inject
-    lateinit var goalRepository: GoalRepository
-    @Inject
     lateinit var syncSourceRepository: SyncSourceRepository
     @Inject
     lateinit var syncSourceProvider: SyncSourceProvider
+
+    @Inject
+    lateinit var goalRepository: GoalRepository
+    @Inject
+    lateinit var athleteActivityRepository: AthleteActivityRepository
+
     @Inject
     lateinit var goalWidgetUpdater: GoalWidgetUpdater
 
@@ -77,7 +83,12 @@ class SyncSourceIntentService : JobIntentService() {
                     Log.d(TAG, "onHandleWork | syncGoalId=${it.id}")
                     goalRepository.markGoalUpdateStatus(true, it)
 
-                    val distanceInMetre = getDistanceFromSource(it, syncSource)
+                    val workoutsFromSource = getAthleteActivitiesFromSource(it, syncSource)
+                    persistWorkouts(it, workoutsFromSource)
+
+                    // GET LATEST AND GREATEST FROM REPO
+                    val workouts = athleteActivityRepository.getAllForGoal(it.id)
+                    val distanceInMetre = totalDistanceForWorkouts(workouts)
                     if (distanceInMetre > -1f) {
                         updateGoalWithNewDistance(it, Distance.fromMetres(distanceInMetre), syncSource)
                     }
@@ -90,15 +101,17 @@ class SyncSourceIntentService : JobIntentService() {
         }
     }
 
-    private suspend fun getDistanceFromSource(goal: RunningGoal, syncSource: SyncSource): Float {
-        Log.i(TAG, "getDistanceFromSource")
+    private suspend fun getAthleteActivitiesFromSource(goal: RunningGoal, syncSource: SyncSource): List<AthleteActivity> {
+        Log.i(TAG, "getAthleteActivitiesFromSource")
 
         syncSourceProvider.setSyncSourceProfile(ApiSourceProfile(syncSource.accessToken))
-        return syncSourceProvider.getDistanceForDateRange(
+        return syncSourceProvider.getAthleteActivitiesForDateRange(
                 goal.target.period.from.asEpochUtc(),
                 goal.target.period.to.asEpochUtc())
     }
 
+
+    // SUPPORT LOGIC
     private suspend fun getGoalsForUpdate(singleGoalId: Long): List<RunningGoal> {
         val goals = if (singleGoalId > 0) {
             // ONLY UPDATE SINGLE (SPECIFIC) GOAL
@@ -125,4 +138,25 @@ class SyncSourceIntentService : JobIntentService() {
 
         goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
     }
+
+    private suspend fun persistWorkouts(goal: RunningGoal, workouts: List<AthleteActivity>) {
+        athleteActivityRepository.deleteAllForGoal(goal.id)
+        val mappedWorkouts = workouts.map {
+            au.com.beba.runninggoal.models.AthleteActivity(
+                    it.name,
+                    it.description,
+                    it.distanceInMetres.toLong(),
+                    it.dateTime
+            )
+        }
+        athleteActivityRepository.insertAll(goal.id, mappedWorkouts)
+    }
+
+    private fun totalDistanceForWorkouts(workouts: List<au.com.beba.runninggoal.models.AthleteActivity>): Long {
+        Log.v(TAG, "totalDistanceForWorkouts")
+        val distanceMetre: Long = workouts.asSequence().map { it.distanceInMetres }.sum()
+        Log.v(TAG, "totalDistanceForWorkouts | distanceMetre=$distanceMetre")
+        return distanceMetre
+    }
+
 }

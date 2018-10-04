@@ -17,6 +17,7 @@ import au.com.beba.runninggoal.feature.goals.GoalDetailsFragment
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
+import au.com.beba.runninggoal.feature.router.NavigationInteractor
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.models.RunningGoal
@@ -30,7 +31,8 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(),
         SyncSourcesFragment.SyncSourceListener,
-        GoalActionListener {
+        GoalActionListener,
+        NavigationInteractor {
 
     @Inject
     lateinit var syncSourceRepository: SyncSourceRepository
@@ -92,6 +94,10 @@ class MainActivity : AppCompatActivity(),
         editSyncSource(syncSource)
     }
 
+    override fun onSyncSourcesRequested() {
+        showSyncSources()
+    }
+
     private fun showRunningGoals() {
         supportFragmentManager.beginTransaction().replace(R.id.content_container, RunningGoalsFragment()).commit()
     }
@@ -115,7 +121,10 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showSyncSources() {
-        supportFragmentManager.beginTransaction().replace(R.id.content_container, SyncSourcesFragment()).commit()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.content_container, SyncSourcesFragment())
+                .addToBackStack(null)
+                .commit()
     }
 
     private fun gotoCreateGoal() {

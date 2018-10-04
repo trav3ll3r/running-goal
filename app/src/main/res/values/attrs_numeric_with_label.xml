@@ -3,6 +3,7 @@
 
     <declare-styleable name="NumericWithLabel">
         <attr name="NumericWithLabel_numericValue" format="reference|string" />
+        <attr name="NumericWithLabel_numericColor" format="color" />
         <attr name="NumericWithLabel_unitValue" format="reference|string" />
     </declare-styleable>
 </resources>

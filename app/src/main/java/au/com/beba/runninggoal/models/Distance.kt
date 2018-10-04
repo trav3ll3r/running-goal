@@ -1,9 +1,14 @@
 package au.com.beba.runninggoal.models
 
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned.SPAN_EXCLUSIVE_INCLUSIVE
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import java.math.RoundingMode
 import java.text.NumberFormat
 import java.util.*
+
 
 class Distance : Displayable {
 
@@ -13,8 +18,8 @@ class Distance : Displayable {
     private val numberFormat: NumberFormat = NumberFormat.getInstance(Locale.ENGLISH)
 
     companion object {
-        fun fromMetres(metres: Float): Distance {
-            val roundedDistance: Float = "%.1f".format(metres / 1000).toFloat()
+        fun fromMetres(metres: Long): Distance {
+            val roundedDistance: Float = "%.1f".format(metres / 1000f).toFloat()
             return Distance(roundedDistance)
         }
     }
@@ -45,13 +50,24 @@ class Distance : Displayable {
         }
 
     init {
-        numberFormat.minimumFractionDigits = 0
+        numberFormat.minimumFractionDigits = 1
         numberFormat.maximumFractionDigits = 1
         numberFormat.roundingMode = RoundingMode.HALF_UP
     }
 
     override fun display(): String {
-        return "%s".format(numberFormat.format(value))
+        return numberFormat.format(value)
+    }
+
+    override fun displayReduced(): Spannable {
+        val value = numberFormat.format(value)
+        val result = SpannableString(value)
+        if (value.contains('.')) {
+            val startChar = value.indexOf(".")
+            val endChar = value.length
+            result.setSpan(RelativeSizeSpan(0.8f), startChar, endChar, SPAN_EXCLUSIVE_INCLUSIVE) // reduce font size by 20%
+        }
+        return result
     }
 
     override fun displaySigned(): String {
@@ -82,5 +98,6 @@ class Distance : Displayable {
 
 interface Displayable {
     fun display(): String
+    fun displayReduced(): Spannable
     fun displaySigned(): String
 }

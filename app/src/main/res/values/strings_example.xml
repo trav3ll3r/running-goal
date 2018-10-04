@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="example_name">Lorem Ipsum Dolor Sit</string>
+    <string name="example_description">Lorem Ipsum Dolor Sit</string>
+    <string name="example_date_time">31 Dec 2018 23:59</string>
+    <string name="example_distance">200.1</string>
+</resources>

@@ -17,7 +17,7 @@ class RunningGoalsAdapter(private val items: MutableList<RunningGoal>, private v
 
     // BUILD ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GoalViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.goal_list_item, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item_goal, parent, false)
         return GoalViewHolder(v)
     }
 

@@ -11,7 +11,8 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 
 abstract class CommonSyncSourceProvider
-constructor(private val networkingContext: CoroutineContext = DefaultDispatcher) : SyncSourceProvider {
+constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
+    : SyncSourceProvider {
 
     companion object {
         private val TAG = CommonSyncSourceProvider::class.java.simpleName

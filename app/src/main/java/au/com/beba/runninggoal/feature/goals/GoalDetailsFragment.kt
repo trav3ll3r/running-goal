@@ -20,7 +20,6 @@ import au.com.beba.runninggoal.feature.goal.GoalViewModel
 import au.com.beba.runninggoal.models.AthleteActivity
 import au.com.beba.runninggoal.models.GoalStatus
 import au.com.beba.runninggoal.models.RunningGoal
-import au.com.beba.runninggoal.repo.GoalRepository
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
 import javax.inject.Inject
@@ -30,8 +29,6 @@ class GoalDetailsFragment : Fragment() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
-    @Inject
-    lateinit var goalRepository: GoalRepository
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProviders.of(this, factory).get(GoalViewModel::class.java)
@@ -58,7 +55,7 @@ class GoalDetailsFragment : Fragment() {
         }
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var recyclerAdapter: AthleteActivitiesAdapter
+    private lateinit var recyclerAdapter: WorkoutsAdapter
 
     private var goalActionListener: GoalActionListener? = null
 
@@ -145,7 +142,7 @@ class GoalDetailsFragment : Fragment() {
         val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        recyclerAdapter = AthleteActivitiesAdapter(mutableListOf())
+        recyclerAdapter = WorkoutsAdapter(mutableListOf())
         recyclerView.adapter = recyclerAdapter
     }
 
@@ -185,8 +182,8 @@ class GoalDetailsFragment : Fragment() {
                 }
             }
 
-            goal_distance_current.setValues(runningGoal.progress.distanceToday.display(), runningGoal.progress.distanceToday.units)
-            goal_distance_total.setValues(runningGoal.target.distance.display(), runningGoal.target.distance.units)
+            goal_distance_current.setValues(runningGoal.progress.distanceToday.displayReduced(), getString(R.string.current_units, runningGoal.progress.distanceToday.units))
+            goal_distance_target.setValues(runningGoal.target.distance.displayReduced(), getString(R.string.target_units, runningGoal.target.distance.units))
 
             goal_days_lapsed.setValues(runningGoal.progress.daysLapsed.toString(), ctx.getString(R.string.unit_days))
             goal_days_total.setValues(runningGoal.target.period.totalDays.toString(), ctx.getString(R.string.unit_days))

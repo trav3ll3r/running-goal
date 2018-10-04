@@ -4,9 +4,9 @@ import android.util.Log
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
 import au.com.beba.runninggoal.networking.model.AthleteActivity
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.withContext
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.Response
@@ -14,7 +14,8 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 
 class StravaSyncSourceProvider
-constructor(private val networkingContext: CoroutineContext = DefaultDispatcher) : CommonSyncSourceProvider(networkingContext) {
+constructor(networkingContext: CoroutineContext = DefaultDispatcher)
+    : CommonSyncSourceProvider(networkingContext) {
 
     companion object {
         private val TAG = StravaSyncSourceProvider::class.java.simpleName
@@ -26,7 +27,7 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
         sourceProfile = apiSourceProfile
     }
 
-    override suspend fun getDistanceForDateRange(startTime: Long, endTime: Long): Float = withContext(networkingContext) {
+    override suspend fun getAthleteActivitiesForDateRange(startTime: Long, endTime: Long): List<AthleteActivity> {
         val allActivities = mutableListOf<AthleteActivity>()
 
         Log.i(TAG, "getDistanceForDateRange | startTime=%s".format(startTime))
@@ -48,7 +49,7 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
             allActivities.addAll(activities)
         } while (activities.isNotEmpty())
 
-        distanceForAllActivities(allActivities)
+        return allActivities
     }
 
     private suspend fun getActivitiesForUrl(url: HttpUrl.Builder): List<AthleteActivity> {
@@ -63,41 +64,49 @@ constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
         Log.v(TAG, "getActivitiesForUrl | request url=%s".format(request.url()))
 
         val responseDef = executeRequest(request)
-        val activities = extractActivities(responseDef.await())
+        val activities = marshalResponse(responseDef.await())
         Log.v(TAG, "distanceForActivities | page | activities=%s".format(activities.size))
 
         activities.forEach {
-            Log.v(TAG, "distanceForActivities | run {name=%s distance=%s private=%b}".format(it.name, it.distance, it.private))
+            Log.v(TAG, "distanceForActivities | run {name=%s distance=%s}".format(it.name, it.distanceInMetres))
         }
 
-
-        Log.v(TAG, "distanceForActivities | page | distanceMetre=%s".format(activities.map { it.distance }.sum()))
+        Log.v(TAG, "distanceForActivities | page | distanceMetre=%s".format(activities.asSequence().map { it.distanceInMetres }.sum()))
         return activities
     }
 
-    private fun extractActivities(response: Response?): List<AthleteActivity> {
-        Log.i(TAG, "extractActivities")
-        Log.v(TAG, "extractActivities | code=%s".format(response?.code() ?: "UNKNOWN"))
+    private fun marshalResponse(response: Response?): List<AthleteActivity> {
+        Log.i(TAG, "marshalResponse")
+        Log.v(TAG, "marshalResponse | code=%s".format(response?.code() ?: "UNKNOWN"))
         val responseBody = response?.body()?.string() ?: ""
-        logBody(responseBody)
+        //logBody(responseBody)
 
         return if (response != null) {
             val listType = object : TypeToken<ArrayList<AthleteActivity>>() {}.type
-            Gson().fromJson(responseBody, listType)
+            gson.fromJson(responseBody, listType)
         } else {
             emptyList()
         }
     }
 
-    private fun distanceForAllActivities(activities: List<AthleteActivity>): Float {
-        Log.v(TAG, "distanceForAllActivities")
-        val distanceMetre: Float = activities.map { it.distance }.sum()
-        Log.v(TAG, "distanceForAllActivities | distanceMetre=$distanceMetre")
-        return distanceMetre
-    }
-
-    private fun logBody(body: String) {
+//    private fun logBody(body: String) {
 //        Log.i(TAG, "logBody")
 //        Log.v(TAG, "logBody | body=%s".format(body))
-    }
+//    }
+
+    private val gson: Gson
+        get() {
+            val gb = GsonBuilder()
+//            gb.registerTypeAdapter(Number::class.java, object : JsonSerializer<String> {
+//                override fun serialize(src: String?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+//                    return if (src != null) {
+//                        val f = src.toFloat()
+//                        JsonPrimitive(f.toLong())
+//                    } else {
+//                        JsonPrimitive(0L)
+//                    }
+//                }
+//            })
+            return gb.create()
+        }
 }

@@ -27,5 +27,5 @@
     <dimen name="bottom_navigation_padding">8dp</dimen>
     <dimen name="MATCH_CONSTRAINTS">0dp</dimen>
     <dimen name="toolbar_height_goal_details_expanded">160dp</dimen>
-    <dimen name="toolbar_height_goal_details_collapsed">60dp</dimen> <!--TEST WITH ?attr/actionBarSize -->
+    <dimen name="toolbar_height_goal_details_collapsed">60dp</dimen>
 </resources>

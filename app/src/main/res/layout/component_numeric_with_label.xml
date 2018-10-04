@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
@@ -10,9 +10,9 @@
         style="@style/Text.XLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="50" />
+        tools:text="@string/example_distance" />
 
     <TextView
         android:id="@+id/numeric_label"
@@ -20,9 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:lines="1"
-        app:layout_constraintStart_toStartOf="@id/numeric_value"
-        app:layout_constraintEnd_toEndOf="@id/numeric_value"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/numeric_value"
-        tools:text="Units" />
+        tools:text="@string/unit_kilometre" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

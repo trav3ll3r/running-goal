@@ -6,6 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -95,8 +98,8 @@ class GoalDetailsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchGoal(goalId)
-        viewModel.fetchActivities(goalId)
+//        viewModel.fetchGoal(goalId)
+//        viewModel.fetchActivities(goalId)
     }
 
     override fun onDetach() {
@@ -154,13 +157,14 @@ class GoalDetailsFragment : Fragment() {
     }
 
     private fun syncGoal(goal: RunningGoal) {
-        goalActionListener?.syncGoal(goal)
+        viewModel.syncWorkouts(context, goal)
     }
 
     /* ********* */
     /* REACTIONS */
     /* ********* */
     private fun handleGoalUpdate(runningGoal: RunningGoal) {
+        Log.i(TAG, "handleGoalUpdate")
         val ctx = context
         if (ctx != null) {
             goal_item_name.text = runningGoal.name
@@ -182,14 +186,18 @@ class GoalDetailsFragment : Fragment() {
                 }
             }
 
-            goal_distance_current.setValues(runningGoal.progress.distanceToday.displayReduced(), getString(R.string.current_units, runningGoal.progress.distanceToday.units))
-            goal_distance_target.setValues(runningGoal.target.distance.displayReduced(), getString(R.string.target_units, runningGoal.target.distance.units))
+            goal_distance_current.setValues(runningGoal.progress.distanceToday.display(true), getString(R.string.current_units, runningGoal.progress.distanceToday.units))
+            goal_distance_target.setValues(runningGoal.target.distance.display(true), getString(R.string.target_units, runningGoal.target.distance.units))
 
-            goal_days_lapsed.setValues(runningGoal.progress.daysLapsed.toString(), ctx.getString(R.string.unit_days))
-            goal_days_total.setValues(runningGoal.target.period.totalDays.toString(), ctx.getString(R.string.unit_days))
+            goal_days_lapsed.setValues(runningGoal.progress.daysLapsed.toString(), ctx.getString(R.string.lapsed))
+            goal_days_total.setValues(runningGoal.target.period.totalDays.toString(), ctx.getString(R.string.total))
+
+            goal_progress_position.setValues(runningGoal.progress.positionInDistance.displaySigned(), ctx.getString(R.string.progress_position))
 
             goal_item_edit.setOnClickListener { editGoal(runningGoal) }
             goal_item_sync.setOnClickListener { syncGoal(runningGoal) }
+
+            //handleBusyIndicator(runningGoal.view.updating)
         }
 
         // Data is loaded so lets wait for our parent to be drawn
@@ -204,4 +212,26 @@ class GoalDetailsFragment : Fragment() {
         recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()
     }
+
+    private fun handleBusyIndicator(busy: Boolean) {
+        Log.i(TAG, "handleBusyIndicator")
+        if (busy) {
+            goal_item_sync.startAnimation(syncAnimation)
+        } else {
+            goal_item_sync.clearAnimation()
+        }
+    }
+
+    private val syncAnimation: Animation
+        get() {
+            val r = RotateAnimation(
+                    0f,
+                    360f,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f)
+            r.interpolator = LinearInterpolator()
+            r.repeatCount = Animation.INFINITE
+            r.duration = 900
+            return r
+        }
 }

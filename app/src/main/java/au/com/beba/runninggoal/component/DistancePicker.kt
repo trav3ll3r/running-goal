@@ -30,7 +30,7 @@ class DistancePicker : LinearLayout {
 
         integerPicker = findViewById(R.id.integer_picker)
         integerPicker.minValue = 0
-        integerPicker.maxValue = 1000
+        integerPicker.maxValue = 100000
 
         fractionPicker = findViewById(R.id.fraction_picker)
         fractionPicker.minValue = 0

@@ -55,24 +55,23 @@ class Distance : Displayable {
         numberFormat.roundingMode = RoundingMode.HALF_UP
     }
 
-    override fun display(): String {
-        return numberFormat.format(value)
+    override fun display(smallerDecimals: Boolean): Spannable {
+        return displayReduced(numberFormat.format(value), smallerDecimals)
     }
 
-    override fun displayReduced(): Spannable {
-        val value = numberFormat.format(value)
-        val result = SpannableString(value)
-        if (value.contains('.')) {
-            val startChar = value.indexOf(".")
-            val endChar = value.length
+    override fun displaySigned(smallerDecimals: Boolean): Spannable {
+        val sign = if (value > 0) "+" else ""
+        return displayReduced("%s%s".format(sign, numberFormat.format(value)), smallerDecimals)
+    }
+
+    private fun displayReduced(text: String, smallerDecimals: Boolean = false): Spannable {
+        val result = SpannableString(text)
+        val startChar = text.indexOf(".")
+        if (smallerDecimals && startChar > 0) {
+            val endChar = text.length
             result.setSpan(RelativeSizeSpan(0.8f), startChar, endChar, SPAN_EXCLUSIVE_INCLUSIVE) // reduce font size by 20%
         }
         return result
-    }
-
-    override fun displaySigned(): String {
-        val sign = if (value > 0) "+" else ""
-        return "%s%s".format(sign, numberFormat.format(value))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -92,12 +91,9 @@ class Distance : Displayable {
         result = 31 * result + units.hashCode()
         return result
     }
-
-
 }
 
 interface Displayable {
-    fun display(): String
-    fun displayReduced(): Spannable
-    fun displaySigned(): String
+    fun display(smallerDecimals: Boolean = false): Spannable
+    fun displaySigned(smallerDecimals: Boolean = false): Spannable
 }

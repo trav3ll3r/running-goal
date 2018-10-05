@@ -55,7 +55,7 @@ class NumericProgress : ConstraintLayout {
         setValues(styledCurrent, styledTotal, styledUnit)
     }
 
-    fun setValues(current: String?, total: String?, units: String?) {
+    fun setValues(current: CharSequence?, total: CharSequence?, units: CharSequence?) {
         Log.d(TAG, "setValues")
         this.current.text = current ?: EMPTY_VALUE
         this.total.text = total ?: EMPTY_VALUE

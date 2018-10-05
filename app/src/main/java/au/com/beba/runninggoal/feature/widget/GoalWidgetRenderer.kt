@@ -108,7 +108,7 @@ object GoalInNumbersRenderer {
         addNumericView(context, rootView, R.id.hex_bottom_right, "Position", DecimalRenderer.fromFloat(progress.positionInDays, true), units = "day(s)")
     }
 
-    private fun addNumericView(context: Context, rootView: RemoteViews, @Identifier holderViewId: Int, name: String, value: String, valueMax: String? = null, units: String? = null) {
+    private fun addNumericView(context: Context, rootView: RemoteViews, @Identifier holderViewId: Int, name: String, value: CharSequence, valueMax: CharSequence? = null, units: String? = null) {
         val view = RemoteViews(context.packageName, R.layout.goal_partial)
         view.setTextViewText(R.id.goal_part_name, name)
         view.setTextViewText(R.id.goal_part_value, value)

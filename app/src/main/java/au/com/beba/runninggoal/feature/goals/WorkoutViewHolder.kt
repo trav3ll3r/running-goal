@@ -24,6 +24,6 @@ class WorkoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         name.text = workout.name
         description.text = workout.description
         dateTime.text = dt.asDisplayLocalLong()
-        distance.setValues(d.displayReduced(), d.units)
+        distance.setValues(d.display(true), d.units)
     }
 }

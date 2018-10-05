@@ -1,14 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showPaths="true">
 
     <Transition
         app:constraintSetEnd="@id/collapsed"
         app:constraintSetStart="@id/expanded">
         <KeyFrameSet>
-            <KeyAttribute app:target="@id/goal_item_status"
+            <!--STATUS-->
+<!--
+            <KeyAttribute
                 app:framePosition="80"
-                app:progress="80"/>
+                app:progress="80"
+                app:target="@id/goal_item_status" />
+-->
+
+            <!--SYNC ACTION-->
+            <KeyPosition
+                app:framePosition="25"
+                app:keyPositionType="pathRelative"
+                app:percentX="-0.00"
+                app:target="@id/goal_item_sync" />
+
+            <!--DISTANCE TARGET-->
+            <KeyAttribute
+                app:framePosition="50"
+                app:progress="75"
+                app:target="@id/goal_distance_target" />
+            <KeyPosition
+                app:framePosition="50"
+                app:keyPositionType="pathRelative"
+                app:percentY="0.3"
+                app:target="@id/goal_distance_target" />
+
         </KeyFrameSet>
 
         <OnSwipe
@@ -31,9 +56,9 @@
             android:id="@id/goal_item_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/status_rounded"
             android:layout_marginStart="@dimen/base_x1"
             android:layout_marginTop="@dimen/base_x1"
+            android:background="@drawable/status_rounded"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
             app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start">
             <CustomAttribute
@@ -46,12 +71,12 @@
             android:id="@id/goal_item_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start"
-            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
             android:paddingStart="@dimen/base_x2"
-            android:paddingBottom="@dimen/base_x2"
             android:paddingTop="@dimen/base_x1"
-            android:paddingEnd="@dimen/base_x1" />
+            android:paddingEnd="@dimen/base_x1"
+            android:paddingBottom="@dimen/base_x2"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start" />
 
         <!--TOTAL (GOAL) DISTANCE-->
         <Constraint
@@ -61,6 +86,19 @@
             android:layout_marginEnd="@dimen/base_x1"
             app:layout_constraintBottom_toTopOf="@id/goal_distance_current"
             app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end" />
+
+        <!--SYNC ACTION-->
+        <Constraint
+            android:id="@id/goal_item_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/base_x2"
+            android:elevation="2dp"
+            android:padding="@dimen/base_x1"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_bounds" />
 
     </ConstraintSet>
 
@@ -77,9 +115,9 @@
             android:id="@id/goal_item_status"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:background="@drawable/status_circle"
             android:layout_marginStart="@dimen/base_x1"
             android:layout_marginTop="@dimen/base_x1"
+            android:background="@drawable/status_circle"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
             app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start">
             <CustomAttribute
@@ -92,12 +130,24 @@
             android:id="@id/goal_item_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_start"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical_end"
             android:paddingStart="@dimen/base_x2"
-            android:paddingBottom="@dimen/base_x2"
             android:paddingTop="@dimen/base_x1"
-            android:paddingEnd="@dimen/base_x1" />
+            android:paddingEnd="@dimen/base_x1"
+            android:paddingBottom="@dimen/base_x2"
+            app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_start"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_end" />
+
+        <!--SYNC ACTION-->
+        <Constraint
+            android:id="@id/goal_item_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/base_x2"
+            android:elevation="-1dp"
+            android:padding="@dimen/base_x1"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_start" />
 
         <!--TOTAL (GOAL) DISTANCE-->
         <Constraint
@@ -108,15 +158,28 @@
             app:layout_constraintBottom_toBottomOf="@id/goal_distance_current"
             app:layout_constraintEnd_toStartOf="@id/goal_distance_current" />
 
+        <!--PERIOD (LABEL)-->
+        <Constraint
+            android:id="@id/goal_period_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_x1"
+            android:layout_marginBottom="@dimen/base_x1"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_icon"
+            android:alpha="0.0"
+             />
+
         <!--PERIOD LAPSED DAYS-->
         <Constraint
             android:id="@id/goal_days_lapsed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
-            app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
+            android:layout_marginStart="@dimen/base_x1"
             android:layout_marginBottom="@dimen/base_x1"
-            android:alpha="0.0" />
+            android:alpha="0.0"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
+            app:layout_constraintStart_toEndOf="@id/goal_period_label" />
 
         <!--PERIOD (GOAL) DAYS-->
         <Constraint
@@ -124,10 +187,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_x2"
-            app:layout_constraintTop_toTopOf="@id/goal_days_lapsed"
+            android:alpha="0.0"
             app:layout_constraintBottom_toBottomOf="@id/goal_days_lapsed"
             app:layout_constraintStart_toEndOf="@id/goal_days_lapsed"
-            android:alpha="0.0" />
+            app:layout_constraintTop_toTopOf="@id/goal_days_lapsed" />
 
     </ConstraintSet>
 

@@ -74,7 +74,7 @@ class NumericWithLabel : ConstraintLayout {
         setValues(SpannableString(current), units)
     }
 
-    fun setValues(current: Spannable, units: String) {
+    fun setValues(current: CharSequence, units: CharSequence) {
         Log.d(TAG, "setValues")
         this.current.text = current
         this.units.text = units

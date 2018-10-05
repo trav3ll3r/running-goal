@@ -9,12 +9,12 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
+        <!--android:descendantFocusability="blocksDescendants"-->
         <NumberPicker
             android:id="@+id/integer_picker"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:descendantFocusability="blocksDescendants"
             />
 
         <TextView

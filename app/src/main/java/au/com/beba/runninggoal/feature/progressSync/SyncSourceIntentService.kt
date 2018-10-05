@@ -91,6 +91,7 @@ class SyncSourceIntentService : JobIntentService() {
                     val distanceInMetre = totalDistanceForWorkouts(workouts)
                     if (distanceInMetre > -1f) {
                         updateGoalWithNewDistance(it, Distance.fromMetres(distanceInMetre), syncSource)
+                        //TODO: NOTIFY athleteActivities UPDATED
                     }
                     goalRepository.markGoalUpdateStatus(false, it)
                     Log.d(TAG, "onHandleWork | distance=$distanceInMetre")

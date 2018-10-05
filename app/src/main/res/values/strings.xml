@@ -35,4 +35,9 @@
     <string name="action_create_goal">New goal</string>
     <string name="action_manage_sync_sources">Sync sources</string>
 
+    <!--GOAL DETAILS-->
+    <string name="lapsed">lapsed</string>
+    <string name="total">total</string>
+    <string name="progress">progress</string>
+    <string name="progress_position">position</string>
 </resources>

@@ -2,9 +2,9 @@ package au.com.beba.runninggoal.repo
 
 import android.content.Context
 import android.util.Log
-import au.com.beba.runninggoal.models.Widget
-import au.com.beba.runninggoal.models.WidgetView
-import au.com.beba.runninggoal.models.WidgetViewType
+import au.com.beba.runninggoal.domain.widget.Widget
+import au.com.beba.runninggoal.domain.widget.WidgetView
+import au.com.beba.runninggoal.domain.widget.WidgetViewType
 import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.WidgetDao
 import au.com.beba.runninggoal.persistence.WidgetEntity

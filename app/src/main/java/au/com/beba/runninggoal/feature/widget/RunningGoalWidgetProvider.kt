@@ -5,7 +5,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import au.com.beba.runninggoal.models.Widget
+import au.com.beba.runninggoal.domain.widget.Widget
 import au.com.beba.runninggoal.repo.WidgetRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.async

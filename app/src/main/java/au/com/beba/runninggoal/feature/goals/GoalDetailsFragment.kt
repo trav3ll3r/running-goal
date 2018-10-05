@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goal.GoalViewModel
-import au.com.beba.runninggoal.models.AthleteActivity
-import au.com.beba.runninggoal.models.GoalStatus
-import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.domain.core.Workout
+import au.com.beba.runninggoal.domain.core.GoalStatus
+import au.com.beba.runninggoal.domain.core.RunningGoal
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
 import javax.inject.Inject
@@ -207,7 +207,7 @@ class GoalDetailsFragment : Fragment() {
         }
     }
 
-    private fun updateList(items: List<AthleteActivity>) {
+    private fun updateList(items: List<Workout>) {
         Log.i(TAG, "updateList")
         recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()

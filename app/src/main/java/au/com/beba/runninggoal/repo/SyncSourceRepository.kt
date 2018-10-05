@@ -1,6 +1,6 @@
 package au.com.beba.runninggoal.repo
 
-import au.com.beba.runninggoal.models.SyncSource
+import au.com.beba.runninggoal.domain.sync.SyncSource
 
 
 interface SyncSourceRepository {

@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.models
+package au.com.beba.runninggoal.domain.core
 
 import java.time.Duration
 import java.time.Instant

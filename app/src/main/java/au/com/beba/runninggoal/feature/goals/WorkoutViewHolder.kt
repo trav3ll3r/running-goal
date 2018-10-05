@@ -5,9 +5,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.NumericWithLabel
-import au.com.beba.runninggoal.models.AthleteActivity
-import au.com.beba.runninggoal.models.Distance
-import au.com.beba.runninggoal.models.GoalDate
+import au.com.beba.runninggoal.domain.core.Workout
+import au.com.beba.runninggoal.domain.core.Distance
+import au.com.beba.runninggoal.domain.core.GoalDate
 import org.jetbrains.anko.find
 
 
@@ -17,7 +17,7 @@ class WorkoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val dateTime = itemView.find<TextView>(R.id.workout_datetime)
     private val distance = itemView.find<NumericWithLabel>(R.id.workout_distance)
 
-    fun bindView(workout: AthleteActivity) {
+    fun bindView(workout: Workout) {
         val dt = GoalDate(workout.dateTime)
         val d = Distance.fromMetres(workout.distanceInMetres)
 

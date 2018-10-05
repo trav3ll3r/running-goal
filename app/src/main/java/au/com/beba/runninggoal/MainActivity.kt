@@ -20,8 +20,8 @@ import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.router.NavigationInteractor
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
-import au.com.beba.runninggoal.models.RunningGoal
-import au.com.beba.runninggoal.models.SyncSource
+import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.sync.SyncSource
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI

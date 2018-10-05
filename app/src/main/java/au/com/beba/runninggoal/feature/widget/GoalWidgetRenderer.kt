@@ -20,10 +20,10 @@ import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.goals.GoalActivity
-import au.com.beba.runninggoal.models.GoalDate
-import au.com.beba.runninggoal.models.RunningGoal
-import au.com.beba.runninggoal.models.Widget
-import au.com.beba.runninggoal.models.WidgetViewType
+import au.com.beba.runninggoal.domain.core.GoalDate
+import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.widget.Widget
+import au.com.beba.runninggoal.domain.widget.WidgetViewType
 import org.intellij.lang.annotations.Identifier
 import java.math.RoundingMode
 import java.text.DecimalFormat

@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.models
+package au.com.beba.runninggoal.domain.widget
 
 data class Widget(
         val id: Int = 0,

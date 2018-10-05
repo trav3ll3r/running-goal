@@ -13,11 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.DistancePickerDialog
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
-import au.com.beba.runninggoal.models.Distance
-import au.com.beba.runninggoal.models.GoalDate
-import au.com.beba.runninggoal.models.GoalTarget
-import au.com.beba.runninggoal.models.Period
-import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.domain.core.Distance
+import au.com.beba.runninggoal.domain.core.GoalDate
+import au.com.beba.runninggoal.domain.core.GoalTarget
+import au.com.beba.runninggoal.domain.core.Period
+import au.com.beba.runninggoal.domain.core.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.WidgetRepository
 import dagger.android.AndroidInjection

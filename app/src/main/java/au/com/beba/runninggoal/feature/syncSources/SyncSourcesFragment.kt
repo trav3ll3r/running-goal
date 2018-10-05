@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.progressSync.SyncSourcesAdapter
-import au.com.beba.runninggoal.models.SyncSource
+import au.com.beba.runninggoal.domain.sync.SyncSource
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import dagger.android.support.AndroidSupportInjection

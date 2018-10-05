@@ -2,7 +2,7 @@ package au.com.beba.runninggoal.repo
 
 import android.content.Context
 import android.util.Log
-import au.com.beba.runninggoal.models.SyncSource
+import au.com.beba.runninggoal.domain.sync.SyncSource
 import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.SyncSourceDao
 import au.com.beba.runninggoal.persistence.SyncSourceEntity

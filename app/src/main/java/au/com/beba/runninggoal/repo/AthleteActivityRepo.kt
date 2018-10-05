@@ -2,7 +2,7 @@ package au.com.beba.runninggoal.repo
 
 import android.content.Context
 import android.util.Log
-import au.com.beba.runninggoal.models.AthleteActivity
+import au.com.beba.runninggoal.domain.core.Workout
 import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.AthleteActivityDao
 import au.com.beba.runninggoal.persistence.AthleteActivityEntity
@@ -32,8 +32,8 @@ class AthleteActivityRepo private constructor(
         }
     }
 
-    override suspend fun insertAll(goalId: Long, athleteActivities: List<AthleteActivity>) {
-        athleteActivityDao.insert(athleteActivities.map {
+    override suspend fun insertAll(goalId: Long, workouts: List<Workout>) {
+        athleteActivityDao.insert(workouts.map {
             AthleteActivityEntity(
                     goalId,
                     it.name ?: "",
@@ -45,13 +45,13 @@ class AthleteActivityRepo private constructor(
 
     }
 
-    override suspend fun getAllForGoal(goalId: Long): List<AthleteActivity> = withContext(coroutineContext) {
+    override suspend fun getAllForGoal(goalId: Long): List<Workout> = withContext(coroutineContext) {
         Log.i(TAG, "getAllForGoal")
         Log.v(TAG, "getAllForGoal | goalId=%s".format(goalId))
         val entities = athleteActivityDao.getAllForGoal(goalId)
-        val athleteActivities: List<AthleteActivity> = entities.asSequence().map { entity2model(it)!! }.toList()
-        Log.d(TAG, "athleteActivities=%s".format(athleteActivities.size))
-        athleteActivities
+        val workouts: List<Workout> = entities.asSequence().map { entity2model(it)!! }.toList()
+        Log.d(TAG, "athleteActivities=%s".format(workouts.size))
+        workouts
     }
 
     override suspend fun deleteAllForGoal(goalId: Long): Int = withContext(coroutineContext) {
@@ -61,9 +61,9 @@ class AthleteActivityRepo private constructor(
         deletedRows
     }
 
-    private fun entity2model(entity: AthleteActivityEntity?): AthleteActivity? {
+    private fun entity2model(entity: AthleteActivityEntity?): Workout? {
         return if (entity != null) {
-            AthleteActivity(
+            Workout(
                     entity.name,
                     entity.description,
                     entity.distanceInMetres,

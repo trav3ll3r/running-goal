@@ -1,6 +1,6 @@
 package au.com.beba.runninggoal.repo
 
-import au.com.beba.runninggoal.models.Widget
+import au.com.beba.runninggoal.domain.widget.Widget
 
 
 interface WidgetRepository {

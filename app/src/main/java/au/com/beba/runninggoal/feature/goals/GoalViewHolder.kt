@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.NumericProgress
 import au.com.beba.runninggoal.feature.base.ListListener
-import au.com.beba.runninggoal.models.GoalStatus
-import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.domain.core.GoalStatus
+import au.com.beba.runninggoal.domain.core.RunningGoal
 import org.jetbrains.anko.find
 
 

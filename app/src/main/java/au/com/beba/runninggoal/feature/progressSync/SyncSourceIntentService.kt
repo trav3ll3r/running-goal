@@ -5,10 +5,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
-import au.com.beba.runninggoal.models.Distance
-import au.com.beba.runninggoal.models.GoalStatus
-import au.com.beba.runninggoal.models.RunningGoal
-import au.com.beba.runninggoal.models.SyncSource
+import au.com.beba.runninggoal.domain.core.Distance
+import au.com.beba.runninggoal.domain.core.GoalStatus
+import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.sync.SyncSource
 import au.com.beba.runninggoal.networking.model.ApiSourceProfile
 import au.com.beba.runninggoal.networking.model.AthleteActivity
 import au.com.beba.runninggoal.networking.source.SyncSourceProvider
@@ -143,7 +143,7 @@ class SyncSourceIntentService : JobIntentService() {
     private suspend fun persistWorkouts(goal: RunningGoal, workouts: List<AthleteActivity>) {
         athleteActivityRepository.deleteAllForGoal(goal.id)
         val mappedWorkouts = workouts.map {
-            au.com.beba.runninggoal.models.AthleteActivity(
+            au.com.beba.runninggoal.domain.core.Workout(
                     it.name,
                     it.description,
                     it.distanceInMetres.toLong(),
@@ -153,7 +153,7 @@ class SyncSourceIntentService : JobIntentService() {
         athleteActivityRepository.insertAll(goal.id, mappedWorkouts)
     }
 
-    private fun totalDistanceForWorkouts(workouts: List<au.com.beba.runninggoal.models.AthleteActivity>): Long {
+    private fun totalDistanceForWorkouts(workouts: List<au.com.beba.runninggoal.domain.core.Workout>): Long {
         Log.v(TAG, "totalDistanceForWorkouts")
         val distanceMetre: Long = workouts.asSequence().map { it.distanceInMetres }.sum()
         Log.v(TAG, "totalDistanceForWorkouts | distanceMetre=$distanceMetre")

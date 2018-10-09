@@ -92,8 +92,3 @@ class Distance : Displayable {
         return result
     }
 }
-
-interface Displayable {
-    fun display(smallerDecimals: Boolean = false): Spannable
-    fun displaySigned(smallerDecimals: Boolean = false): Spannable
-}

@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import au.com.beba.runninggoal.domain.Workout
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
-import au.com.beba.runninggoal.domain.core.Workout
 import au.com.beba.runninggoal.domain.core.RunningGoal
-import au.com.beba.runninggoal.repo.AthleteActivityRepository
+import au.com.beba.runninggoal.repo.WorkoutRepository
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
 import kotlinx.coroutines.experimental.*
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class GoalViewModel @Inject constructor(
         private val goalRepository: GoalRepository,
-        private val athleteActivityRepository: AthleteActivityRepository,
+        private val workoutRepository: WorkoutRepository,
         private val syncSourceRepository: SyncSourceRepository
 ) : ViewModel() {
 
@@ -36,7 +36,7 @@ class GoalViewModel @Inject constructor(
     fun fetchActivities(goalId: Long) {
         async {
             val list: MutableList<Workout> = mutableListOf()
-            list.addAll(athleteActivityRepository.getAllForGoal(goalId))
+            list.addAll(workoutRepository.getAllForGoal(goalId))
             activitiesLiveData.postValue(list)
         }
     }

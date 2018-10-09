@@ -98,7 +98,7 @@ class GoalDate {
         return daysBetween
     }
 
-    // EVALUATE ONCE (WHEN FIRST) REQUESTED
+    // EVALUATE ONCE (WHEN FIRST REQUESTED)
     private val asLocal: LocalDateTime get() = internalUtc!!.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
     private fun stringToUtc(dateAsString: String, time: Int = LATEST): ZonedDateTime {

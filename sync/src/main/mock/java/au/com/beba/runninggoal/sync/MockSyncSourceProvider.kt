@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.di.feature
+package au.com.beba.runninggoal.sync
 
 import android.util.Log
 import au.com.beba.runninggoal.domain.core.Workout

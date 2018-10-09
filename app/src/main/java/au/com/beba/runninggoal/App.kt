@@ -4,6 +4,7 @@ import au.com.beba.runninggoal.di.component.DaggerMainComponent
 import com.facebook.stetho.Stetho
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
+import timber.log.Timber
 
 class App : DaggerApplication() {
 
@@ -16,6 +17,13 @@ class App : DaggerApplication() {
 
         applicationInjector().inject(this)
 
+        initLogging()
+
         Stetho.initializeWithDefaults(this)
     }
+
+    private fun initLogging() {
+        Timber.plant(Timber.DebugTree())
+    }
+
 }

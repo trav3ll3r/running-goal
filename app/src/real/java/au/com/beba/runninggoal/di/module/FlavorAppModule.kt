@@ -1,7 +1,9 @@
 package au.com.beba.runninggoal.di.module
 
-import au.com.beba.runninggoal.networking.source.StravaSyncSourceProvider
-import au.com.beba.runninggoal.networking.source.SyncSourceProvider
+import au.com.beba.runninggoal.https.HttpClient
+import au.com.beba.runninggoal.https.HttpClientImpl
+import au.com.beba.runninggoal.sync.StravaSyncSourceProvider
+import au.com.beba.runninggoal.sync.SyncSourceProvider
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -12,6 +14,10 @@ class FlavorAppModule {
 
     @Provides
     @Singleton
-    fun apiSource(): SyncSourceProvider = StravaSyncSourceProvider()
+    fun httpClient(): HttpClient = HttpClientImpl()
+
+    @Provides
+    @Singleton
+    fun apiSource(httpClient: HttpClient): SyncSourceProvider = StravaSyncSourceProvider(httpClient)
 
 }

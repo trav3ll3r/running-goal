@@ -53,8 +53,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility '1.8'
+        targetCompatibility '1.8'
     }
 }
 
@@ -63,9 +63,7 @@ dependencies {
     implementation "com.google.android.material:material:${androidx.materialVer}"
     implementation "androidx.appcompat:appcompat:${androidx.appcompatVer}"
     implementation "androidx.recyclerview:recyclerview:${androidx.recyclerViewVer}"
-
     implementation "androidx.constraintlayout:constraintlayout:${androidx.constraintLayoutVer}"
-
     implementation "androidx.lifecycle:lifecycle-extensions:${androidx.archLifecycleVer}"
     kapt "androidx.lifecycle:lifecycle-compiler:${androidx.archLifecycleVer}"
 
@@ -88,9 +86,8 @@ dependencies {
     implementation "com.facebook.stetho:stetho:${libs.stetho}"
 }
 
-// KOTLIN, ANKO, KTX
+// KOTLIN, ANKO, KOTLINX
 dependencies {
-    // Kotlin AND Anko
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
     implementation "org.jetbrains.anko:anko-sdk25:${kotlin.ankoVer}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin.kotlinCoroutinesVer}"
@@ -103,13 +100,20 @@ dependencies {
 
 // MODULES
 dependencies {
-    implementation project(':networking')
+    implementation project(':domain')
+    implementation project(':sync')
+    implementation project(':https') //FIXME: ONLY TEMPORARILY
 }
 
 // TESTING
 dependencies {
     testImplementation "junit:junit:${test.junit}"
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta01'
+}
 
+// LOGGING
+dependencies {
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'at.favre.lib:slf4j-timber:1.0.0'    //slf4j BINDINGS FOR Timber
 }

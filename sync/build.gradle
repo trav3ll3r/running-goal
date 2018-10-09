@@ -1,0 +1,34 @@
+def libs = rootProject.ext.libs
+def kotlin = rootProject.ext.kotlin
+
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+// KOTLIN, ANKO, KOTLINX
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+}
+
+// SERIALISATION
+dependencies {
+    implementation "com.google.code.gson:gson:${libs.gsonVer}"
+}
+
+// LOGGING
+dependencies {
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+}
+
+//MODULES
+dependencies {
+    implementation project(':domain')
+    implementation project(':https')
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"

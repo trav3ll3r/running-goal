@@ -4,8 +4,8 @@ import au.com.beba.runninggoal.App
 import au.com.beba.runninggoal.feature.LocalPreferences
 import au.com.beba.runninggoal.feature.LocalPreferencesImpl
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
-import au.com.beba.runninggoal.repo.AthleteActivityRepo
-import au.com.beba.runninggoal.repo.AthleteActivityRepository
+import au.com.beba.runninggoal.repo.WorkoutRepo
+import au.com.beba.runninggoal.repo.WorkoutRepository
 import au.com.beba.runninggoal.repo.GoalRepo
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepo
@@ -31,8 +31,8 @@ class CommonAppModule {
 
     @Provides
     @Singleton
-    fun athleteActivityRepository(application: App): AthleteActivityRepository =
-            AthleteActivityRepo.getInstance(application.applicationContext)
+    fun workoutRepository(application: App): WorkoutRepository =
+            WorkoutRepo.getInstance(application.applicationContext)
 
     @Provides
     @Singleton

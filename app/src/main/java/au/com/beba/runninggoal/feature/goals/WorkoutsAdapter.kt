@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.domain.core.Workout
+import au.com.beba.runninggoal.domain.Workout
 
 
 class WorkoutsAdapter(private val items: MutableList<Workout>)

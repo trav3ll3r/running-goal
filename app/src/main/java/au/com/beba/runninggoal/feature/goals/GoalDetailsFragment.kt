@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.goal.GoalActionListener
-import au.com.beba.runninggoal.feature.goal.GoalViewModel
-import au.com.beba.runninggoal.domain.core.Workout
+import au.com.beba.runninggoal.domain.Workout
 import au.com.beba.runninggoal.domain.core.GoalStatus
 import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.feature.goal.GoalActionListener
+import au.com.beba.runninggoal.feature.goal.GoalViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
 import javax.inject.Inject

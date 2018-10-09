@@ -17,7 +17,7 @@ import java.util.concurrent.Executors
             RunningGoalEntity::class,
             SyncSourceEntity::class,
             WidgetEntity::class,
-            AthleteActivityEntity::class],
+            WorkoutEntity::class],
         version = 1,
         exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -77,5 +77,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun runningGoalDao(): RunningGoalDao
     abstract fun syncSourceDao(): SyncSourceDao
     abstract fun widgetDao(): WidgetDao
-    abstract fun athleteActivityDao(): AthleteActivityDao
+    abstract fun workoutDao(): WorkoutDao
 }

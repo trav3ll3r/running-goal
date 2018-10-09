@@ -4,17 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
-import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
+import au.com.beba.runninggoal.domain.Workout
 import au.com.beba.runninggoal.domain.core.Distance
 import au.com.beba.runninggoal.domain.core.GoalStatus
 import au.com.beba.runninggoal.domain.core.RunningGoal
 import au.com.beba.runninggoal.domain.sync.SyncSource
-import au.com.beba.runninggoal.networking.model.ApiSourceProfile
-import au.com.beba.runninggoal.networking.model.AthleteActivity
-import au.com.beba.runninggoal.networking.source.SyncSourceProvider
-import au.com.beba.runninggoal.repo.AthleteActivityRepository
+import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository
+import au.com.beba.runninggoal.repo.WorkoutRepository
+import au.com.beba.runninggoal.sync.ApiSourceProfile
+import au.com.beba.runninggoal.sync.SyncSourceProvider
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.launch
@@ -32,7 +32,7 @@ class SyncSourceIntentService : JobIntentService() {
     @Inject
     lateinit var goalRepository: GoalRepository
     @Inject
-    lateinit var athleteActivityRepository: AthleteActivityRepository
+    lateinit var workoutRepository: WorkoutRepository
 
     @Inject
     lateinit var goalWidgetUpdater: GoalWidgetUpdater
@@ -83,15 +83,15 @@ class SyncSourceIntentService : JobIntentService() {
                     Log.d(TAG, "onHandleWork | syncGoalId=${it.id}")
                     goalRepository.markGoalUpdateStatus(true, it)
 
-                    val workoutsFromSource = getAthleteActivitiesFromSource(it, syncSource)
+                    val workoutsFromSource = getWorkoutsFromSource(it, syncSource)
                     persistWorkouts(it, workoutsFromSource)
 
                     // GET LATEST AND GREATEST FROM REPO
-                    val workouts = athleteActivityRepository.getAllForGoal(it.id)
+                    val workouts = workoutRepository.getAllForGoal(it.id)
                     val distanceInMetre = totalDistanceForWorkouts(workouts)
                     if (distanceInMetre > -1f) {
                         updateGoalWithNewDistance(it, Distance.fromMetres(distanceInMetre), syncSource)
-                        //TODO: NOTIFY athleteActivities UPDATED
+                        //TODO: NOTIFY workouts UPDATED
                     }
                     goalRepository.markGoalUpdateStatus(false, it)
                     Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
@@ -102,11 +102,11 @@ class SyncSourceIntentService : JobIntentService() {
         }
     }
 
-    private suspend fun getAthleteActivitiesFromSource(goal: RunningGoal, syncSource: SyncSource): List<AthleteActivity> {
-        Log.i(TAG, "getAthleteActivitiesFromSource")
+    private suspend fun getWorkoutsFromSource(goal: RunningGoal, syncSource: SyncSource): List<Workout> {
+        Log.i(TAG, "getWorkoutsFromSource")
 
         syncSourceProvider.setSyncSourceProfile(ApiSourceProfile(syncSource.accessToken))
-        return syncSourceProvider.getAthleteActivitiesForDateRange(
+        return syncSourceProvider.getWorkoutsForDateRange(
                 goal.target.period.from.asEpochUtc(),
                 goal.target.period.to.asEpochUtc())
     }
@@ -140,22 +140,14 @@ class SyncSourceIntentService : JobIntentService() {
         goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
     }
 
-    private suspend fun persistWorkouts(goal: RunningGoal, workouts: List<AthleteActivity>) {
-        athleteActivityRepository.deleteAllForGoal(goal.id)
-        val mappedWorkouts = workouts.map {
-            au.com.beba.runninggoal.domain.core.Workout(
-                    it.name,
-                    it.description,
-                    it.distanceInMetres.toLong(),
-                    it.dateTime
-            )
-        }
-        athleteActivityRepository.insertAll(goal.id, mappedWorkouts)
+    private suspend fun persistWorkouts(goal: RunningGoal, workouts: List<Workout>) {
+        workoutRepository.deleteAllForGoal(goal.id)
+        workoutRepository.insertAll(goal.id, workouts)
     }
 
-    private fun totalDistanceForWorkouts(workouts: List<au.com.beba.runninggoal.domain.core.Workout>): Long {
+    private fun totalDistanceForWorkouts(workouts: List<Workout>): Long {
         Log.v(TAG, "totalDistanceForWorkouts")
-        val distanceMetre: Long = workouts.asSequence().map { it.distanceInMetres }.sum()
+        val distanceMetre: Long = workouts.asSequence().map { it.distanceInMetres.toLong() }.sum()
         Log.v(TAG, "totalDistanceForWorkouts | distanceMetre=$distanceMetre")
         return distanceMetre
     }

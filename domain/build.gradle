@@ -1,0 +1,16 @@
+def kotlin = rootProject.ext.kotlin
+
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+// KOTLIN, ANKO, KOTLINX
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"

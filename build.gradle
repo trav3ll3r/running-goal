@@ -22,6 +22,7 @@ buildscript {
             kotlinVer               : "1.2.71",
             ankoVer                 : "0.10.6",
             kotlinCoroutinesVer     : "0.22.5",
+            coreKtx                 : "1.0.0",
         ]
         testing = [
             junit : "4.12"

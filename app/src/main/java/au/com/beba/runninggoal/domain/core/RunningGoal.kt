@@ -25,11 +25,17 @@ data class RunningGoal(
         val expectedDistance = linearDistancePerDay * daysLapsed
 
         runningGoal.let {
+
             progress = GoalProgress(Distance(currentDistance), daysTotal, daysLapsed, Distance(expectedDistance))
             progress.positionInDistance = Distance(currentDistance - expectedDistance)
             progress.positionInDays = progress.positionInDistance.value / linearDistancePerDay
             progress.status = getStatus(today)
-            projection = GoalProjection(Distance(linearDistancePerDay), daysLapsed)
+
+            val daysRemaining = daysTotal - daysLapsed
+            val distanceRemaining = runningGoal.target.distance.value - currentDistance
+            val remainingDistancePerDay = (distanceRemaining / daysRemaining)
+
+            projection = GoalProjection(Distance(linearDistancePerDay), Distance(remainingDistancePerDay))
         }
     }
 
@@ -56,7 +62,7 @@ data class GoalProgress(
         var positionInDays: Float = 0.0f,
         var status: GoalStatus = GoalStatus.UNKNOWN)
 
-data class GoalProjection(val distancePerDay: Distance = Distance(), val daysLapsed: Int = 0)
+data class GoalProjection(val distancePerDayPeriod: Distance = Distance(), val distancePerDayRemaining: Distance = Distance())
 
 data class GoalView(var updating: Boolean = false)
 

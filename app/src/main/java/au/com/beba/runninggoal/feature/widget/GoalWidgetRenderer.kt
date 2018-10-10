@@ -14,17 +14,17 @@ import android.graphics.Point
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
-import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.domain.core.GoalDate
 import au.com.beba.runninggoal.domain.core.RunningGoal
 import au.com.beba.runninggoal.domain.widget.Widget
 import au.com.beba.runninggoal.domain.widget.WidgetViewType
+import au.com.beba.runninggoal.feature.goals.GoalActivity
 import org.intellij.lang.annotations.Identifier
+import timber.log.Timber
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -38,7 +38,7 @@ object GoalWidgetRenderer {
     const val FLIP_CLICKED = "au.com.beba.runninggoal.FLIP_CLICKED"
 
     fun updateUi(context: Context, rootView: RemoteViews, runningGoal: RunningGoal?, widget: Widget) {
-        Log.i(TAG, "updateUi")
+        Timber.i(TAG, "updateUi")
 
         if (runningGoal?.deleted != false || runningGoal.id < 1) {
             GoalDeletedRenderer.render(context, rootView)
@@ -54,7 +54,7 @@ object GoalWidgetRenderer {
 
         when (widget.view.viewType) {
             WidgetViewType.PROGRESS_BAR -> {
-                Log.d(TAG, "updateUi | PROGRESS_BAR | runningGoal=%s".format(runningGoal.id))
+                Timber.d(TAG, "updateUi | PROGRESS_BAR | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.VISIBLE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.GONE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_list_24dp))
@@ -62,7 +62,7 @@ object GoalWidgetRenderer {
                 GoalAsProgressRenderer.render(context, rootView, runningGoal)
             }
             WidgetViewType.NUMBERS -> {
-                Log.d(TAG, "updateUi | NUMBERS | runningGoal=%s".format(runningGoal.id))
+                Timber.d(TAG, "updateUi | NUMBERS | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.GONE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.VISIBLE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_pie_chart_24dp))
@@ -94,14 +94,14 @@ object GoalInNumbersRenderer {
     private val TAG = GoalInNumbersRenderer::class.java.simpleName
 
     fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
-        Log.i(TAG, "render")
+        Timber.i(TAG, "render")
         val progress = runningGoal.progress
         val projections = runningGoal.projection
 
         // ROW 1
         addNumericView(context, rootView, R.id.hex_center, "Km", progress.distanceToday.display(), runningGoal.target.distance.display())
         addNumericView(context, rootView, R.id.hex_top_left, "Days", progress.daysLapsed.toString(), progress.daysTotal.toString())
-        addNumericView(context, rootView, R.id.hex_bottom_left, "Average", projections.distancePerDay.displaySigned(), units = "km/day")
+        addNumericView(context, rootView, R.id.hex_bottom_left, "Average", projections.distancePerDayPeriod.displaySigned(), units = "km/day")
 
         // ROW 2
         addNumericView(context, rootView, R.id.hex_top_right, "Position", progress.positionInDistance.displaySigned(), units = "km")
@@ -153,8 +153,8 @@ object GoalAsProgressRenderer {
     }
 
     fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
-        Log.i(TAG, "render")
-        Log.d(TAG, "render | runningGoal=%s".format(runningGoal.id))
+        Timber.i(TAG, "render")
+        Timber.d(TAG, "render | runningGoal=%s".format(runningGoal.id))
         widthMax = context.resources.getDimensionPixelSize(R.dimen.max_width)
         heightMax = context.resources.getDimensionPixelSize(R.dimen.max_height)
 
@@ -258,7 +258,7 @@ object GoalAsProgressRenderer {
             if (correctedArcStartAngle > 360.00f) {
                 correctedArcStartAngle -= 360.00f
             }
-            Log.d("WIDGET", "arcProgressNotches | notch=%s correctedArcStartAngle=%s sweep=%s".format(it, correctedArcStartAngle, notchesSpecs.notchOffsetAngle))
+            Timber.d("arcProgressNotches | notch=%s correctedArcStartAngle=%s sweep=%s".format(it, correctedArcStartAngle, notchesSpecs.notchOffsetAngle))
 
             val notchScale = if ((it + 0) % 5 == 0) 0.5f else 0.2f // every 5th notch is longer
             drawArc(context, canvas, colour, correctedArcStartAngle, notchesSpecs.notchWidth, notchScale = notchScale)
@@ -268,7 +268,7 @@ object GoalAsProgressRenderer {
     private fun getArcRect(stroke: Float, padding: Int, width: Int? = null, height: Int? = null): RectF {
         val arcWidth = width ?: widthMax
         val arcHeight = height ?: heightMax
-        Log.d("getArcRect", "width=%s height=%s".format(arcWidth, arcHeight))
+        Timber.d("width=%s height=%s".format(arcWidth, arcHeight))
         val arcRect = RectF()
         arcRect.set((stroke / 2 + padding), (stroke / 2 + padding), (arcWidth - padding - stroke / 2), (arcHeight - padding - stroke / 2))
         return arcRect
@@ -337,7 +337,7 @@ object GoalDeletedRenderer {
     private val TAG = GoalDeletedRenderer::class.java.simpleName
 
     fun render(context: Context, rootView: RemoteViews) {
-        Log.i(TAG, "render")
+        Timber.i(TAG, "render")
         rootView.setViewVisibility(R.id.goal_period, View.GONE)
         rootView.setTextViewText(R.id.goal_name, context.getString(R.string.warning_goal_for_widget_deleted))
         rootView.removeAllViews(R.id.goal_in_visuals)

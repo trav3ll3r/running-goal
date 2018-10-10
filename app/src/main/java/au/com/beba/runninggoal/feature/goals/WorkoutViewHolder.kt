@@ -19,7 +19,7 @@ class WorkoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bindView(workout: Workout) {
         val dt = GoalDate(workout.dateTime)
-        val d = Distance.fromMetres(workout.distanceInMetres.toLong())
+        val d = Distance.fromMetres(workout.distanceInMetres)
 
         name.text = workout.name
         description.text = workout.description

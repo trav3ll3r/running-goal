@@ -147,7 +147,7 @@ class SyncSourceIntentService : JobIntentService() {
 
     private fun totalDistanceForWorkouts(workouts: List<Workout>): Long {
         Log.v(TAG, "totalDistanceForWorkouts")
-        val distanceMetre: Long = workouts.asSequence().map { it.distanceInMetres.toLong() }.sum()
+        val distanceMetre: Long = workouts.asSequence().map { it.distanceInMetres }.sum()
         Log.v(TAG, "totalDistanceForWorkouts | distanceMetre=$distanceMetre")
         return distanceMetre
     }

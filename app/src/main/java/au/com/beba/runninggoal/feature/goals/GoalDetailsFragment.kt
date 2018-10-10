@@ -2,7 +2,6 @@ package au.com.beba.runninggoal.feature.goals
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +22,10 @@ import au.com.beba.runninggoal.domain.core.GoalStatus
 import au.com.beba.runninggoal.domain.core.RunningGoal
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goal.GoalViewModel
+import au.com.beba.runninggoal.feature.widget.DecimalRenderer
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -92,7 +93,7 @@ class GoalDetailsFragment : Fragment() {
         if (context is GoalActionListener) {
             goalActionListener = context
         } else {
-            Log.d(TAG, context.toString() + " must implement %s".format(GoalActionListener::class.java.simpleName))
+            Timber.d(TAG, "%s must implement %s".format(context.toString(), GoalActionListener::class.java.simpleName))
         }
     }
 
@@ -164,7 +165,7 @@ class GoalDetailsFragment : Fragment() {
     /* REACTIONS */
     /* ********* */
     private fun handleGoalUpdate(runningGoal: RunningGoal) {
-        Log.i(TAG, "handleGoalUpdate")
+        Timber.i(TAG, "handleGoalUpdate")
         val ctx = context
         if (ctx != null) {
             goal_item_name.text = runningGoal.name
@@ -192,7 +193,12 @@ class GoalDetailsFragment : Fragment() {
             goal_days_lapsed.setValues(runningGoal.progress.daysLapsed.toString(), ctx.getString(R.string.lapsed))
             goal_days_total.setValues(runningGoal.target.period.totalDays.toString(), ctx.getString(R.string.total))
 
-            goal_progress_position.setValues(runningGoal.progress.positionInDistance.displaySigned(), ctx.getString(R.string.progress_position))
+            goal_position_distance.setValues(runningGoal.progress.positionInDistance.displaySigned(), ctx.getString(R.string.position_distance))
+            goal_position_ideal_days.setValues(DecimalRenderer.fromFloat(runningGoal.progress.positionInDays, true), ctx.getString(R.string.position_ideal_days))
+
+            // PROJECTIONS
+            goal_projection_period_daily.setValues(runningGoal.projection.distancePerDayPeriod.display(), ctx.getString(R.string.period_daily_distance))
+            goal_projection_remaining_daily.setValues(runningGoal.projection.distancePerDayRemaining.display(), ctx.getString(R.string.remaining_daily_distance))
 
             goal_item_edit.setOnClickListener { editGoal(runningGoal) }
             goal_item_sync.setOnClickListener { syncGoal(runningGoal) }
@@ -208,13 +214,13 @@ class GoalDetailsFragment : Fragment() {
     }
 
     private fun updateList(items: List<Workout>) {
-        Log.i(TAG, "updateList")
+        Timber.i(TAG, "updateList")
         recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()
     }
 
     private fun handleBusyIndicator(busy: Boolean) {
-        Log.i(TAG, "handleBusyIndicator")
+        Timber.i(TAG, "handleBusyIndicator")
         if (busy) {
             goal_item_sync.startAnimation(syncAnimation)
         } else {

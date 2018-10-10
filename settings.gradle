@@ -1,1 +1,1 @@
-include ':app', ':domain', ':https', ':sync'
+include ':app', ':domain', ':https', ':sync', ':stylist'

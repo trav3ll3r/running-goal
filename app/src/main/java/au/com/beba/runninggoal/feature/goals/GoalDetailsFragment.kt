@@ -18,8 +18,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.Workout
-import au.com.beba.runninggoal.domain.core.GoalStatus
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.GoalStatus
+import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.domain.core.displaySigned
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goal.GoalViewModel
 import au.com.beba.runninggoal.feature.widget.DecimalRenderer

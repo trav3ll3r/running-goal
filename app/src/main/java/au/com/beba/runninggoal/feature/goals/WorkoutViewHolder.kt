@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.NumericWithLabel
 import au.com.beba.runninggoal.domain.Workout
-import au.com.beba.runninggoal.domain.core.Distance
-import au.com.beba.runninggoal.domain.core.GoalDate
+import au.com.beba.runninggoal.domain.Distance
+import au.com.beba.runninggoal.domain.GoalDate
+import au.com.beba.runninggoal.domain.core.display
 import org.jetbrains.anko.find
 
 

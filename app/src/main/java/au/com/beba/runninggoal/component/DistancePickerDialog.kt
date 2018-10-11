@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import androidx.appcompat.widget.AppCompatButton
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.domain.core.Distance
+import au.com.beba.runninggoal.domain.Distance
 
 
 class DistancePickerDialog(private val context: Context, private val listener: DistancePickerDialog.OnDistanceSetListener) {

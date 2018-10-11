@@ -1,7 +1,7 @@
 package au.com.beba.runninggoal.repo
 
 import androidx.lifecycle.LiveData
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.RunningGoal
 
 
 interface GoalRepository {

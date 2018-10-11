@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import au.com.beba.runninggoal.domain.Workout
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.WorkoutRepository
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository

@@ -1,6 +1,6 @@
-package au.com.beba.runninggoal.domain.core
+package au.com.beba.runninggoal.domain
 
-import au.com.beba.runninggoal.domain.core.GoalDate
+import au.com.beba.runninggoal.domain.GoalDate
 
 
 class Period constructor(val from: GoalDate = GoalDate(),

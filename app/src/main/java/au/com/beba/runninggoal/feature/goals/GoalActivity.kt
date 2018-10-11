@@ -13,11 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.DistancePickerDialog
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
-import au.com.beba.runninggoal.domain.core.Distance
-import au.com.beba.runninggoal.domain.core.GoalDate
-import au.com.beba.runninggoal.domain.core.GoalTarget
-import au.com.beba.runninggoal.domain.core.Period
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.Distance
+import au.com.beba.runninggoal.domain.GoalDate
+import au.com.beba.runninggoal.domain.GoalTarget
+import au.com.beba.runninggoal.domain.Period
+import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.domain.core.display
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.WidgetRepository
 import dagger.android.AndroidInjection
@@ -28,6 +29,7 @@ import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.find
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -77,8 +79,8 @@ class GoalActivity : AppCompatActivity() {
         if (extras != null) {
             goalId = extras.getLong(EXTRA_GOAL_ID, 0)
             appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-            Log.d(TAG, "extractIntentData | goalId=%s".format(goalId))
-            Log.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
+            Timber.d(TAG, "extractIntentData | goalId=%s".format(goalId))
+            Timber.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
         }
 
         return goalId
@@ -127,7 +129,7 @@ class GoalActivity : AppCompatActivity() {
     }
 
     private fun saveGoal(goal: RunningGoal) = async(UI) {
-        Log.i(TAG, "saveGoal")
+        Timber.i(TAG, "saveGoal")
         val startDate = GoalDate(find<TextView>(R.id.goal_start).text.toString(), GoalDate.EARLIEST)
         val endDate = GoalDate(find<TextView>(R.id.goal_end).text.toString())
 
@@ -149,9 +151,9 @@ class GoalActivity : AppCompatActivity() {
     }
 
     private fun deleteGoal(runningGoal: RunningGoal) = async(DefaultDispatcher) {
-        Log.i(TAG, "deleteGoal")
+        Timber.i(TAG, "deleteGoal")
 
-        Log.d(TAG, "deleteGoal | goalId=%s".format(runningGoal.id))
+        Timber.d(TAG, "deleteGoal | goalId=%s".format(runningGoal.id))
         if (goalRepository.delete(runningGoal) == 1) {
             // DELETE ALL RELATED Widgets IF DELETING runningGoal IS SUCCESSFUL
             runningGoal.deleted = true

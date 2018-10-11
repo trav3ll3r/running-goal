@@ -5,7 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.RemoteViews
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.WidgetRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher

@@ -18,8 +18,10 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.domain.core.GoalDate
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.GoalDate
+import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.domain.core.displaySigned
 import au.com.beba.runninggoal.domain.widget.Widget
 import au.com.beba.runninggoal.domain.widget.WidgetViewType
 import au.com.beba.runninggoal.feature.goals.GoalActivity

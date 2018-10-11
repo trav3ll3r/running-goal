@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.WidgetRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher

@@ -1,7 +1,7 @@
 package au.com.beba.runninggoal.models
 
-import au.com.beba.runninggoal.domain.core.GoalDate
-import au.com.beba.runninggoal.domain.core.Period
+import au.com.beba.runninggoal.domain.GoalDate
+import au.com.beba.runninggoal.domain.Period
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

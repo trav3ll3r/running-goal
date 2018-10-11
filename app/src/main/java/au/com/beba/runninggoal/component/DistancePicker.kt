@@ -9,7 +9,7 @@ import android.view.MotionEvent
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.domain.core.Distance
+import au.com.beba.runninggoal.domain.Distance
 
 
 class DistancePicker : LinearLayout {

@@ -19,7 +19,7 @@ import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.router.NavigationInteractor
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.GoalRepository
 import com.google.android.material.button.MaterialButton
 import dagger.android.support.AndroidSupportInjection

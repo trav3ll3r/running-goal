@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import au.com.beba.runninggoal.domain.core.Distance
-import au.com.beba.runninggoal.domain.core.GoalDate
-import au.com.beba.runninggoal.domain.core.GoalTarget
-import au.com.beba.runninggoal.domain.core.Period
-import au.com.beba.runninggoal.domain.core.RunningGoal
+import au.com.beba.runninggoal.domain.Distance
+import au.com.beba.runninggoal.domain.GoalDate
+import au.com.beba.runninggoal.domain.GoalTarget
+import au.com.beba.runninggoal.domain.Period
+import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.persistence.AppDatabase
 import au.com.beba.runninggoal.persistence.RunningGoalDao
 import au.com.beba.runninggoal.persistence.RunningGoalEntity

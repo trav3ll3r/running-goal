@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.domain.core
+package au.com.beba.runninggoal.domain
 
 
 data class RunningGoal(

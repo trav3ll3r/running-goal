@@ -5,10 +5,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 import au.com.beba.runninggoal.domain.Workout
-import au.com.beba.runninggoal.domain.core.Distance
-import au.com.beba.runninggoal.domain.core.GoalStatus
-import au.com.beba.runninggoal.domain.core.RunningGoal
-import au.com.beba.runninggoal.domain.sync.SyncSource
+import au.com.beba.runninggoal.domain.Distance
+import au.com.beba.runninggoal.domain.GoalStatus
+import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.sync.SyncSource
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.repo.GoalRepository
 import au.com.beba.runninggoal.repo.SyncSourceRepository

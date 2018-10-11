@@ -1,6 +1,6 @@
 package au.com.beba.runninggoal
 
-import au.com.beba.runninggoal.domain.core.Distance
+import au.com.beba.runninggoal.domain.Distance
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

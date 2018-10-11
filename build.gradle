@@ -3,29 +3,32 @@
 buildscript {
     ext {
         libs = [
-            daggerVersion           : "2.16",
-            javaxInjectVersion      : "1",
-            gsonVer                 : "2.8.0",
-            stetho                  : "1.5.0",
-            crashlytics             : "2.9.5@aar",
+                daggerVersion     : "2.16",
+                javaxInjectVersion: "1",
+                gsonVer           : "2.8.0",
+                stetho            : "1.5.0",
+                crashlytics       : "2.9.5@aar",
 
         ]
         androidx = [
-            materialVer             : "1.0.0",
-            appcompatVer            : "1.0.0",
-            recyclerViewVer         : "1.0.0",
-            constraintLayoutVer     : "2.0.0-alpha2",
-            archLifecycleVer        : "2.0.0",
-            roomVer                 : "2.0.0",
+                materialVer        : "1.0.0",
+                appcompatVer       : "1.0.0",
+                recyclerViewVer    : "1.0.0",
+                constraintLayoutVer: "2.0.0-alpha2",
+                archLifecycleVer   : "2.0.0",
+                roomVer            : "2.0.0",
         ]
         kotlin = [
-            kotlinVer               : "1.2.71",
-            ankoVer                 : "0.10.6",
-            kotlinCoroutinesVer     : "0.22.5",
-            coreKtx                 : "1.0.0",
+                kotlinVer          : "1.2.71",
+                ankoVer            : "0.10.6",
+                kotlinCoroutinesVer: "0.22.5",
+                coreKtx            : "1.0.0",
         ]
         testing = [
-            junit : "4.12"
+                junit: "4.12"
+        ]
+        logs = [
+                slf4j: "1.7.25"
         ]
     }
 

@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.domain.sync
+package au.com.beba.runninggoal.sync
 
 import java.time.LocalDateTime
 

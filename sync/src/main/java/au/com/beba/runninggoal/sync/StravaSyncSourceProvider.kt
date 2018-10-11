@@ -1,7 +1,6 @@
 package au.com.beba.runninggoal.sync
 
 import au.com.beba.runninggoal.domain.Workout
-import au.com.beba.runninggoal.https.HttpClient
 import au.com.beba.runninggoal.https.HttpHeaders
 import au.com.beba.runninggoal.https.HttpRequest
 import au.com.beba.runninggoal.https.HttpResponse
@@ -13,9 +12,7 @@ import org.slf4j.LoggerFactory
 import java.io.InputStreamReader
 
 
-class StravaSyncSourceProvider
-constructor(httpClient: HttpClient)
-    : CommonSyncSourceProvider(httpClient) {
+class StravaSyncSourceProvider : CommonSyncSourceProvider() {
 
     companion object {
         private val TAG = StravaSyncSourceProvider::class.java.simpleName
@@ -25,8 +22,6 @@ constructor(httpClient: HttpClient)
     }
 
     private val logger: Logger = LoggerFactory.getLogger(TAG)
-//    //FIXME @Inject
-//    lateinit var httpClient: HttpClient
 
     private var sourceProfile: ApiSourceProfile? = null
 

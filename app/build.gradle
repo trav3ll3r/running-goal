@@ -103,7 +103,6 @@ dependencies {
     implementation project(':domain')
     implementation project(':sync')
     implementation project(':stylist')
-    implementation project(':https') //FIXME: ONLY TEMPORARILY
 }
 
 // TESTING

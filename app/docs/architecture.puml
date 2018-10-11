@@ -1,0 +1,96 @@
+@startuml
+    ' LEGEND
+    cloud domain #62ff73 {
+    }
+    cloud repo #6273ff {
+    }
+
+
+    node https {
+        interface HttpClient
+        class HttpClientImpl
+        HttpClient <|-- HttpClientImpl : impl
+    }
+
+    node domain-core #62ff73 {
+        class RunningGoal
+        class GoalTarget
+'        class GoalProgress
+'        class GoalProjection
+'        class GoalView
+'        enum GoalStatus
+    }
+
+    node domain-workout #62ff73 {
+        class Workout
+    }
+
+    node domain-sync #62ff73 {
+        interface SyncSourceProvider
+        class StravaSyncSourceProvider
+
+        StravaSyncSourceProvider --|> SyncSourceProvider
+        SyncSourceProvider *-- HttpClient
+        SyncSourceProvider *-- "repo-sync"
+
+    }
+
+    node domain-events #62ff73 {
+        interface Event
+        class EventImpl
+        enum Channel
+        Event <|-- EventImpl : impl
+        Event *-- Channel
+    }
+
+
+    node database {
+        GoalDao *-- GoalEntity
+        WorkoutDao *-- WorkoutEntity
+        SyncSourceDao *-- SyncSourceEntity
+        WidgetDao *-- WidgetEntity
+    }
+
+    node repo-goal #6273ff {
+        interface GoalRepository
+        class GoalRepo
+        GoalRepo --|> GoalRepository : impl
+        GoalRepository o-- GoalDao
+    }
+
+    node repo-workout #6273ff {
+        interface WorkoutRepository
+        class WorkoutRepo
+        WorkoutRepo --|> WorkoutRepository : impl
+        WorkoutRepository o-- WorkoutDao
+    }
+
+    node repo-widget #6273ff {
+        interface WidgetRepository
+        class WidgetRepo
+        WidgetRepo --|> WidgetRepository : impl
+        WidgetRepository o-- WidgetDao
+    }
+
+    node repo-sync #6273ff {
+        interface SyncSourceRepository
+        class SyncSourceRepo
+        SyncSourceRepo --|> SyncSourceRepository : impl
+        SyncSourceRepository o-- SyncSourceDao
+    }
+
+    node stylist {
+    }
+
+    database sharedPref {
+    }
+
+    node app {
+    }
+
+    app o-- "domain-core"
+    app o-- stylist
+
+    "domain-core" *-- "repo-goal"
+    "domain-core" *-- "repo-workout"
+@enduml

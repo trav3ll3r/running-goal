@@ -15,6 +15,12 @@ dependencies {
 }
 
 // SERIALISATION
+//dependencies {
+//    // FROM https://traversal.space/kapsule/
+//    implementation "space.traversal.kapsule:kapsule-core:0.3"
+//}
+
+// SERIALISATION
 dependencies {
     implementation "com.google.code.gson:gson:${libs.gsonVer}"
 }

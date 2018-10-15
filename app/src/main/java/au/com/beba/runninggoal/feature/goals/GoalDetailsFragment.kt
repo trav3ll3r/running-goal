@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.domain.Workout
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.core.display
 import au.com.beba.runninggoal.domain.core.displaySigned
+import au.com.beba.runninggoal.domain.workout.Workout
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goal.GoalViewModel
 import au.com.beba.runninggoal.feature.widget.DecimalRenderer
@@ -35,6 +35,7 @@ class GoalDetailsFragment : Fragment() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
+
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProviders.of(this, factory).get(GoalViewModel::class.java)
@@ -51,8 +52,6 @@ class GoalDetailsFragment : Fragment() {
             f.arguments = extra
             return f
         }
-
-        private val TAG = GoalDetailsFragment::class.java.simpleName
     }
 
     private val goalId: Long
@@ -64,7 +63,6 @@ class GoalDetailsFragment : Fragment() {
     private lateinit var recyclerAdapter: WorkoutsAdapter
 
     private var goalActionListener: GoalActionListener? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -95,14 +93,8 @@ class GoalDetailsFragment : Fragment() {
         if (context is GoalActionListener) {
             goalActionListener = context
         } else {
-            Timber.d(TAG, "%s must implement %s".format(context.toString(), GoalActionListener::class.java.simpleName))
+            Timber.d("%s must implement %s".format(context.toString(), GoalActionListener::class.java.simpleName))
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        viewModel.fetchGoal(goalId)
-//        viewModel.fetchActivities(goalId)
     }
 
     override fun onDetach() {
@@ -125,19 +117,24 @@ class GoalDetailsFragment : Fragment() {
     }
 
     private fun initLiveData() {
+        Timber.i("initLiveData")
         viewModel.goalLiveData.observe(this, Observer {
+            Timber.i("initLiveData | goalsLiveData | observed")
             if (it != null) {
+                Timber.d("initLiveData | goalsLiveData | observed | goal=%s", it.id)
                 handleGoalUpdate(it)
             }
         })
         viewModel.fetchGoal(goalId)
 
-        viewModel.activitiesLiveData.observe(this, Observer {
+        viewModel.workoutsLiveData.observe(this, Observer {
+            Timber.i("initLiveData | goalsLiveData | observed")
             if (it != null) {
+                Timber.d("initLiveData | goalsLiveData | observed | workouts=%s", it.size)
                 updateList(it)
             }
         })
-        viewModel.fetchActivities(goalId)
+        viewModel.fetchWorkouts(goalId)
     }
 
     private fun initRecyclerView() {
@@ -167,7 +164,7 @@ class GoalDetailsFragment : Fragment() {
     /* REACTIONS */
     /* ********* */
     private fun handleGoalUpdate(runningGoal: RunningGoal) {
-        Timber.i(TAG, "handleGoalUpdate")
+        Timber.i("handleGoalUpdate")
         val ctx = context
         if (ctx != null) {
             goal_item_name.text = runningGoal.name
@@ -205,7 +202,7 @@ class GoalDetailsFragment : Fragment() {
             goal_item_edit.setOnClickListener { editGoal(runningGoal) }
             goal_item_sync.setOnClickListener { syncGoal(runningGoal) }
 
-            //handleBusyIndicator(runningGoal.view.updating)
+            handleBusyIndicator(runningGoal.view.updating)
         }
 
         // Data is loaded so lets wait for our parent to be drawn
@@ -216,13 +213,13 @@ class GoalDetailsFragment : Fragment() {
     }
 
     private fun updateList(items: List<Workout>) {
-        Timber.i(TAG, "updateList")
+        Timber.i("updateList")
         recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()
     }
 
     private fun handleBusyIndicator(busy: Boolean) {
-        Timber.i(TAG, "handleBusyIndicator")
+        Timber.i("handleBusyIndicator")
         if (busy) {
             goal_item_sync.startAnimation(syncAnimation)
         } else {

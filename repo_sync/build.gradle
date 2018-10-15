@@ -1,0 +1,62 @@
+def kotlin = rootProject.ext.kotlin
+def test = rootProject.ext.testing
+def logs = rootProject.ext.logs
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 26
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+// KOTLIN, ANKO, KOTLINX
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+}
+
+// SERIALIZATION (GSON)
+def gson_version = '2.8.5'
+dependencies {
+    implementation "com.google.code.gson:gson:$gson_version"
+}
+
+// TESTING
+dependencies {
+    testImplementation "junit:junit:${test.junit}"
+}
+
+// LOGGING
+dependencies {
+    implementation "org.slf4j:slf4j-api:${logs.slf4j}"
+}
+
+// MODULES
+dependencies {
+    implementation project(':domain_workout')
+    implementation project(':goaldatabase')
+    implementation project(':https')
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"

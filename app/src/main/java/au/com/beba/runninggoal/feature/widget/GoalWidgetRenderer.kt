@@ -35,12 +35,10 @@ import java.util.*
 
 object GoalWidgetRenderer {
 
-    private val TAG = GoalWidgetRenderer::class.java.simpleName
-
     const val FLIP_CLICKED = "au.com.beba.runninggoal.FLIP_CLICKED"
 
     fun updateUi(context: Context, rootView: RemoteViews, runningGoal: RunningGoal?, widget: Widget) {
-        Timber.i(TAG, "updateUi")
+        Timber.i("updateUi")
 
         if (runningGoal?.deleted != false || runningGoal.id < 1) {
             GoalDeletedRenderer.render(context, rootView)
@@ -56,7 +54,7 @@ object GoalWidgetRenderer {
 
         when (widget.view.viewType) {
             WidgetViewType.PROGRESS_BAR -> {
-                Timber.d(TAG, "updateUi | PROGRESS_BAR | runningGoal=%s".format(runningGoal.id))
+                Timber.d("updateUi | PROGRESS_BAR | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.VISIBLE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.GONE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_list_24dp))
@@ -64,7 +62,7 @@ object GoalWidgetRenderer {
                 GoalAsProgressRenderer.render(context, rootView, runningGoal)
             }
             WidgetViewType.NUMBERS -> {
-                Timber.d(TAG, "updateUi | NUMBERS | runningGoal=%s".format(runningGoal.id))
+                Timber.d("updateUi | NUMBERS | runningGoal=%s".format(runningGoal.id))
                 rootView.setViewVisibility(R.id.goal_in_visuals, View.GONE)
                 rootView.setViewVisibility(R.id.goal_in_numbers, View.VISIBLE)
                 rootView.setImageViewIcon(R.id.btn_flip, Icon.createWithResource(context, R.drawable.ic_pie_chart_24dp))
@@ -93,10 +91,8 @@ object GoalWidgetRenderer {
 
 object GoalInNumbersRenderer {
 
-    private val TAG = GoalInNumbersRenderer::class.java.simpleName
-
     fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
-        Timber.i(TAG, "render")
+        Timber.i("render")
         val progress = runningGoal.progress
         val projections = runningGoal.projection
 
@@ -132,8 +128,6 @@ object GoalInNumbersRenderer {
 
 object GoalAsProgressRenderer {
 
-    private val TAG = GoalAsProgressRenderer::class.java.simpleName
-
     private const val gapAngle = 30f
     private const val startAngle = 90f + gapAngle
     private const val fullSweep = 360f - (gapAngle * 2)
@@ -155,8 +149,8 @@ object GoalAsProgressRenderer {
     }
 
     fun render(context: Context, rootView: RemoteViews, runningGoal: RunningGoal) {
-        Timber.i(TAG, "render")
-        Timber.d(TAG, "render | runningGoal=%s".format(runningGoal.id))
+        Timber.i("render")
+        Timber.d("render | runningGoal=%s".format(runningGoal.id))
         widthMax = context.resources.getDimensionPixelSize(R.dimen.max_width)
         heightMax = context.resources.getDimensionPixelSize(R.dimen.max_height)
 
@@ -336,10 +330,8 @@ object GoalAsProgressRenderer {
 
 object GoalDeletedRenderer {
 
-    private val TAG = GoalDeletedRenderer::class.java.simpleName
-
     fun render(context: Context, rootView: RemoteViews) {
-        Timber.i(TAG, "render")
+        Timber.i("render")
         rootView.setViewVisibility(R.id.goal_period, View.GONE)
         rootView.setTextViewText(R.id.goal_name, context.getString(R.string.warning_goal_for_widget_deleted))
         rootView.removeAllViews(R.id.goal_in_visuals)

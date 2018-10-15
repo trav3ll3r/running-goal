@@ -21,10 +21,6 @@ class NumericWithLabel : ConstraintLayout {
     private val current: TextView
     private val units: TextView
 
-    companion object {
-        private val TAG = NumericWithLabel::class.java.simpleName
-    }
-
     constructor(context: Context?) : this(context, null)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
@@ -93,7 +89,7 @@ class NumericWithLabel : ConstraintLayout {
     }
 
     fun setValues(current: CharSequence, units: CharSequence) {
-        Timber.d(TAG, "setValues")
+        Timber.d("setValues")
         this.current.text = current
         this.units.text = units
     }

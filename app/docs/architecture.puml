@@ -12,27 +12,46 @@
         HttpClient <|-- HttpClientImpl : impl
     }
 
-    node domain-core #62ff73 {
-        class RunningGoal
+    node "domain.goal" #62ff73 {
+        class RunningGoal {
+            +id: Long = 0
+            +name: String = ""
+            +deleted: Boolean = false
+            +updateProgressValues(onDate: GoalDate)
+        }
         class GoalTarget
-'        class GoalProgress
-'        class GoalProjection
-'        class GoalView
-'        enum GoalStatus
+        class GoalProgress
+        class GoalProjection
+        class GoalView
+        class GoalDate
+        enum GoalStatus
+
+        RunningGoal *-- GoalTarget
+        RunningGoal *-- GoalProgress
+        RunningGoal *-- GoalProjection
+        RunningGoal *-- GoalView
+        GoalProgress *-- GoalStatus
     }
 
-    node domain-workout #62ff73 {
+    node "domain.workout" #62ff73 {
         class Workout
+
+        package sync {
+            interface SyncSourceProvider
+            class StravaSyncSourceProvider
+        }
     }
+    StravaSyncSourceProvider --|> SyncSourceProvider
+    SyncSourceProvider *-- HttpClient
+    SyncSourceProvider *-- "repo-sync"
 
-    node domain-sync #62ff73 {
-        interface SyncSourceProvider
-        class StravaSyncSourceProvider
+    node domain-widget #62ff73 {
+        class Widget
+        class WidgetView
+        class WidgetViewType
 
-        StravaSyncSourceProvider --|> SyncSourceProvider
-        SyncSourceProvider *-- HttpClient
-        SyncSourceProvider *-- "repo-sync"
-
+        Widget *- WidgetView
+        WidgetView *- WidgetViewType
     }
 
     node domain-events #62ff73 {
@@ -43,54 +62,89 @@
         Event *-- Channel
     }
 
-
     node database {
-        GoalDao *-- GoalEntity
-        WorkoutDao *-- WorkoutEntity
-        SyncSourceDao *-- SyncSourceEntity
-        WidgetDao *-- WidgetEntity
+        class GoalDao
+        class GoalEntity
+        interface GoalStorage
+        class GoalStorageImpl
+
+        class WorkoutDao
+        class WorkoutEntity
+        interface WorkoutStorage
+        class WorkoutStorageImpl
+
+        class WidgetDao
+        class WidgetEntity
+        interface WidgetStorage
+        class WidgetStorageImpl
+
+        class SyncSourceDao
+        class SyncSourceEntity
+        interface SyncSourceStorage
+        class SyncSourceStorageImpl
     }
 
     node repo-goal #6273ff {
         interface GoalRepository
         class GoalRepo
-        GoalRepo --|> GoalRepository : impl
-        GoalRepository o-- GoalDao
     }
+    GoalRepository <|-- GoalRepo : impl
+    GoalRepo *-- GoalStorage
+    GoalStorage <|-- GoalStorageImpl
+    GoalStorageImpl *-- GoalDao
+    GoalDao *-- GoalEntity
 
     node repo-workout #6273ff {
         interface WorkoutRepository
         class WorkoutRepo
-        WorkoutRepo --|> WorkoutRepository : impl
-        WorkoutRepository o-- WorkoutDao
     }
+    WorkoutRepository <|-- WorkoutRepo : impl
+    WorkoutRepo *-- WorkoutStorage
+    WorkoutStorage <|-- WorkoutStorageImpl
+    WorkoutStorageImpl *-- WorkoutDao
+    WorkoutDao *-- WorkoutEntity
 
     node repo-widget #6273ff {
         interface WidgetRepository
         class WidgetRepo
-        WidgetRepo --|> WidgetRepository : impl
-        WidgetRepository o-- WidgetDao
     }
+    WidgetRepository <|-- WidgetRepo : impl
+    WidgetRepo *-- WidgetStorage
+    WidgetStorage <|-- WidgetStorageImpl
+    WidgetStorageImpl *-- WidgetDao
+    WidgetDao *-- WidgetEntity
 
     node repo-sync #6273ff {
         interface SyncSourceRepository
         class SyncSourceRepo
-        SyncSourceRepo --|> SyncSourceRepository : impl
-        SyncSourceRepository o-- SyncSourceDao
     }
+    SyncSourceRepository <|-- SyncSourceRepo : impl
+    SyncSourceRepo *-- SyncSourceStorage
+    SyncSourceStorage <|-- SyncSourceStorageImpl
+    SyncSourceStorageImpl *-- SyncSourceDao
+    SyncSourceDao *-- SyncSourceEntity
 
     node stylist {
     }
 
-    database sharedPref {
+    node sharedPref {
     }
 
     node app {
     }
 
-    app o-- "domain-core"
-    app o-- stylist
+    app *-- "domain.goal"
+    app *- stylist
 
-    "domain-core" *-- "repo-goal"
-    "domain-core" *-- "repo-workout"
+    "domain.goal" *-- "repo-goal"
+    "domain.workout" *-- "repo-workout"
+
+    object androidx_room {
+        v2.0.0
+    }
+
+    "repo-goal" *- "domain.goal"
+    database *-- androidx_room #080 : gradle
+    database *-- "domain.goal"
+    database *-- "domain-widget"
 @enduml

@@ -5,22 +5,25 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.component.DistancePickerDialog
-import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.domain.Distance
 import au.com.beba.runninggoal.domain.GoalDate
 import au.com.beba.runninggoal.domain.GoalTarget
 import au.com.beba.runninggoal.domain.Period
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.core.display
-import au.com.beba.runninggoal.repo.GoalRepository
-import au.com.beba.runninggoal.repo.WidgetRepository
+import au.com.beba.runninggoal.domain.event.GoalChangeEvent
+import au.com.beba.runninggoal.domain.event.GoalDeleteEvent
+import au.com.beba.runninggoal.domain.event.PublisherEventCentre
+import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
+import au.com.beba.runninggoal.repo.goal.GoalRepository
+import au.com.beba.runninggoal.repo.widget.WidgetRepository
+import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
@@ -37,7 +40,6 @@ import javax.inject.Inject
 class GoalActivity : AppCompatActivity() {
 
     companion object {
-        private val TAG = GoalActivity::class.java.simpleName
         private const val EXTRA_GOAL_ID = "EXTRA_GOAL_ID"
 
         fun buildIntent(context: Context, goalId: Long): Intent {
@@ -52,9 +54,13 @@ class GoalActivity : AppCompatActivity() {
     @Inject
     lateinit var goalRepository: GoalRepository
     @Inject
+    lateinit var workoutRepository: WorkoutRepository
+    @Inject
     lateinit var widgetRepository: WidgetRepository
     @Inject
     lateinit var goalWidgetUpdater: GoalWidgetUpdater
+    @Inject
+    lateinit var eventCentre: PublisherEventCentre
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -79,23 +85,23 @@ class GoalActivity : AppCompatActivity() {
         if (extras != null) {
             goalId = extras.getLong(EXTRA_GOAL_ID, 0)
             appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-            Timber.d(TAG, "extractIntentData | goalId=%s".format(goalId))
-            Timber.d(TAG, "extractIntentData | appWidgetId=%s".format(appWidgetId))
+            Timber.d("extractIntentData | goalId=%s".format(goalId))
+            Timber.d("extractIntentData | appWidgetId=%s".format(appWidgetId))
         }
 
         return goalId
     }
 
     private suspend fun resolveGoal(goalId: Long): RunningGoal {
-        Log.i(TAG, "resolveGoal")
+        Timber.i("resolveGoal")
         val goal: RunningGoal? = withContext(DefaultDispatcher) {
             if (goalId > 0) {
-                Log.d(TAG, "resolveGoal | from goalId")
+                Timber.d("resolveGoal | from goalId")
                 goalRepository.getById(goalId)
             } else {
                 val widget = widgetRepository.getByWidgetId(appWidgetId)
                 if (widget != null) {
-                    Log.d(TAG, "resolveGoal | linked to widgetId")
+                    Timber.d("resolveGoal | linked to widgetId")
                     goalRepository.getById(widget.goalId)
                 } else {
                     null
@@ -128,8 +134,9 @@ class GoalActivity : AppCompatActivity() {
         find<TextView>(R.id.goal_end).setText(endDate.asDisplayLocalLong(), TextView.BufferType.EDITABLE)
     }
 
+    //TODO: MOVE TO VIEWMODEL
     private fun saveGoal(goal: RunningGoal) = async(UI) {
-        Timber.i(TAG, "saveGoal")
+        Timber.i("saveGoal")
         val startDate = GoalDate(find<TextView>(R.id.goal_start).text.toString(), GoalDate.EARLIEST)
         val endDate = GoalDate(find<TextView>(R.id.goal_end).text.toString())
 
@@ -142,30 +149,39 @@ class GoalActivity : AppCompatActivity() {
 
         val goalId = goalRepository.save(goal)
 
-        // CHECK IF THIS IS NEEDED, USE goal
+        // TODO: CHECK IF THIS IS NEEDED, USE goal
         val updatedGoal = goalRepository.getById(goalId)
 
         updateWidgetView(updatedGoal)
 
+        eventCentre.publish(GoalChangeEvent(goalId))
+
         exit()
     }
 
+    //TODO: MOVE TO VIEWMODEL
     private fun deleteGoal(runningGoal: RunningGoal) = async(DefaultDispatcher) {
-        Timber.i(TAG, "deleteGoal")
+        Timber.i("deleteGoal")
+        Timber.d("deleteGoal | goalId=%s".format(runningGoal.id))
 
-        Timber.d(TAG, "deleteGoal | goalId=%s".format(runningGoal.id))
+        // IF DELETING runningGoal IS SUCCESSFUL
         if (goalRepository.delete(runningGoal) == 1) {
-            // DELETE ALL RELATED Widgets IF DELETING runningGoal IS SUCCESSFUL
+            // DELETE ALL RELATED Workouts
+            workoutRepository.deleteAllForGoal(runningGoal.id)
+
+            // DELETE ALL RELATED Widgets
             runningGoal.deleted = true
 
             updateWidgetView(runningGoal)
+
+            eventCentre.publish(GoalDeleteEvent())
         }
 
         exit()
     }
 
     private suspend fun updateWidgetView(runningGoal: RunningGoal?) = withContext(DefaultDispatcher) {
-        Log.i(TAG, "updateWidgetView")
+        Timber.i("updateWidgetView")
         val context = this
         if (runningGoal != null) {
             runBlocking {

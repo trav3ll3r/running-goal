@@ -1,20 +1,24 @@
 package au.com.beba.runninggoal.di.module
 
 import au.com.beba.runninggoal.App
+import au.com.beba.runninggoal.domain.event.EventCentre
+import au.com.beba.runninggoal.domain.event.PublisherEventCentre
+import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
 import au.com.beba.runninggoal.feature.LocalPreferences
 import au.com.beba.runninggoal.feature.LocalPreferencesImpl
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
-import au.com.beba.runninggoal.repo.WorkoutRepo
-import au.com.beba.runninggoal.repo.WorkoutRepository
-import au.com.beba.runninggoal.repo.GoalRepo
-import au.com.beba.runninggoal.repo.GoalRepository
-import au.com.beba.runninggoal.repo.SyncSourceRepo
-import au.com.beba.runninggoal.repo.SyncSourceRepository
-import au.com.beba.runninggoal.repo.WidgetRepo
-import au.com.beba.runninggoal.repo.WidgetRepository
+import au.com.beba.runninggoal.repo.goal.GoalRepo
+import au.com.beba.runninggoal.repo.goal.GoalRepository
+import au.com.beba.runninggoal.repo.sync.SyncSourceRepo
+import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
+import au.com.beba.runninggoal.repo.widget.WidgetRepo
+import au.com.beba.runninggoal.repo.widget.WidgetRepository
+import au.com.beba.runninggoal.repo.workout.WorkoutRepo
+import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
+
 
 @Module
 class CommonAppModule {
@@ -26,23 +30,31 @@ class CommonAppModule {
 
     @Provides
     @Singleton
+    fun subscriberEventCentre(): SubscriberEventCentre = EventCentre
+
+    @Provides
+    @Singleton
+    fun publisherEventCentre(): PublisherEventCentre = EventCentre
+
+    @Provides
+    @Singleton
     fun goalRepository(application: App): GoalRepository =
-            GoalRepo.getInstance(application.applicationContext)
+            GoalRepo(application)
 
     @Provides
     @Singleton
     fun workoutRepository(application: App): WorkoutRepository =
-            WorkoutRepo.getInstance(application.applicationContext)
+            WorkoutRepo(application)
 
     @Provides
     @Singleton
     fun syncSourceRepository(application: App): SyncSourceRepository =
-            SyncSourceRepo.getInstance(application.applicationContext)
+            SyncSourceRepo(application)
 
     @Provides
     @Singleton
     fun widgetRepository(application: App): WidgetRepository =
-            WidgetRepo.getInstance(application.applicationContext)
+            WidgetRepo(application)
 
     @Provides
     @Singleton

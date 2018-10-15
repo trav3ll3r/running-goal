@@ -2,23 +2,26 @@ package au.com.beba.runninggoal.feature.progressSync
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.JobIntentService
-import au.com.beba.runninggoal.domain.Workout
 import au.com.beba.runninggoal.domain.Distance
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.sync.SyncSource
+import au.com.beba.runninggoal.domain.event.EventCentre
+import au.com.beba.runninggoal.domain.event.PublisherEventCentre
+import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
+import au.com.beba.runninggoal.domain.workout.Workout
+import au.com.beba.runninggoal.domain.workout.sync.ApiSourceProfile
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
-import au.com.beba.runninggoal.repo.GoalRepository
-import au.com.beba.runninggoal.repo.SyncSourceRepository
-import au.com.beba.runninggoal.repo.WorkoutRepository
-import au.com.beba.runninggoal.sync.ApiSourceProfile
-import au.com.beba.runninggoal.sync.SyncSourceProvider
+import au.com.beba.runninggoal.repo.goal.GoalRepository
+import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
+import au.com.beba.runninggoal.repo.sync.providers.SyncSourceProvider
+import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -37,8 +40,10 @@ class SyncSourceIntentService : JobIntentService() {
     @Inject
     lateinit var goalWidgetUpdater: GoalWidgetUpdater
 
+    @Inject
+    lateinit var eventCentre: PublisherEventCentre
+
     companion object {
-        private val TAG = SyncSourceIntentService::class.java.simpleName
         private const val EXTRA_GOAL_ID = "EXTRA_GOAL_ID"
 
         /**
@@ -58,7 +63,7 @@ class SyncSourceIntentService : JobIntentService() {
          * Convenience method for enqueuing work in to this service.
          */
         fun enqueueWork(context: Context, work: Intent, jobId: Int) {
-            Log.d(TAG, "enqueueWork")
+            Timber.d("enqueueWork")
             enqueueWork(context, SyncSourceIntentService::class.java, jobId, work)
         }
     }
@@ -69,19 +74,19 @@ class SyncSourceIntentService : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        Log.i(TAG, "onHandleWork")
+        Timber.i("onHandleWork")
 
         launch {
 
             val syncSource = syncSourceRepository.getDefaultSyncSource()
             if (syncSource.isDefault) {
-                Log.d(TAG, "onHandleWork | syncType=${syncSource.type}")
+                Timber.d("onHandleWork | syncType=%s", syncSource.type)
 
                 val goals = getGoalsForUpdate(intent.getLongExtra(EXTRA_GOAL_ID, -1L))
 
                 goals.forEach {
-                    Log.d(TAG, "onHandleWork | syncGoalId=${it.id}")
-                    goalRepository.markGoalUpdateStatus(true, it)
+                    Timber.d("onHandleWork | syncGoalId=%s", it.id)
+                    eventCentre.publish(WorkoutSyncEvent(it.id, true))
 
                     val workoutsFromSource = getWorkoutsFromSource(it, syncSource)
                     persistWorkouts(it, workoutsFromSource)
@@ -91,19 +96,21 @@ class SyncSourceIntentService : JobIntentService() {
                     val distanceInMetre = totalDistanceForWorkouts(workouts)
                     if (distanceInMetre > -1f) {
                         updateGoalWithNewDistance(it, Distance.fromMetres(distanceInMetre), syncSource)
-                        //TODO: NOTIFY workouts UPDATED
+
+                        //NOTIFY workouts FINISHED UPDATING
+                        eventCentre.publish(WorkoutSyncEvent(it.id, false))
                     }
-                    goalRepository.markGoalUpdateStatus(false, it)
-                    Log.d(TAG, "onHandleWork | distance=$distanceInMetre")
+
+                    Timber.d("onHandleWork | distance=$distanceInMetre")
                 }
             } else {
-                Log.e(TAG, "onHandleWork | no Default Sync Source found")
+                Timber.e("onHandleWork | no Default Sync Source found")
             }
         }
     }
 
     private suspend fun getWorkoutsFromSource(goal: RunningGoal, syncSource: SyncSource): List<Workout> {
-        Log.i(TAG, "getWorkoutsFromSource")
+        Timber.i("getWorkoutsFromSource")
 
         syncSourceProvider.setSyncSourceProfile(ApiSourceProfile(syncSource.accessToken))
         return syncSourceProvider.getWorkoutsForDateRange(
@@ -130,8 +137,8 @@ class SyncSourceIntentService : JobIntentService() {
     }
 
     private suspend fun updateGoalWithNewDistance(runningGoal: RunningGoal, distance: Distance, syncSource: SyncSource) {
-        Log.i(TAG, "updateGoalWithNewDistance")
-        Log.d(TAG, "updateGoalWithNewDistance | newDistance=${distance.value}")
+        Timber.i("updateGoalWithNewDistance")
+        Timber.d("updateGoalWithNewDistance | newDistance=%s", distance.value)
         runningGoal.progress.distanceToday = distance
         goalRepository.save(runningGoal)
 
@@ -146,9 +153,9 @@ class SyncSourceIntentService : JobIntentService() {
     }
 
     private fun totalDistanceForWorkouts(workouts: List<Workout>): Long {
-        Log.v(TAG, "totalDistanceForWorkouts")
+        Timber.v("totalDistanceForWorkouts")
         val distanceMetre: Long = workouts.asSequence().map { it.distanceInMetres }.sum()
-        Log.v(TAG, "totalDistanceForWorkouts | distanceMetre=$distanceMetre")
+        Timber.v("totalDistanceForWorkouts | distanceMetre=%s", distanceMetre)
         return distanceMetre
     }
 

@@ -8,9 +8,9 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.ListListener
-import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
+import au.com.beba.runninggoal.feature.goals.GoalsListFragment
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.repo.WidgetRepository
+import au.com.beba.runninggoal.repo.widget.WidgetRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.runBlocking
@@ -58,7 +58,7 @@ class SelectGoalActivity : AppCompatActivity(),
     }
 
     private fun showRunningGoals() {
-        supportFragmentManager.beginTransaction().replace(R.id.content_container, RunningGoalsFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.content_container, GoalsListFragment()).commit()
     }
 
     private fun bindGoalToWidget(runningGoal: RunningGoal, appWidgetId: Int) {

@@ -67,10 +67,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:${androidx.archLifecycleVer}"
     kapt "androidx.lifecycle:lifecycle-compiler:${androidx.archLifecycleVer}"
 
-    // Room (ORM)
-    implementation "androidx.room:room-runtime:${androidx.roomVer}"
-    kapt "androidx.room:room-compiler:${androidx.roomVer}"
-
     // DAGGER2 dependencies
     implementation "com.google.dagger:dagger:${libs.daggerVersion}"
     implementation "com.google.dagger:dagger-android:${libs.daggerVersion}"
@@ -100,16 +96,21 @@ dependencies {
 
 // MODULES
 dependencies {
-    implementation project(':domain')
-    implementation project(':sync')
+    implementation project(':domain_goal')
+    implementation project(':domain_workout')
+    implementation project(':domain_widget')
+    implementation project(':domain_event')
+    implementation project(':repo_goal')
+    implementation project(':repo_workout')
+    implementation project(':repo_sync')
     implementation project(':stylist')
 }
 
 // TESTING
 dependencies {
     testImplementation "junit:junit:${test.junit}"
-    androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta01'
+    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
 }
 
 // LOGGING

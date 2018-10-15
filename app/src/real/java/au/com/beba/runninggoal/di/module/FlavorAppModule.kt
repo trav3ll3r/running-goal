@@ -1,7 +1,7 @@
 package au.com.beba.runninggoal.di.module
 
-import au.com.beba.runninggoal.sync.StravaSyncSourceProvider
-import au.com.beba.runninggoal.sync.SyncSourceProvider
+import au.com.beba.runninggoal.repo.sync.providers.StravaSyncSourceProvider
+import au.com.beba.runninggoal.repo.sync.providers.SyncSourceProvider
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -6,7 +6,7 @@ import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.feature.base.ListListener
-import au.com.beba.runninggoal.models.SyncSource
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import org.jetbrains.anko.find
 
 

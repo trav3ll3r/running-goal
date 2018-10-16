@@ -4,50 +4,43 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import au.com.beba.runninggoal.models.Widget
-import au.com.beba.runninggoal.repo.WidgetRepository
+import au.com.beba.runninggoal.domain.widget.Widget
+import au.com.beba.runninggoal.repo.widget.WidgetRepository
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
 open class RunningGoalWidgetProvider : AppWidgetProvider() {
 
-    companion object {
-        private val TAG = RunningGoalWidgetProvider::class.java.simpleName
-    }
-
-    //    @Inject
-//    lateinit var goalRepo: GoalRepository
     @Inject
     lateinit var widgetRepo: WidgetRepository
     @Inject
     lateinit var goalWidgetUpdater: GoalWidgetUpdater
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        Log.i(TAG, "onUpdate")
+        Timber.i("onUpdate")
         AndroidInjection.inject(this, context)
 
         // Perform this loop procedure for each App Widget that belongs to this provider
         appWidgetIds.forEach {
-            Log.d(TAG, "onUpdate | appWidgetId=%s".format(it))
+            Timber.d("onUpdate | appWidgetId=%s".format(it))
             goalWidgetUpdater.refreshWidget(context, it)
             //updateWidgetView(context, appWidgetManager, it)
         }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "onReceive")
+        Timber.i("onReceive")
         AndroidInjection.inject(this, context)
         super.onReceive(context, intent)
 
         if (GoalWidgetRenderer.FLIP_CLICKED == intent.action) {
             val appWidgetId = getWidgetIdFromIntent(intent)
-            Log.d(TAG, "onReceive | FLIP_CLICKED | appWidgetId=%s".format(appWidgetId))
+            Timber.d("onReceive | FLIP_CLICKED | appWidgetId=%s".format(appWidgetId))
             if (appWidgetId > 0) {
-                async {
+                launch {
                     val widget = widgetRepo.getByWidgetId(appWidgetId)
 
                     if (widget != null) {
@@ -89,7 +82,7 @@ open class RunningGoalWidgetProvider : AppWidgetProvider() {
 //    }
 
     override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
-        Log.i(TAG, "onDeleted")
+        Timber.i("onDeleted")
         super.onDeleted(context, appWidgetIds)
 
         launch {

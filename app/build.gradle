@@ -53,8 +53,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility '1.8'
+        targetCompatibility '1.8'
     }
 }
 
@@ -63,15 +63,9 @@ dependencies {
     implementation "com.google.android.material:material:${androidx.materialVer}"
     implementation "androidx.appcompat:appcompat:${androidx.appcompatVer}"
     implementation "androidx.recyclerview:recyclerview:${androidx.recyclerViewVer}"
-
     implementation "androidx.constraintlayout:constraintlayout:${androidx.constraintLayoutVer}"
-
     implementation "androidx.lifecycle:lifecycle-extensions:${androidx.archLifecycleVer}"
     kapt "androidx.lifecycle:lifecycle-compiler:${androidx.archLifecycleVer}"
-
-    // Room (ORM)
-    implementation "androidx.room:room-runtime:${androidx.roomVer}"
-    kapt "androidx.room:room-compiler:${androidx.roomVer}"
 
     // DAGGER2 dependencies
     implementation "com.google.dagger:dagger:${libs.daggerVersion}"
@@ -88,9 +82,8 @@ dependencies {
     implementation "com.facebook.stetho:stetho:${libs.stetho}"
 }
 
-// KOTLIN, ANKO, KTX
+// KOTLIN, ANKO, KOTLINX
 dependencies {
-    // Kotlin AND Anko
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
     implementation "org.jetbrains.anko:anko-sdk25:${kotlin.ankoVer}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin.kotlinCoroutinesVer}"
@@ -98,18 +91,30 @@ dependencies {
     implementation "org.jetbrains.anko:anko-coroutines:${kotlin.ankoVer}"
     implementation "org.jetbrains.anko:anko-support-v4:${kotlin.ankoVer}"
     implementation "org.jetbrains.anko:anko-appcompat-v7:${kotlin.ankoVer}"
-    implementation 'androidx.core:core-ktx:1.0.0'
+    implementation "androidx.core:core-ktx:${kotlin.coreKtx}"
 }
 
 // MODULES
 dependencies {
-    implementation project(':networking')
+    implementation project(':domain_goal')
+    implementation project(':domain_workout')
+    implementation project(':domain_widget')
+    implementation project(':domain_event')
+    implementation project(':repo_goal')
+    implementation project(':repo_workout')
+    implementation project(':repo_sync')
+    implementation project(':stylist')
 }
 
 // TESTING
 dependencies {
     testImplementation "junit:junit:${test.junit}"
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
+}
 
+// LOGGING
+dependencies {
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'at.favre.lib:slf4j-timber:1.0.0'    //slf4j BINDINGS FOR Timber
 }

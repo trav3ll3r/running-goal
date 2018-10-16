@@ -1,1 +1,1 @@
-include ':app', ':networking'
+include ':app', ':domain_goal', ':https', ':stylist', ':repo_goal', ':goaldatabase', ':domain_widget', ':domain_workout', ':repo_sync', ':repo_workout', ':domain_event'

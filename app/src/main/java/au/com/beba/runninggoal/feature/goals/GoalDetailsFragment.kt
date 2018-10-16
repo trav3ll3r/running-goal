@@ -2,7 +2,6 @@ package au.com.beba.runninggoal.feature.goals
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,13 +17,17 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.domain.GoalStatus
+import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.domain.core.displaySigned
+import au.com.beba.runninggoal.domain.workout.Workout
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goal.GoalViewModel
-import au.com.beba.runninggoal.models.AthleteActivity
-import au.com.beba.runninggoal.models.GoalStatus
-import au.com.beba.runninggoal.models.RunningGoal
+import au.com.beba.runninggoal.feature.widget.DecimalRenderer
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -32,6 +35,7 @@ class GoalDetailsFragment : Fragment() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
+
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProviders.of(this, factory).get(GoalViewModel::class.java)
@@ -48,8 +52,6 @@ class GoalDetailsFragment : Fragment() {
             f.arguments = extra
             return f
         }
-
-        private val TAG = GoalDetailsFragment::class.java.simpleName
     }
 
     private val goalId: Long
@@ -61,7 +63,6 @@ class GoalDetailsFragment : Fragment() {
     private lateinit var recyclerAdapter: WorkoutsAdapter
 
     private var goalActionListener: GoalActionListener? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -92,14 +93,8 @@ class GoalDetailsFragment : Fragment() {
         if (context is GoalActionListener) {
             goalActionListener = context
         } else {
-            Log.d(TAG, context.toString() + " must implement %s".format(GoalActionListener::class.java.simpleName))
+            Timber.d("%s must implement %s".format(context.toString(), GoalActionListener::class.java.simpleName))
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        viewModel.fetchGoal(goalId)
-//        viewModel.fetchActivities(goalId)
     }
 
     override fun onDetach() {
@@ -122,19 +117,24 @@ class GoalDetailsFragment : Fragment() {
     }
 
     private fun initLiveData() {
+        Timber.i("initLiveData")
         viewModel.goalLiveData.observe(this, Observer {
+            Timber.i("initLiveData | goalsLiveData | observed")
             if (it != null) {
+                Timber.d("initLiveData | goalsLiveData | observed | goal=%s", it.id)
                 handleGoalUpdate(it)
             }
         })
         viewModel.fetchGoal(goalId)
 
-        viewModel.activitiesLiveData.observe(this, Observer {
+        viewModel.workoutsLiveData.observe(this, Observer {
+            Timber.i("initLiveData | goalsLiveData | observed")
             if (it != null) {
+                Timber.d("initLiveData | goalsLiveData | observed | workouts=%s", it.size)
                 updateList(it)
             }
         })
-        viewModel.fetchActivities(goalId)
+        viewModel.fetchWorkouts(goalId)
     }
 
     private fun initRecyclerView() {
@@ -164,7 +164,7 @@ class GoalDetailsFragment : Fragment() {
     /* REACTIONS */
     /* ********* */
     private fun handleGoalUpdate(runningGoal: RunningGoal) {
-        Log.i(TAG, "handleGoalUpdate")
+        Timber.i("handleGoalUpdate")
         val ctx = context
         if (ctx != null) {
             goal_item_name.text = runningGoal.name
@@ -192,12 +192,17 @@ class GoalDetailsFragment : Fragment() {
             goal_days_lapsed.setValues(runningGoal.progress.daysLapsed.toString(), ctx.getString(R.string.lapsed))
             goal_days_total.setValues(runningGoal.target.period.totalDays.toString(), ctx.getString(R.string.total))
 
-            goal_progress_position.setValues(runningGoal.progress.positionInDistance.displaySigned(), ctx.getString(R.string.progress_position))
+            goal_position_distance.setValues(runningGoal.progress.positionInDistance.displaySigned(), ctx.getString(R.string.position_distance))
+            goal_position_ideal_days.setValues(DecimalRenderer.fromFloat(runningGoal.progress.positionInDays, true), ctx.getString(R.string.position_ideal_days))
+
+            // PROJECTIONS
+            goal_projection_period_daily.setValues(runningGoal.projection.distancePerDayPeriod.display(), ctx.getString(R.string.period_daily_distance))
+            goal_projection_remaining_daily.setValues(runningGoal.projection.distancePerDayRemaining.display(), ctx.getString(R.string.remaining_daily_distance))
 
             goal_item_edit.setOnClickListener { editGoal(runningGoal) }
             goal_item_sync.setOnClickListener { syncGoal(runningGoal) }
 
-            //handleBusyIndicator(runningGoal.view.updating)
+            handleBusyIndicator(runningGoal.view.updating)
         }
 
         // Data is loaded so lets wait for our parent to be drawn
@@ -207,14 +212,14 @@ class GoalDetailsFragment : Fragment() {
         }
     }
 
-    private fun updateList(items: List<AthleteActivity>) {
-        Log.i(TAG, "updateList")
+    private fun updateList(items: List<Workout>) {
+        Timber.i("updateList")
         recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()
     }
 
     private fun handleBusyIndicator(busy: Boolean) {
-        Log.i(TAG, "handleBusyIndicator")
+        Timber.i("handleBusyIndicator")
         if (busy) {
             goal_item_sync.startAnimation(syncAnimation)
         } else {

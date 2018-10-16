@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.models.AthleteActivity
+import au.com.beba.runninggoal.domain.workout.Workout
 
 
-class WorkoutsAdapter(private val items: MutableList<AthleteActivity>)
+class WorkoutsAdapter(private val items: MutableList<Workout>)
     : RecyclerView.Adapter<WorkoutViewHolder>() {
 
     companion object {
@@ -34,11 +34,11 @@ class WorkoutsAdapter(private val items: MutableList<AthleteActivity>)
         return items.size
     }
 
-    private fun getItem(position: Int): AthleteActivity {
+    private fun getItem(position: Int): Workout {
         return items[position]
     }
 
-    fun setItems(activities: List<AthleteActivity>) {
+    fun setItems(activities: List<Workout>) {
         Log.i(TAG, "setItems")
         Log.d(TAG, "setItems | activities=${activities.size}")
         items.clear()

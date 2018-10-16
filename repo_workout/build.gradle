@@ -1,0 +1,73 @@
+def kotlin = rootProject.ext.kotlin
+def test = rootProject.ext.testing
+def logs = rootProject.ext.logs
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 26
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+//def koin_version = '1.0.1'
+//// KOIN (DI)
+//dependencies {
+//    // Koin for Kotlin
+//    implementation "org.koin:koin-core:$koin_version"
+//    // Koin extended & experimental features
+//    implementation "org.koin:koin-core-ext:$koin_version"
+//    // Koin for Unit tests
+//    //testImplementation "org.koin:koin-test:$koin_version"
+//
+//    // Koin for Android
+//    implementation "org.koin:koin-android:$koin_version"
+//    // Android Scope feature
+//    implementation "org.koin:koin-android-scope:$koin_version"
+//    // AndroidX (based on koin-android)
+//    // Koin AndroidX Scope feature
+//    implementation "org.koin:koin-androidx-scope:$koin_version"
+//}
+
+// KOTLIN, ANKO, KOTLINX
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+}
+
+// TESTING
+dependencies {
+    testImplementation "junit:junit:${test.junit}"
+}
+
+// LOGGING
+dependencies {
+    implementation "org.slf4j:slf4j-api:${logs.slf4j}"
+}
+
+// MODULES
+dependencies {
+    implementation project(':domain_workout')
+    implementation project(':goaldatabase')
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"

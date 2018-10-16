@@ -9,19 +9,19 @@
     </style>
 
     <style name="Text">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/text_base</item>
     </style>
 
     <style name="Text.Small">
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">@dimen/text_small</item>
     </style>
 
     <style name="Text.Large">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/text_large</item>
     </style>
 
     <style name="Text.XLarge">
-        <item name="android:textSize">26sp</item>
+        <item name="android:textSize">@dimen/text_xlarge</item>
     </style>
 
     <style name="GoalSlot">
@@ -51,4 +51,22 @@
         <item name="android:layout_height">@dimen/goal_slot_height_toptier</item>
         <item name="android:backgroundTint">@color/hex_background_time</item>
     </style>
+
+    <style name="GoalValueLabel">
+        <item name="numericTextColor">@android:color/white</item>
+        <item name="numericTextSize">@dimen/text_base</item>
+        <item name="labelTextColor">@android:color/white</item>
+        <item name="labelTextSize">@dimen/text_small</item>
+        <item name="labelVisibility">visible</item>
+    </style>
+
+    <style name="GoalValueLabel.Large">
+        <item name="numericTextSize">@dimen/text_large</item>
+    </style>
+
+    <style name="GoalValueLabel.XLarge">
+        <item name="numericTextSize">@dimen/text_xlarge</item>
+    </style>
+
+
 </resources>

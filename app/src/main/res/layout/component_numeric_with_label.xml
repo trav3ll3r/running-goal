@@ -7,7 +7,6 @@
 
     <TextView
         android:id="@+id/numeric_value"
-        style="@style/Text.XLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -16,7 +15,6 @@
 
     <TextView
         android:id="@+id/numeric_label"
-        style="@style/Text.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:lines="1"

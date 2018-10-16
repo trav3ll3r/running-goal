@@ -38,6 +38,12 @@
     <!--GOAL DETAILS-->
     <string name="lapsed">lapsed</string>
     <string name="total">total</string>
-    <string name="progress">progress</string>
-    <string name="progress_position">position</string>
+    <string name="projection">projection</string>
+
+    <string name="position">position</string>
+    <string name="position_distance">km</string>
+    <string name="position_ideal_days">ideal days</string>
+
+    <string name="period_daily_distance">ideal daily</string>
+    <string name="remaining_daily_distance">remaining daily</string>
 </resources>

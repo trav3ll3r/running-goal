@@ -1,5 +1,6 @@
 package au.com.beba.runninggoal.models
 
+import au.com.beba.runninggoal.domain.GoalDate
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Month

@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.base.ListListener
-import au.com.beba.runninggoal.models.SyncSource
 
 
 class SyncSourcesAdapter(private val items: MutableList<SyncSource>, private val listener: ListListener<SyncSource>) : RecyclerView.Adapter<SyncSourceViewHolder>() {

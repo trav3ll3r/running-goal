@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.models.SyncSource
-import au.com.beba.runninggoal.repo.SyncSourceRepository
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
+import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_edit_sync_source.*
 import kotlinx.coroutines.experimental.DefaultDispatcher

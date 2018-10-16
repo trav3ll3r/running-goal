@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.progressSync.SyncSourcesAdapter
-import au.com.beba.runninggoal.models.SyncSource
-import au.com.beba.runninggoal.repo.GoalRepository
-import au.com.beba.runninggoal.repo.SyncSourceRepository
+import au.com.beba.runninggoal.repo.goal.GoalRepository
+import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch

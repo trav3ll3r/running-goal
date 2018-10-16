@@ -2,8 +2,17 @@
 <resources>
 
     <declare-styleable name="NumericWithLabel">
-        <attr name="NumericWithLabel_numericValue" format="reference|string" />
-        <attr name="NumericWithLabel_numericColor" format="color" />
-        <attr name="NumericWithLabel_unitValue" format="reference|string" />
+        <attr name="NumericWithLabel_numericText" format="string" />
+        <attr name="NumericWithLabel_labelText" format="string" />
+
+        <attr name="numericTextColor" format="color" />
+        <attr name="numericTextSize" format="dimension" />
+        <attr name="labelTextColor" format="color" />
+        <attr name="labelTextSize" format="dimension|float" />
+        <attr name="labelVisibility" format="enum">
+            <enum name="visible" value="0"/>
+            <enum name="invisible" value="4"/>
+            <enum name="gone" value="8"/>
+        </attr>
     </declare-styleable>
 </resources>

@@ -3,33 +3,30 @@
 buildscript {
     ext {
         libs = [
-            supportLibVersion       : "28.0.0-rc01",
-            playServicesAuthVer     : "15.0.1",
-            firebaseCoreVer         : "16.0.0",
-            firebaseDatabaseVer     : "16.0.1",
-            firebaseAuthVer         : "16.0.1",
-            daggerVersion           : "2.16",
-            javaxInjectVersion      : "1",
-            gsonVer                 : "2.8.0",
-            stetho                  : "1.5.0",
-            crashlytics             : "2.9.5@aar",
+                daggerVersion     : "2.16",
+                javaxInjectVersion: "1",
+                stetho            : "1.5.0",
+                crashlytics       : "2.9.5@aar",
 
         ]
         androidx = [
-            materialVer             : "1.0.0",
-            appcompatVer            : "1.0.0",
-            recyclerViewVer         : "1.0.0",
-            constraintLayoutVer     : "2.0.0-alpha2",
-            archLifecycleVer        : "2.0.0",
-            roomVer                 : "2.0.0-rc01",
+                materialVer        : "1.0.0",
+                appcompatVer       : "1.0.0",
+                recyclerViewVer    : "1.0.0",
+                constraintLayoutVer: "2.0.0-alpha2",
+                archLifecycleVer   : "2.0.0",
         ]
         kotlin = [
-            kotlinVer               : "1.2.71",
-            ankoVer                 : "0.10.6",
-            kotlinCoroutinesVer     : "0.22.5",
+                kotlinVer          : "1.2.71",
+                ankoVer            : "0.10.6",
+                kotlinCoroutinesVer: "0.22.5",
+                coreKtx            : "1.0.0",
         ]
         testing = [
-            junit : "4.12"
+                junit: "4.12"
+        ]
+        logs = [
+                slf4j: "1.7.25"
         ]
     }
 
@@ -40,7 +37,8 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-alpha13'
+//        classpath 'com.android.tools.build:gradle:3.3.0-alpha13'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin.kotlinVer}"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -59,3 +57,22 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+//plugins {
+//    id 'org.jetbrains.kotlin.jvm' version '1.2.71'
+//}
+repositories {
+    mavenCentral()
+}
+//dependencies {
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+//}
+//compileKotlin {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}
+//compileTestKotlin {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}

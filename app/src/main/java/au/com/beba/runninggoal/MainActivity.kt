@@ -11,18 +11,18 @@ import androidx.transition.ChangeBounds
 import androidx.transition.ChangeImageTransform
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionSet
+import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.feature.goals.GoalDetailsFragment
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
-import au.com.beba.runninggoal.feature.goals.RunningGoalsFragment
+import au.com.beba.runninggoal.feature.goals.GoalsListFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.router.NavigationInteractor
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
-import au.com.beba.runninggoal.models.RunningGoal
-import au.com.beba.runninggoal.models.SyncSource
-import au.com.beba.runninggoal.repo.SyncSourceRepository
+import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showRunningGoals() {
-        supportFragmentManager.beginTransaction().replace(R.id.content_container, RunningGoalsFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.content_container, GoalsListFragment()).commit()
     }
 
     private fun gotoGoalDetails(runningGoal: RunningGoal, holder: GoalViewHolder) {

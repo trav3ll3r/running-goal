@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/base_x2">
+
+    <include layout="@layout/list_item_guidelines" />
+
+    <!--PERIOD (LABEL)-->
+    <TextView
+        android:id="@+id/label"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/goal_period_in_days"
+        android:textColor="@color/primary_light"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--PERIOD LAPSED DAYS-->
+    <au.com.beba.runninggoal.component.NumericWithLabel
+        android:id="@+id/goal_days_lapsed"
+        style="@style/GoalValueLabel.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/base_x1"
+        android:layout_marginBottom="@dimen/base_x1"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+        app:layout_constraintTop_toBottomOf="@id/label"
+        tools:NumericWithLabel_labelText="@string/lapsed"
+        tools:NumericWithLabel_numericText="7" />
+
+    <!--PERIOD (GOAL) DAYS-->
+    <au.com.beba.runninggoal.component.NumericWithLabel
+        android:id="@+id/goal_days_total"
+        style="@style/GoalValueLabel.Large"
+        android:layout_width="@dimen/MATCH_CONSTRAINTS"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/base_x2"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
+        app:layout_constraintStart_toEndOf="@id/goal_days_lapsed"
+        app:layout_constraintTop_toBottomOf="@id/label"
+        tools:NumericWithLabel_labelText="@string/total"
+        tools:NumericWithLabel_numericText="31" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

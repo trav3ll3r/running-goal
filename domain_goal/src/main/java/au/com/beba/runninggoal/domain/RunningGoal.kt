@@ -33,8 +33,10 @@ data class RunningGoal(
 
             val daysRemaining = daysTotal - daysLapsed
             val distanceRemaining = runningGoal.target.distance.value - currentDistance
-            val remainingDistancePerDay = (distanceRemaining / daysRemaining)
-
+            val remainingDistancePerDay = when {
+                daysRemaining > 0 -> distanceRemaining / daysRemaining
+                else -> -1f
+            }
             projection = GoalProjection(Distance(linearDistancePerDay), Distance(remainingDistancePerDay))
         }
     }
@@ -45,6 +47,10 @@ data class RunningGoal(
             onDate.isAfter(target.period.to) -> GoalStatus.EXPIRED
             else -> GoalStatus.ONGOING
         }
+    }
+
+    fun expired(): Boolean {
+        return progress.status == GoalStatus.EXPIRED
     }
 }
 
@@ -70,5 +76,5 @@ enum class GoalStatus {
     UNKNOWN,
     NOT_STARTED,
     ONGOING,
-    EXPIRED
+    EXPIRED;
 }

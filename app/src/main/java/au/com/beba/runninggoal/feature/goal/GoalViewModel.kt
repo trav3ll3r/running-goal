@@ -24,26 +24,38 @@ class GoalViewModel @Inject constructor(
         private val goalRepository: GoalRepository,
         private val workoutRepository: WorkoutRepository,
         private val syncSourceRepository: SyncSourceRepository,
-        eventCentre: SubscriberEventCentre
+        private val eventCentre: SubscriberEventCentre
 ) : ViewModel(), Subscriber {
 
-    val goalLiveData: MutableLiveData<RunningGoal?> = MutableLiveData()
+    private var currentGoalId: Long = -1
+    fun getObservableGoal(goalId: Long): MutableLiveData<RunningGoal?> {
+        currentGoalId = goalId
+        return goalLiveData
+    }
+
+    private val goalLiveData: MutableLiveData<RunningGoal?> = MutableLiveData()
     val workoutsLiveData: MutableLiveData<List<Workout>> = MutableLiveData()
 
     init {
-        eventCentre.registerSubscriber(this, GoalChangeEvent::class.java.canonicalName!!)
-        eventCentre.registerSubscriber(this, WorkoutSyncEvent::class.java.canonicalName!!)
+        eventCentre.registerSubscriber(this, GoalChangeEvent::class)
+        eventCentre.registerSubscriber(this, WorkoutSyncEvent::class)
     }
 
-    fun fetchGoal(goalId: Long) {
+    override fun onCleared() {
+        super.onCleared()
+        eventCentre.unregisterSubscriber(this, GoalChangeEvent::class)
+        eventCentre.unregisterSubscriber(this, WorkoutSyncEvent::class)
+    }
+
+    fun fetchGoal() {
         launch {
-            goalLiveData.postValue(goalRepository.getById(goalId))
+            goalLiveData.postValue(goalRepository.getById(currentGoalId))
         }
     }
 
-    fun fetchWorkouts(goalId: Long) {
+    fun fetchWorkouts() {
         launch {
-            workoutsLiveData.postValue(workoutRepository.getAllForGoal(goalId))
+            workoutsLiveData.postValue(workoutRepository.getAllForGoal(currentGoalId))
         }
     }
 
@@ -65,12 +77,21 @@ class GoalViewModel @Inject constructor(
 
     override fun newEvent(postbox: WeakReference<SubscriberPostbox>) {
         Timber.i("newEvent")
+        Timber.d("newEvent | postbox=%s", postbox.get()?.toString())
         val pb = postbox.get()
         val event = pb?.takeLast()
 
         when (event) {
-            is WorkoutSyncEvent -> notifyView(event.isUpdating)
-            is GoalChangeEvent -> fetchGoal(event.goalId)
+            is GoalChangeEvent -> fetchGoal()
+
+            is WorkoutSyncEvent -> {
+                if (event.goalId == currentGoalId) {
+                    notifyView(event.isUpdating)
+                    if (!event.isUpdating) {
+                        fetchWorkouts()
+                    }
+                }
+            }
             else -> super.newEvent(postbox)
         }
     }
@@ -81,8 +102,8 @@ class GoalViewModel @Inject constructor(
             goal?.view?.updating = isBusy
             goalLiveData.postValue(goal)
         } else {
-            if (goal?.id != null) {
-                fetchGoal(goal.id)
+            if (currentGoalId > 0) {
+                fetchGoal()
             }
         }
     }

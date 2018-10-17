@@ -26,6 +26,7 @@ import au.com.beba.runninggoal.repo.widget.WidgetRepository
 import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
@@ -174,15 +175,15 @@ class GoalActivity : AppCompatActivity() {
 
             updateWidgetView(runningGoal)
 
-            eventCentre.publish(GoalDeleteEvent())
+            eventCentre.publish(GoalDeleteEvent(runningGoal.id))
         }
 
         exit()
     }
 
-    private suspend fun updateWidgetView(runningGoal: RunningGoal?) = withContext(DefaultDispatcher) {
+    private suspend fun updateWidgetView(runningGoal: RunningGoal?) = withContext(Dispatchers.Default) {
         Timber.i("updateWidgetView")
-        val context = this
+        val context = applicationContext
         if (runningGoal != null) {
             runBlocking {
                 goalWidgetUpdater.updateAllWidgetsForGoal(context, runningGoal)

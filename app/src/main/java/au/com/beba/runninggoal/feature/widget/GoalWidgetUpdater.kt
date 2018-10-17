@@ -7,19 +7,21 @@ import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.goal.GoalRepository
 import au.com.beba.runninggoal.repo.widget.WidgetRepository
-import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 
-class GoalWidgetUpdater @Inject constructor(var goalRepo: GoalRepository, var widgetRepo: WidgetRepository) {
+class GoalWidgetUpdater
+@Inject constructor(
+        private var goalRepo: GoalRepository,
+        var widgetRepo: WidgetRepository) {
 
     suspend fun updateAllWidgetsForGoal(context: Context, runningGoal: RunningGoal) {
         Timber.i("updateAllWidgetsForGoal")
 
-        withContext(DefaultDispatcher) {
+        launch {
             val widgets = widgetRepo.getAllForGoal(runningGoal.id)
             Timber.d("updateAllWidgetsForGoal | widgets=%s".format(widgets.size))
 

@@ -2,7 +2,6 @@ package au.com.beba.runninggoal
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -14,8 +13,8 @@ import androidx.transition.TransitionSet
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
+import au.com.beba.runninggoal.feature.goal.GoalDetailsFragment
 import au.com.beba.runninggoal.feature.goals.GoalActivity
-import au.com.beba.runninggoal.feature.goals.GoalDetailsFragment
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.GoalsListFragment
 import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
@@ -24,8 +23,9 @@ import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -36,10 +36,6 @@ class MainActivity : AppCompatActivity(),
 
     @Inject
     lateinit var syncSourceRepository: SyncSourceRepository
-
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -143,17 +139,17 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun syncOneGoal(runningGoal: RunningGoal) {
-        Log.i(TAG, "syncOneGoal")
+        Timber.i("syncOneGoal")
         syncGoals(runningGoal, 1001)
     }
 
     private fun syncAllGoals() {
-        Log.i(TAG, "syncAllGoals")
+        Timber.i("syncAllGoals")
         syncGoals(null, 1000)
     }
 
     private fun syncGoals(runningGoal: RunningGoal?, jobId: Int) {
-        Log.i(TAG, "syncGoals")
+        Timber.i("syncGoals")
         val ctx = this
         launch {
             val syncSource = syncSourceRepository.getDefaultSyncSource()
@@ -164,7 +160,7 @@ class MainActivity : AppCompatActivity(),
                         SyncSourceIntentService.buildIntent(runningGoal),
                         jobId)
             } else {
-                launch(UI) {
+                launch(Dispatchers.Main) {
                     // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
                     val dialog = AlertDialog.Builder(ctx)
                             .setCancelable(true)

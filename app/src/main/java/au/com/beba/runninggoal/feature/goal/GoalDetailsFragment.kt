@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.feature.goals
+package au.com.beba.runninggoal.feature.goal
 
 import android.content.Context
 import android.os.Bundle
@@ -20,11 +20,7 @@ import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.core.display
-import au.com.beba.runninggoal.domain.core.displaySigned
 import au.com.beba.runninggoal.domain.workout.Workout
-import au.com.beba.runninggoal.feature.goal.GoalActionListener
-import au.com.beba.runninggoal.feature.goal.GoalViewModel
-import au.com.beba.runninggoal.feature.widget.DecimalRenderer
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
 import timber.log.Timber
@@ -60,14 +56,14 @@ class GoalDetailsFragment : Fragment() {
         }
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var recyclerAdapter: WorkoutsAdapter
+    private lateinit var recyclerAdapter: GoalDetailsAdapter
 
     private var goalActionListener: GoalActionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-//        sharedElementEnterTransition = ChangeBounds()
+        //TODO: sharedElementEnterTransition = ChangeBounds()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -113,28 +109,27 @@ class GoalDetailsFragment : Fragment() {
         goal_item_name.transitionName = "goal_name_%s".format(id)
         goal_item_status.transitionName = "goal_status_%s".format(id)
         goal_distance_current.transitionName = "goal_distance_current_%s".format(id)
-        goal_days_lapsed.transitionName = "goal_period_current_%s".format(id)
     }
 
     private fun initLiveData() {
         Timber.i("initLiveData")
-        viewModel.goalLiveData.observe(this, Observer {
+        viewModel.getObservableGoal(goalId).observe(this, Observer {
             Timber.i("initLiveData | goalsLiveData | observed")
             if (it != null) {
                 Timber.d("initLiveData | goalsLiveData | observed | goal=%s", it.id)
-                handleGoalUpdate(it)
+                onGoalUpdated(it)
             }
         })
-        viewModel.fetchGoal(goalId)
+        viewModel.fetchGoal()
 
         viewModel.workoutsLiveData.observe(this, Observer {
-            Timber.i("initLiveData | goalsLiveData | observed")
+            Timber.i("workoutsLiveData | observed")
             if (it != null) {
-                Timber.d("initLiveData | goalsLiveData | observed | workouts=%s", it.size)
-                updateList(it)
+                Timber.d("workoutsLiveData | observed | workouts=%s", it.size)
+                handleWorkoutsUpdate(it)
             }
         })
-        viewModel.fetchWorkouts(goalId)
+        viewModel.fetchWorkouts()
     }
 
     private fun initRecyclerView() {
@@ -145,7 +140,7 @@ class GoalDetailsFragment : Fragment() {
         val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        recyclerAdapter = WorkoutsAdapter(mutableListOf())
+        recyclerAdapter = GoalDetailsAdapter()
         recyclerView.adapter = recyclerAdapter
     }
 
@@ -163,8 +158,21 @@ class GoalDetailsFragment : Fragment() {
     /* ********* */
     /* REACTIONS */
     /* ********* */
-    private fun handleGoalUpdate(runningGoal: RunningGoal) {
-        Timber.i("handleGoalUpdate")
+    private fun onGoalUpdated(runningGoal: RunningGoal) {
+        Timber.i("onGoalUpdated")
+
+        handleToolbarUpdate(runningGoal)
+
+        handleListUpdate(runningGoal)
+
+        // Data is loaded so lets wait for our parent to be drawn
+        (view?.parent as? ViewGroup)?.doOnPreDraw { _ ->
+            // Parent has been drawn. Start transitioning!
+            startPostponedEnterTransition()
+        }
+    }
+
+    private fun handleToolbarUpdate(runningGoal: RunningGoal) {
         val ctx = context
         if (ctx != null) {
             goal_item_name.text = runningGoal.name
@@ -189,37 +197,28 @@ class GoalDetailsFragment : Fragment() {
             goal_distance_current.setValues(runningGoal.progress.distanceToday.display(true), getString(R.string.current_units, runningGoal.progress.distanceToday.units))
             goal_distance_target.setValues(runningGoal.target.distance.display(true), getString(R.string.target_units, runningGoal.target.distance.units))
 
-            goal_days_lapsed.setValues(runningGoal.progress.daysLapsed.toString(), ctx.getString(R.string.lapsed))
-            goal_days_total.setValues(runningGoal.target.period.totalDays.toString(), ctx.getString(R.string.total))
-
-            goal_position_distance.setValues(runningGoal.progress.positionInDistance.displaySigned(), ctx.getString(R.string.position_distance))
-            goal_position_ideal_days.setValues(DecimalRenderer.fromFloat(runningGoal.progress.positionInDays, true), ctx.getString(R.string.position_ideal_days))
-
-            // PROJECTIONS
-            goal_projection_period_daily.setValues(runningGoal.projection.distancePerDayPeriod.display(), ctx.getString(R.string.period_daily_distance))
-            goal_projection_remaining_daily.setValues(runningGoal.projection.distancePerDayRemaining.display(), ctx.getString(R.string.remaining_daily_distance))
-
             goal_item_edit.setOnClickListener { editGoal(runningGoal) }
             goal_item_sync.setOnClickListener { syncGoal(runningGoal) }
 
             handleBusyIndicator(runningGoal.view.updating)
         }
-
-        // Data is loaded so lets wait for our parent to be drawn
-        (view?.parent as? ViewGroup)?.doOnPreDraw { _ ->
-            // Parent has been drawn. Start transitioning!
-            startPostponedEnterTransition()
-        }
     }
 
-    private fun updateList(items: List<Workout>) {
-        Timber.i("updateList")
-        recyclerAdapter.setItems(items)
+    private fun handleListUpdate(goal: RunningGoal) {
+        Timber.i("updateDetails")
+        recyclerAdapter.setGoal(goal)
+        recyclerAdapter.notifyDataSetChanged()
+    }
+
+    private fun handleWorkoutsUpdate(items: List<Workout>) {
+        Timber.i("handleWorkoutsUpdate")
+        recyclerAdapter.setWorkout(items)
         recyclerAdapter.notifyDataSetChanged()
     }
 
     private fun handleBusyIndicator(busy: Boolean) {
         Timber.i("handleBusyIndicator")
+        Timber.d("handleBusyIndicator | busy=%s", busy)
         if (busy) {
             goal_item_sync.startAnimation(syncAnimation)
         } else {

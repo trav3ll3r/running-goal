@@ -13,6 +13,7 @@ import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.widget.WidgetRepository
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
@@ -77,7 +78,7 @@ class SelectGoalActivity : AppCompatActivity(),
         finish()
     }
 
-    private suspend fun updateWidgetView(runningGoal: RunningGoal) = withContext(DefaultDispatcher) {
-        goalWidgetUpdater.updateAllWidgetsForGoal(this, runningGoal)
+    private suspend fun updateWidgetView(runningGoal: RunningGoal) = withContext(Dispatchers.Default) {
+        goalWidgetUpdater.updateAllWidgetsForGoal(applicationContext, runningGoal)
     }
 }

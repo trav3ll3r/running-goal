@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.feature.goals
+package au.com.beba.runninggoal.feature.workout
 
 import android.util.Log
 import android.view.LayoutInflater

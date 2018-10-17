@@ -5,14 +5,10 @@ def logs = rootProject.ext.logs
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}
-
 // KOTLIN, ANKO, KOTLINX
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.coroutines}"
 }
 
 // NETWORKING/COMMS

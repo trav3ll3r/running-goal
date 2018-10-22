@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@id/workout_description"
         tools:text="@string/example_date_time" />
 
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/workout_distance"
         style="@style/GoalValueLabel.Large"
         android:layout_width="wrap_content"
@@ -41,7 +41,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:NumericWithLabel_numericText="@string/example_distance"
-        tools:NumericWithLabel_labelText="@string/unit_kilometre"
-        />
+        tools:NumericWithLabel_labelText="@string/unit_kilometre" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

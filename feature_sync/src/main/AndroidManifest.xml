@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="au.com.beba.runninggoal.feature.sync">
+
+    <application>
+
+        <!--SYNC-->
+        <service
+            android:name=".SyncSourceIntentService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+    </application>
+</manifest>

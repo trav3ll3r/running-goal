@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.ui.component.display
 import au.com.beba.runninggoal.domain.workout.Workout
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
@@ -107,7 +107,7 @@ class GoalDetailsFragment : Fragment() {
      */
     private fun initTransitionNames(id: Long) {
         goal_item_name.transitionName = "goal_name_%s".format(id)
-        goal_item_status.transitionName = "goal_status_%s".format(id)
+        goal_item_status_background.transitionName = "goal_status_%s".format(id)
         goal_distance_current.transitionName = "goal_distance_current_%s".format(id)
     }
 
@@ -177,22 +177,22 @@ class GoalDetailsFragment : Fragment() {
         if (ctx != null) {
             goal_item_name.text = runningGoal.name
 
-            goal_item_status.let {
-                when (runningGoal.progress.status) {
-                    GoalStatus.ONGOING -> {
-                        it.text = ctx.getString(R.string.status_ongoing); it.backgroundTintList = ctx.getColorStateList(R.color.status_ongoing)
+            goal_item_status_label.text =
+                    when (runningGoal.progress.status) {
+                        GoalStatus.ONGOING -> ctx.getString(R.string.status_ongoing)
+                        GoalStatus.NOT_STARTED -> ctx.getString(R.string.status_not_started)
+                        GoalStatus.EXPIRED -> ctx.getString(R.string.status_expired)
+                        GoalStatus.UNKNOWN -> ctx.getString(R.string.status_unknown)
                     }
-                    GoalStatus.NOT_STARTED -> {
-                        it.text = ctx.getString(R.string.status_not_started); it.backgroundTintList = ctx.getColorStateList(R.color.status_not_started)
+
+            goal_item_status_background.imageTintList =
+                    when (runningGoal.progress.status) {
+                        GoalStatus.ONGOING -> ctx.getColorStateList(R.color.status_ongoing)
+                        GoalStatus.NOT_STARTED -> ctx.getColorStateList(R.color.status_not_started)
+                        GoalStatus.EXPIRED -> ctx.getColorStateList(R.color.status_expired)
+                        GoalStatus.UNKNOWN -> ctx.getColorStateList(R.color.status_not_started)
                     }
-                    GoalStatus.EXPIRED -> {
-                        it.text = ctx.getString(R.string.status_expired); it.backgroundTintList = ctx.getColorStateList(R.color.status_expired)
-                    }
-                    GoalStatus.UNKNOWN -> {
-                        it.text = ctx.getString(R.string.status_unknown); it.backgroundTintList = ctx.getColorStateList(R.color.status_not_started)
-                    }
-                }
-            }
+
 
             goal_distance_current.setValues(runningGoal.progress.distanceToday.display(true), getString(R.string.current_units, runningGoal.progress.distanceToday.units))
             goal_distance_target.setValues(runningGoal.target.distance.display(true), getString(R.string.target_units, runningGoal.target.distance.units))

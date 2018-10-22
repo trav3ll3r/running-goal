@@ -67,6 +67,7 @@ dependencies {
 dependencies {
     implementation project(':domain_goal')
     implementation project(':domain_widget')
+    implementation project(':domain_event')
     implementation project(':goaldatabase')
 }
 

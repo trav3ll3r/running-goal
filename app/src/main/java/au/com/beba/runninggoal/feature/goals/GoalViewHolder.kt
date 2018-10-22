@@ -5,11 +5,11 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.component.NumericProgress
-import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.ui.component.display
+import au.com.beba.runninggoal.feature.base.ListListener
+import au.com.beba.runninggoal.ui.component.NumericProgress
 import org.jetbrains.anko.find
 
 

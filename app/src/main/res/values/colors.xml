@@ -1,17 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <color name="marker_color">#FFFFFF</color>
-
-    <color name="hex_background_default">#aaFFFFFF</color>
-    <color name="hex_background_distance">#aaFFFFFF</color>
-    <color name="hex_background_time">#aaFFFFFF</color>
-
     <color name="theme_background">@android:color/transparent</color>
-    <color name="darker_background">@color/secondary_background</color>
-    <color name="darker_background_text">@color/secondary_text</color>
-
-    <color name="status_ongoing">@color/accent</color>
-    <color name="status_not_started">@color/primary_light</color>
-    <color name="status_expired">@color/secondary_text</color>
 </resources>

@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!--PERIOD LAPSED DAYS-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_days_lapsed"
         style="@style/GoalValueLabel.Large"
         android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
         tools:NumericWithLabel_numericText="7" />
 
     <!--PERIOD (GOAL) DAYS-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_days_total"
         style="@style/GoalValueLabel.Large"
         android:layout_width="@dimen/MATCH_CONSTRAINTS"

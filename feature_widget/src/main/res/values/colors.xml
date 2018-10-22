@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="marker_color">#FFFFFF</color>
+
+    <color name="hex_background_default">#aaFFFFFF</color>
+    <color name="hex_background_distance">#aaFFFFFF</color>
+    <color name="hex_background_time">#aaFFFFFF</color>
+</resources>

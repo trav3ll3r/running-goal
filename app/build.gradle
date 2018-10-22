@@ -59,27 +59,23 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.google.android.material:material:${androidx.materialVer}"
-    implementation "androidx.appcompat:appcompat:${androidx.appcompatVer}"
-    implementation "androidx.recyclerview:recyclerview:${androidx.recyclerViewVer}"
+    implementation "androidx.appcompat:appcompat:${androidx.appcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${androidx.constraintLayoutVer}"
+    implementation "androidx.recyclerview:recyclerview:${androidx.recyclerViewVer}"
     implementation "androidx.lifecycle:lifecycle-extensions:${androidx.archLifecycleVer}"
     kapt "androidx.lifecycle:lifecycle-compiler:${androidx.archLifecycleVer}"
 
-    // DAGGER2 dependencies
+    implementation "com.google.android.material:material:${androidx.materialVer}"
+}
+
+// DAGGER2 dependencies
+dependencies {
     implementation "com.google.dagger:dagger:${libs.daggerVersion}"
     implementation "com.google.dagger:dagger-android:${libs.daggerVersion}"
     implementation "com.google.dagger:dagger-android-support:${libs.daggerVersion}"
     kapt "com.google.dagger:dagger-compiler:${libs.daggerVersion}"
     kapt "com.google.dagger:dagger-android-processor:${libs.daggerVersion}"
     implementation "javax.inject:javax.inject:${libs.javaxInjectVersion}"
-
-    // UTILS
-    implementation("com.crashlytics.sdk.android:crashlytics:${libs.crashlytics}") {
-        transitive = true
-    }
-    implementation "com.facebook.stetho:stetho:${libs.stetho}"
 }
 
 // KOTLIN, ANKO, KOTLINX
@@ -102,8 +98,11 @@ dependencies {
     implementation project(':domain_event')
     implementation project(':repo_goal')
     implementation project(':repo_workout')
-    implementation project(':repo_sync')
+    implementation project(':feature_base')
+    implementation project(':feature_sync')
+    implementation project(':feature_widget')
     implementation project(':stylist')
+    implementation project(':ui_component')
 }
 
 // TESTING
@@ -111,6 +110,14 @@ dependencies {
     testImplementation "junit:junit:${test.junit}"
     androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
+}
+
+// UTILS (CRASHLYTICS, STETHO)
+dependencies {
+    implementation("com.crashlytics.sdk.android:crashlytics:${libs.crashlytics}") {
+        transitive = true
+    }
+    implementation "com.facebook.stetho:stetho:${libs.stetho}"
 }
 
 // LOGGING

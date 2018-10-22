@@ -17,14 +17,11 @@ import au.com.beba.runninggoal.feature.goal.GoalDetailsFragment
 import au.com.beba.runninggoal.feature.goals.GoalActivity
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.GoalsListFragment
-import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
 import au.com.beba.runninggoal.feature.router.NavigationInteractor
+import au.com.beba.runninggoal.feature.sync.SyncFeature
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
-import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,7 +32,7 @@ class MainActivity : AppCompatActivity(),
         NavigationInteractor {
 
     @Inject
-    lateinit var syncSourceRepository: SyncSourceRepository
+    lateinit var syncFeature: SyncFeature
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -150,30 +147,20 @@ class MainActivity : AppCompatActivity(),
 
     private fun syncGoals(runningGoal: RunningGoal?, jobId: Int) {
         Timber.i("syncGoals")
-        val ctx = this
-        launch {
-            val syncSource = syncSourceRepository.getDefaultSyncSource()
-            if (syncSource.isDefault) {
-                // Enqueues new JobIntentService
-                SyncSourceIntentService.enqueueWork(
-                        ctx,
-                        SyncSourceIntentService.buildIntent(runningGoal),
-                        jobId)
-            } else {
-                launch(Dispatchers.Main) {
-                    // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
-                    val dialog = AlertDialog.Builder(ctx)
-                            .setCancelable(true)
-                            .setTitle(R.string.sync_now_error)
-                            .setMessage(R.string.message_no_default_sync_sources)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .create()
+        syncFeature.syncNow(this, runningGoal?.id, jobId)
+    }
 
-                    if (!isFinishing) {
-                        dialog.show()
-                    }
-                }
-            }
+    private fun alertUI() {
+        // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
+        val dialog = AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle(R.string.sync_now_error)
+                .setMessage(R.string.message_no_default_sync_sources)
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+
+        if (!isFinishing) {
+            dialog.show()
         }
     }
 }

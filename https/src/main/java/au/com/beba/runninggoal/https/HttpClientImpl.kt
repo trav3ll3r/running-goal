@@ -1,7 +1,7 @@
 package au.com.beba.runninggoal.https
 
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.async
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -12,7 +12,7 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 
 class HttpClientImpl
-constructor(private val networkingContext: CoroutineContext = DefaultDispatcher)
+constructor(private val networkingContext: CoroutineContext = Dispatchers.Default)
     : HttpClient {
 
     companion object {

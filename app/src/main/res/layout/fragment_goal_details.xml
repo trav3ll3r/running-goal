@@ -21,13 +21,22 @@
     <include layout="@layout/list_item_guidelines" />
 
     <!--STATUS BADGE-->
+    <ImageView
+        android:id="@+id/goal_item_status_background"
+        android:layout_width="@dimen/MATCH_CONSTRAINTS"
+        android:layout_height="@dimen/base_x2"
+        app:srcCompat="@drawable/status_rounded"
+        android:scaleType="fitXY"
+        android:visibility="visible"
+        tools:tint="@color/accent"
+        android:contentDescription="@null" />
+
     <TextView
-        android:id="@+id/goal_item_status"
+        android:id="@+id/goal_item_status_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/base_x1"
         android:layout_marginTop="@dimen/base_x1"
-        android:background="@drawable/status_rounded"
         android:padding="@dimen/base_x1"
         android:textColor="@color/primary_text"
         android:visibility="visible"
@@ -47,7 +56,7 @@
         android:textColor="@color/primary_text"
         app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
         app:layout_constraintEnd_toStartOf="@id/goal_distance_target"
-        app:layout_constraintTop_toBottomOf="@id/goal_item_status"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_status_background"
         tools:text="Goal Name" />
 
     <!--EDIT ACTION-->
@@ -82,7 +91,7 @@
         app:srcCompat="@drawable/ic_sync_24dp" />
 
     <!--CURRENT DISTANCE-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_distance_current"
         style="@style/GoalValueLabel.XLarge"
         android:layout_width="wrap_content"
@@ -96,14 +105,13 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end" />
 
     <!--TARGET (GOAL) DISTANCE-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_distance_target"
         style="@style/GoalValueLabel.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:NumericWithLabel_numericText="250"
-        tools:NumericWithLabel_labelText="Target km"
-        />
+        tools:NumericWithLabel_labelText="Target km" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon" />
 
     <!--PROJECTION::ENTIRE PERIOD DAILY-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_projection_period_daily"
         style="@style/GoalValueLabel.Large"
         android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
         tools:NumericWithLabel_labelText="@string/period_daily_distance" />
 
     <!--PROJECTION::REMAINING DAILY-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_projection_remaining_daily"
         style="@style/GoalValueLabel.Large"
         android:layout_width="@dimen/MATCH_CONSTRAINTS"

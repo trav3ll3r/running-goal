@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 import kotlin.reflect.KClass
 
+private val INDENT = "  "
 
 interface SubscriberEventCentre {
     fun registerSubscriber(subscriber: Subscriber, event: KClass<out Event>)
@@ -22,6 +23,10 @@ object EventCentre :
 
     private val channels = Channels()
 
+    init {
+        logger.info("init")
+    }
+
     override fun registerSubscriber(subscriber: Subscriber, event: KClass<out Event>) {
         logger.info("registerSubscriber")
         channels.registerSubscriber(subscriber, event)
@@ -34,7 +39,7 @@ object EventCentre :
 
     override fun publish(event: Event) {
         logger.info("publish")
-        logger.debug("publish | %s", event.type)
+        logger.debug("publish | ${event.type}")
         channels.publishEvent(event)
     }
 }
@@ -54,17 +59,21 @@ class Channels {
         if (channel == null) {
             channel = registerChannel(event)
         }
-        channel.addSubscriber(subscriber)
+        channel.leasePostbox(subscriber)
     }
 
     fun unregisterSubscriber(subscriber: Subscriber, event: KClass<out Event>) {
         logger.info("unregisterSubscriber")
         synchronized(channels) {
             val channel = getChannelForEvent(event)
-            channel?.removeSubscriber(subscriber)
-            if (channel?.hasSubscribers() != true) {
-                channel?.clear()
-                channels.remove(channel)
+            if (channel != null) {
+                channel.removeSubscriber(subscriber)
+                if (!channel.hasSubscribers()) {
+                    logger.info("unregisterSubscriber | remove channel")
+                    logger.debug("unregisterSubscriber | remove channel | ${channel.dump()}")
+                    channel.clear()
+                    channels.remove(channel)
+                }
             }
         }
     }
@@ -73,16 +82,20 @@ class Channels {
         logger.info("publishEvent")
         logger.debug("publishEvent | event=%s".format(event.type))
         logger.debug("publishEvent | channels=%s".format(channels.size))
+
+        dump("before post and notify")
+
         channels
                 .filter {
                     val filterResult = it.forEvent(event::class)
-                    logger.info("publishEvent | channel.forEvent=$filterResult")
+                    logger.debug("publishEvent | channel=${it.describe(false)} forEvent=$filterResult")
                     filterResult
                 }
                 .forEach {
-                    logger.info("publishEvent | channel")
+                    logger.debug("publishEvent | channel=%s".format(it.describe()))
                     it.notify(event)
                 }
+        dump("after post and notify")
     }
 
     private fun getChannelForEvent(event: KClass<out Event>): Channel? {
@@ -96,6 +109,18 @@ class Channels {
         val channel = Channel(event)
         channels.add(channel)
         return channel
+    }
+
+    private fun dump(message: String = "") {
+        val sb = StringBuilder("$message \n")
+
+        sb.append("channels [").append("\n")
+        channels.forEach {
+            sb.append(it.dump())
+        }
+        sb.append("]").append("\n")
+
+        logger.debug(sb.toString())
     }
 }
 
@@ -113,28 +138,34 @@ class Channel(private val event: KClass<out Event>) {
         return (this.event == event)
     }
 
-    fun addSubscriber(subscriber: Subscriber) {
-        logger.info("addSubscriber")
-        val postbox = postboxes.find { it.forSubscriber(subscriber) }
-        if (postbox != null) {
-            logger.info("addSubscriber | update Subscriber ref for existing Postbox")
-            postbox.updateSubscriber(subscriber)
+    fun leasePostbox(subscriber: Subscriber) {
+        logger.info("leasePostbox")
+        val existingPostbox = postboxes.find { it.forSubscriber(subscriber) }
+        if (existingPostbox != null) {
+            logger.info("leasePostbox | update Subscriber for existing Postbox")
+            existingPostbox.updateSubscriber(subscriber)
         } else {
-            logger.info("addSubscriber | create new Postbox")
-            postboxes.add(Postbox(subscriber))
+            logger.info("leasePostbox | lease new")
+            val newPostbox = Postbox(subscriber)
+            logger.debug("leasePostbox | ${newPostbox.describe(false)} event=${event.java.simpleName}")
+            postboxes.add(newPostbox)
         }
+        logger.debug("leasePostbox | after\n${dump()}")
     }
 
     fun removeSubscriber(subscriber: Subscriber) {
         logger.info("removeSubscriber")
+        logger.debug("removeSubscriber | ${subscriber.id}")
         val postbox = postboxes.find { it.forSubscriber(subscriber) }
         if (postbox != null) {
-            logger.info("removeSubscriber | destroy Postbox")
+            logger.debug("removeSubscriber | destroy ${postbox.dump()}")
             postbox.clear()
             postboxes.remove(postbox)
         } else {
             logger.info("removeSubscriber | Postbox not found")
         }
+
+        logger.debug("removeSubscriber | after\n${dump()}")
     }
 
     fun notify(event: Event) {
@@ -145,15 +176,16 @@ class Channel(private val event: KClass<out Event>) {
     private fun addEventToEveryPostbox(event: Event) {
         logger.info("addEventToEveryPostbox")
         if (forEvent(event::class)) {
-            logger.info("addEventToEveryPostbox | event valid for channel")
-            logger.info("addEventToEveryPostbox | postboxes count = ${postboxes.size}")
-            postboxes.forEach { it.post(event) }
+            logger.debug("addEventToEveryPostbox | event valid for channel")
+            logger.debug("addEventToEveryPostbox | postboxes count=${postboxes.size}")
+            postboxes.forEach { it.dropIntoPostbox(event) }
+            postboxes.forEach { it.notifySubscriber() }
         }
     }
 
     fun hasSubscribers(): Boolean {
         synchronized(postboxes) {
-            return postboxes.isEmpty()
+            return !postboxes.isEmpty()
         }
     }
 
@@ -161,6 +193,25 @@ class Channel(private val event: KClass<out Event>) {
         synchronized(postboxes) {
             postboxes.clear()
         }
+    }
+
+    fun describe(canonical: Boolean = true): String {
+        return if (canonical) {
+            event.java.canonicalName
+        } else {
+            event.java.simpleName
+        }
+    }
+
+    internal fun dump(): String {
+        val sb = StringBuilder("")
+        val indent = INDENT
+        sb.append(indent).append("channel ${describe(false)} (${postboxes.size}) [").append("\n")
+        postboxes.forEach {
+            sb.append(it.dump())
+        }
+        sb.append(indent).append("]").append("\n")
+        return sb.toString()
     }
 }
 
@@ -173,6 +224,8 @@ interface SubscriberPostbox {
     fun takeLast(): Event?
 
     fun clear()
+
+    fun describe(canonical: Boolean = true): String
 }
 
 class Postbox(subscriber: Subscriber) : SubscriberPostbox {
@@ -183,7 +236,7 @@ class Postbox(subscriber: Subscriber) : SubscriberPostbox {
     private val logger = LoggerFactory.getLogger(TAG)
 
     private val events = mutableListOf<Event>()
-    private val subscriberId: String = subscriber.id
+    private val subscriberId: KClass<out Subscriber> = subscriber.id
     private var subscriberRef: WeakReference<Subscriber>? = null
 
     init {
@@ -196,14 +249,28 @@ class Postbox(subscriber: Subscriber) : SubscriberPostbox {
 
     fun forSubscriber(subscriber: Subscriber): Boolean {
         logger.info("forSubscriber")
-        logger.debug("forSubscriber | %s".format(subscriber.id))
-        return (subscriberId == subscriber::class.java.canonicalName)
+        logger.debug("forSubscriber | look=%s".format(subscriber.id.java.simpleName))
+        logger.debug("forSubscriber | this=%s".format(subscriberId.java.simpleName))
+        val isMatch = subscriber.sameAs(subscriberId)
+        logger.debug("forSubscriber | match=%s".format(isMatch))
+        return isMatch
     }
 
-    fun post(event: Event) {
-        logger.info("post")
+
+    fun dropIntoPostbox(event: Event) {
+        logger.info("dropIntoPostbox")
         events.add(event)
-        subscriberRef?.get()?.newEvent(WeakReference(this))
+    }
+
+    fun notifySubscriber() {
+        logger.info("notifySubscriber")
+        val sub = subscriberRef?.get()
+        if (sub != null) {
+            logger.debug("notifySubscriber | subscriber found, notifying")
+            sub.newEvent(WeakReference(this))
+        } else {
+            logger.debug("notifySubscriber | subscriber ${subscriberId.java.simpleName} reference lost")
+        }
     }
 
     override fun takeLast(): Event? {
@@ -220,19 +287,48 @@ class Postbox(subscriber: Subscriber) : SubscriberPostbox {
         events.clear()
     }
 
-    override fun toString(): String {
-        return "%s {subscriber=%s, events=%s}".format(this::class.java.canonicalName, subscriberId, events.size)
+    override fun describe(canonical: Boolean): String {
+        return "%s {subscriber=%s, count=%s}".format(
+                this::class.java.simpleName,
+                if (canonical) subscriberId.java.canonicalName else subscriberId.java.simpleName,
+                events.size)
+    }
+
+    internal fun dump(): String {
+        val sb = StringBuilder("")
+        val indent = INDENT + INDENT
+        sb.append(indent).append(describe(false)).append("\n")
+        return sb.toString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Postbox
+
+        if (subscriberId != other.subscriberId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return subscriberId.hashCode()
     }
 }
 
 interface Subscriber {
-    val id: String
+    val id: KClass<out Subscriber>
         get() {
-            return this::class.java.canonicalName
+            return this::class
         }
 
     fun newEvent(postbox: WeakReference<SubscriberPostbox>) {
         throw Exception("Event [%s] not handled! You are either missing a handler or subscribing to an unused Event".format(this::class.java.canonicalName))
+    }
+
+    fun sameAs(that: KClass<out Subscriber>): Boolean {
+        return id.java.canonicalName == that.java.canonicalName
     }
 }
 
@@ -251,4 +347,8 @@ interface Event {
 class GoalChangeEvent(val goalId: Long) : Event
 
 class GoalDeleteEvent(val goalId: Long) : Event
+
 class WorkoutSyncEvent(val goalId: Long, val isUpdating: Boolean) : Event
+
+class WidgetChangeEvent(val widgetId: Long, val goalId: Long?) : Event
+class WidgetDeleteEvent(val widgetId: Long) : Event

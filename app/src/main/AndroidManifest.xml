@@ -25,35 +25,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".feature.goals.GoalActivity">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />-->
-            <!--</intent-filter>-->
-        </activity>
+        <activity android:name=".feature.goals.GoalActivity"/>
 
         <activity
             android:name=".feature.syncSources.EditSyncSourceActivity"
             android:label="@string/edit_sync_source" />
-        <activity android:name=".feature.widget.SelectGoalActivity">
+        <activity android:name=".feature.widget.selectgoal.SelectGoalActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-
-        <receiver android:name=".feature.widget.RunningGoalWidgetProvider">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/goal_widget_info" />
-        </receiver>
-
-        <service
-            android:name=".feature.progressSync.SyncSourceIntentService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

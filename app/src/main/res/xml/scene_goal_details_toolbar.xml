@@ -9,31 +9,23 @@
         app:constraintSetStart="@id/expanded">
         <KeyFrameSet>
             <!--STATUS-->
-            <!--
-                        <KeyAttribute
-                            app:framePosition="80"
-                            app:progress="80"
-                            app:target="@id/goal_item_status" />
-            -->
+            <KeyAttribute
+                app:framePosition="50"
+                app:progress="100"
+                app:target="@id/goal_item_status_label"
+                android:alpha="0.0"/>
+
+            <!--<KeyAttribute-->
+                <!--app:framePosition="100"-->
+                <!--app:progress="100"-->
+                <!--app:target="@id/goal_item_status_background" />-->
 
             <!--SYNC ACTION-->
             <KeyPosition
-                app:framePosition="25"
+                app:framePosition="45"
                 app:keyPositionType="pathRelative"
                 app:percentX="-0.00"
                 app:target="@id/goal_item_sync" />
-
-            <!--DISTANCE TARGET-->
-            <KeyAttribute
-                app:framePosition="50"
-                app:progress="75"
-                app:target="@id/goal_distance_target" />
-            <KeyPosition
-                app:framePosition="50"
-                app:keyPositionType="pathRelative"
-                app:percentY="0.3"
-                app:target="@id/goal_distance_target" />
-
         </KeyFrameSet>
 
         <OnSwipe
@@ -52,20 +44,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!--STATUS-->
+        <!--STATUS::BACKGROUND-->
         <Constraint
-            android:id="@id/goal_item_status"
+            android:id="@id/goal_item_status_background"
+            android:layout_width="@dimen/MATCH_CONSTRAINTS"
+            android:layout_height="@dimen/base_x3"
+            android:padding="@dimen/base_x0"
+            app:srcCompat="@drawable/status_rounded"
+            android:scaleType="fitXY"
+            android:layout_marginTop="@dimen/base_x1"
+            android:layout_marginStart="@dimen/base_x1"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+            app:layout_constraintEnd_toEndOf="@id/goal_item_status_label"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start"
+            app:layout_constraintBottom_toBottomOf="@id/goal_item_status_label">
+        </Constraint>
+
+        <!--STATUS::LABEL-->
+        <Constraint
+            android:id="@id/goal_item_status_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_x1"
             android:layout_marginTop="@dimen/base_x1"
-            android:background="@drawable/status_rounded"
+            android:alpha="1.0"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
-            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start">
-            <CustomAttribute
-                app:attributeName="textColor"
-                app:customColorValue="@color/primary_text" />
-        </Constraint>
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start"
+            />
 
         <!--EDIT ACTION-->
         <Constraint
@@ -113,20 +118,31 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!--STATUS-->
+        <!--STATUS::BACKGROUND-->
         <Constraint
-            android:id="@id/goal_item_status"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:id="@id/goal_item_status_background"
+            android:layout_width="@dimen/base_x3"
+            android:layout_height="@dimen/base_x3"
+            android:padding="@dimen/base_x0"
+            android:scaleType="fitXY"
+            android:layout_marginTop="@dimen/base_x1"
+            android:layout_marginStart="@dimen/base_x1"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start"
+            app:layout_constraintBottom_toBottomOf="@id/goal_item_status_label">
+        </Constraint>
+
+        <!--STATUS::LABEL-->
+        <Constraint
+            android:id="@id/goal_item_status_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_x1"
             android:layout_marginTop="@dimen/base_x1"
-            android:background="@drawable/status_circle"
+            android:alpha="0.0"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
-            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start">
-            <CustomAttribute
-                app:attributeName="textColor"
-                app:customColorValue="@android:color/transparent" />
-        </Constraint>
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_start"
+            />
 
         <!--EDIT ACTION-->
         <Constraint
@@ -157,7 +173,7 @@
             android:id="@id/goal_distance_target"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/base_x1"
+            android:layout_marginEnd="@dimen/base_x2"
             app:layout_constraintBottom_toBottomOf="@id/goal_distance_current"
             app:layout_constraintEnd_toStartOf="@id/goal_distance_current" />
 

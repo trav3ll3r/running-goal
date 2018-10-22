@@ -13,5 +13,5 @@ interface WidgetRepository {
 
     suspend fun save(widget: Widget)
 
-    suspend fun delete(widget: Widget): Int
+    suspend fun delete(widgetId: Int): Int
 }

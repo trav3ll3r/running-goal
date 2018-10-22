@@ -1,16 +1,10 @@
 <resources>
     <string name="app_name">Running Goals</string>
-    <string name="zero_distance">0.0</string>
-    <string name="zero_days">0</string>
-    <string name="unit_kilometre">km</string>
-    <string name="unit_days">days</string>
     <string name="current_units">Current %1$s</string>
     <string name="target_units">Target %1$s</string>
 
-    <string name="btn_flip">Turn Over</string>
     <string name="btn_edit">Edit goal</string>
     <string name="delete">Delete</string>
-    <string name="local_separator">.</string>
     <string name="measure_unit_sign">km</string>
     <string name="running_goals">Running goals</string>
     <string name="sync_sources">Sync sources</string>
@@ -21,7 +15,6 @@
 
     <string name="sync_now_error">Sync failed</string>
     <string name="message_no_default_sync_sources" formatted="false">No Default Sync Sources found.\nPlease configure one first.</string>
-    <string name="warning_goal_for_widget_deleted">Goal for this widget has been deleted!</string>
 
     <!--GOAL STATUS-->
     <string name="status_ongoing">Ongoing</string>

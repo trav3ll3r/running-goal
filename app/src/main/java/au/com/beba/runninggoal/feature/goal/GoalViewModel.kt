@@ -10,9 +10,8 @@ import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
 import au.com.beba.runninggoal.domain.event.SubscriberPostbox
 import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
 import au.com.beba.runninggoal.domain.workout.Workout
-import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
+import au.com.beba.runninggoal.feature.sync.SyncFeature
 import au.com.beba.runninggoal.repo.goal.GoalRepository
-import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
 import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
@@ -23,7 +22,7 @@ import javax.inject.Inject
 class GoalViewModel @Inject constructor(
         private val goalRepository: GoalRepository,
         private val workoutRepository: WorkoutRepository,
-        private val syncSourceRepository: SyncSourceRepository,
+        private val syncFeature: SyncFeature,
         private val eventCentre: SubscriberEventCentre
 ) : ViewModel(), Subscriber {
 
@@ -63,21 +62,14 @@ class GoalViewModel @Inject constructor(
         Timber.i("syncGoals")
         if (context != null) {
             launch {
-                val syncSource = syncSourceRepository.getDefaultSyncSource()
-                if (syncSource.isDefault) {
-                    // Enqueues new JobIntentService
-                    SyncSourceIntentService.enqueueWork(
-                            context,
-                            SyncSourceIntentService.buildIntent(runningGoal),
-                            jobId)
-                }
+                syncFeature.syncNow(context, runningGoal?.id, jobId)
             }
         }
     }
 
     override fun newEvent(postbox: WeakReference<SubscriberPostbox>) {
         Timber.i("newEvent")
-        Timber.d("newEvent | postbox=%s", postbox.get()?.toString())
+        Timber.d("newEvent | postbox=%s", postbox.get()?.describe())
         val pb = postbox.get()
         val event = pb?.takeLast()
 

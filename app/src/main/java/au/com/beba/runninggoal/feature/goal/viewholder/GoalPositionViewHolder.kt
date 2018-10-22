@@ -4,10 +4,9 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.component.NumericWithLabel
 import au.com.beba.runninggoal.domain.GoalProgress
-import au.com.beba.runninggoal.domain.core.displaySigned
-import au.com.beba.runninggoal.feature.widget.DecimalRenderer
+import au.com.beba.runninggoal.ui.component.displaySigned
+import au.com.beba.runninggoal.ui.component.NumericWithLabel
 import org.jetbrains.anko.find
 
 
@@ -27,7 +26,7 @@ class GoalPositionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
                 context.getString(R.string.unit_kilometre))
 
         positionInDays.setValues(
-                DecimalRenderer.fromFloat(progress.positionInDays, true),
+                progress.positionInDays.displaySigned(),
                 context.getString(R.string.position_ideal_days))
 
     }

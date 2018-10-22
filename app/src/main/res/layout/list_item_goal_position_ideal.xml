@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon" />
 
     <!--POSITION::IDEAL DISTANCE-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_position_distance"
         style="@style/GoalValueLabel.Large"
         android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
         tools:NumericWithLabel_labelText="@string/position_distance" />
 
     <!--POSITION::IDEAL DAYS-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_position_ideal_days"
         style="@style/GoalValueLabel.Large"
         android:layout_width="@dimen/MATCH_CONSTRAINTS"

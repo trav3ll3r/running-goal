@@ -1,19 +1,15 @@
 package au.com.beba.runninggoal.feature.workout
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.workout.Workout
+import timber.log.Timber
 
 
 class WorkoutsAdapter(private val items: MutableList<Workout>)
     : RecyclerView.Adapter<WorkoutViewHolder>() {
-
-    companion object {
-        private val TAG = WorkoutsAdapter::class.java.simpleName
-    }
 
     // BUILD ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutViewHolder {
@@ -39,8 +35,8 @@ class WorkoutsAdapter(private val items: MutableList<Workout>)
     }
 
     fun setItems(activities: List<Workout>) {
-        Log.i(TAG, "setItems")
-        Log.d(TAG, "setItems | activities=${activities.size}")
+        Timber.i("setItems")
+        Timber.d("setItems | activities=${activities.size}")
         items.clear()
         items.addAll(activities)
     }

@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.goal.GoalRepository
-import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
@@ -21,7 +21,7 @@ class RunningGoalsViewModel
     fun fetchGoals() {
         Timber.i("fetchGoals")
         launch {
-            val goals = withContext(DefaultDispatcher) {
+            val goals = withContext(Dispatchers.Default) {
                 goalRepository.fetchGoals()
             }
             Timber.d("fetchGoals | goals count = %s", goals.size)

@@ -10,27 +10,24 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.component.DistancePickerDialog
 import au.com.beba.runninggoal.domain.Distance
 import au.com.beba.runninggoal.domain.GoalDate
 import au.com.beba.runninggoal.domain.GoalTarget
 import au.com.beba.runninggoal.domain.Period
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.ui.component.display
 import au.com.beba.runninggoal.domain.event.GoalChangeEvent
 import au.com.beba.runninggoal.domain.event.GoalDeleteEvent
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
-import au.com.beba.runninggoal.feature.widget.GoalWidgetUpdater
 import au.com.beba.runninggoal.repo.goal.GoalRepository
 import au.com.beba.runninggoal.repo.widget.WidgetRepository
 import au.com.beba.runninggoal.repo.workout.WorkoutRepository
+import au.com.beba.runninggoal.ui.component.DistancePickerDialog
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.find
 import timber.log.Timber
@@ -58,8 +55,6 @@ class GoalActivity : AppCompatActivity() {
     lateinit var workoutRepository: WorkoutRepository
     @Inject
     lateinit var widgetRepository: WidgetRepository
-    @Inject
-    lateinit var goalWidgetUpdater: GoalWidgetUpdater
     @Inject
     lateinit var eventCentre: PublisherEventCentre
 
@@ -95,7 +90,7 @@ class GoalActivity : AppCompatActivity() {
 
     private suspend fun resolveGoal(goalId: Long): RunningGoal {
         Timber.i("resolveGoal")
-        val goal: RunningGoal? = withContext(DefaultDispatcher) {
+        val goal: RunningGoal? = withContext(Dispatchers.Default) {
             if (goalId > 0) {
                 Timber.d("resolveGoal | from goalId")
                 goalRepository.getById(goalId)
@@ -150,10 +145,8 @@ class GoalActivity : AppCompatActivity() {
 
         val goalId = goalRepository.save(goal)
 
-        // TODO: CHECK IF THIS IS NEEDED, USE goal
-        val updatedGoal = goalRepository.getById(goalId)
-
-        updateWidgetView(updatedGoal)
+//        val updatedGoal = goalRepository.getById(goalId)
+//        updateWidgetView(updatedGoal)
 
         eventCentre.publish(GoalChangeEvent(goalId))
 
@@ -161,7 +154,7 @@ class GoalActivity : AppCompatActivity() {
     }
 
     //TODO: MOVE TO VIEWMODEL
-    private fun deleteGoal(runningGoal: RunningGoal) = async(DefaultDispatcher) {
+    private fun deleteGoal(runningGoal: RunningGoal) = async(Dispatchers.Default) {
         Timber.i("deleteGoal")
         Timber.d("deleteGoal | goalId=%s".format(runningGoal.id))
 
@@ -170,10 +163,7 @@ class GoalActivity : AppCompatActivity() {
             // DELETE ALL RELATED Workouts
             workoutRepository.deleteAllForGoal(runningGoal.id)
 
-            // DELETE ALL RELATED Widgets
-            runningGoal.deleted = true
-
-            updateWidgetView(runningGoal)
+//            updateWidgetView(runningGoal)
 
             eventCentre.publish(GoalDeleteEvent(runningGoal.id))
         }
@@ -181,15 +171,15 @@ class GoalActivity : AppCompatActivity() {
         exit()
     }
 
-    private suspend fun updateWidgetView(runningGoal: RunningGoal?) = withContext(Dispatchers.Default) {
-        Timber.i("updateWidgetView")
-        val context = applicationContext
-        if (runningGoal != null) {
-            runBlocking {
-                goalWidgetUpdater.updateAllWidgetsForGoal(context, runningGoal)
-            }
-        }
-    }
+//    private suspend fun updateWidgetView(runningGoal: RunningGoal?) = withContext(Dispatchers.Default) {
+//        Timber.i("updateWidgetView")
+//        val context = applicationContext
+//        if (runningGoal != null) {
+//            runBlocking {
+//                goalWidgetUpdater.updateAllWidgetsForGoal(context, runningGoal)
+//            }
+//        }
+//    }
 
     private fun initDistancePicker(editText: EditText) {
         val distanceSetListener: DistancePickerDialog.OnDistanceSetListener = object : DistancePickerDialog.OnDistanceSetListener {

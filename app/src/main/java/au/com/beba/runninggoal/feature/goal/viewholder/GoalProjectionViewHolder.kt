@@ -4,9 +4,9 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.component.NumericWithLabel
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.ui.component.display
+import au.com.beba.runninggoal.ui.component.NumericWithLabel
 import org.jetbrains.anko.find
 
 

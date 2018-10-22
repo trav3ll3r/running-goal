@@ -4,7 +4,7 @@ import android.content.Context
 import au.com.beba.runninggoal.domain.workout.Workout
 import au.com.beba.runninggoal.goaldatabase.WorkoutStorage
 import au.com.beba.runninggoal.goaldatabase.workout.WorkoutStorageImpl
-import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 class WorkoutRepo constructor(
         private val context: Context,
-        private val coroutineContext: CoroutineContext = DefaultDispatcher)
+        private val coroutineContext: CoroutineContext = Dispatchers.Default)
     : WorkoutRepository {
 
     companion object {

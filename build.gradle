@@ -10,8 +10,9 @@ buildscript {
 
         ]
         androidx = [
+                core               : "1.0.0",
                 materialVer        : "1.0.0",
-                appcompatVer       : "1.0.0",
+                appcompat          : "1.0.0",
                 recyclerViewVer    : "1.0.0",
                 constraintLayoutVer: "2.0.0-alpha2",
                 archLifecycleVer   : "2.0.0",

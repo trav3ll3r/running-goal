@@ -19,7 +19,6 @@ import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.router.NavigationInteractor
-import au.com.beba.runninggoal.repo.goal.GoalRepository
 import com.google.android.material.button.MaterialButton
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_running_goals.*
@@ -32,8 +31,6 @@ class GoalsListFragment : Fragment() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
-    @Inject
-    lateinit var goalRepository: GoalRepository
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProviders.of(this, factory).get(RunningGoalsViewModel::class.java)

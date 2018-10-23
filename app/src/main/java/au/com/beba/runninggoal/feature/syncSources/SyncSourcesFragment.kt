@@ -14,10 +14,7 @@ import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.progressSync.SyncSourcesAdapter
 import au.com.beba.runninggoal.feature.sync.SyncFeature
-import au.com.beba.runninggoal.repo.goal.GoalRepository
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.support.v4.find
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,8 +26,6 @@ class SyncSourcesFragment : Fragment() {
         fun onSyncSourceClicked(syncSource: SyncSource)
     }
 
-    @Inject
-    lateinit var goalRepository: GoalRepository
     @Inject
     lateinit var syncFeature: SyncFeature
 
@@ -90,10 +85,8 @@ class SyncSourcesFragment : Fragment() {
 
     private fun refreshList() {
         Timber.i("refreshList")
-        launch(Dispatchers.Main) {
-            val syncSources = syncFeature.getAllConfiguredSources()
-            recyclerAdapter.setItems(syncSources)
-            recyclerAdapter.notifyDataSetChanged()
-        }
+        val syncSources = syncFeature.getAllConfiguredSources()
+        recyclerAdapter.setItems(syncSources)
+        recyclerAdapter.notifyDataSetChanged()
     }
 }

@@ -1,0 +1,55 @@
+def androidx = rootProject.ext.androidx
+def kotlin = rootProject.ext.kotlin
+def logs = rootProject.ext.logs
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+// ANDROIDX
+dependencies {
+    implementation "androidx.core:core:${androidx.core}"
+}
+
+// KOTLIN, ANKO, KOTLINX
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin.kotlinCoroutinesVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+    implementation "org.jetbrains.anko:anko-coroutines:${kotlin.ankoVer}"
+}
+
+// LOGGING
+dependencies {
+    implementation "org.slf4j:slf4j-api:${logs.slf4j}"
+}
+
+// MODULES
+dependencies {
+    implementation project(":domain_goal")
+    implementation project(":domain_event")
+    implementation project(":feature_base")
+    implementation project(":repo_goal")
+}

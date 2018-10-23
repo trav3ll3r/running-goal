@@ -6,10 +6,6 @@ import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
 import au.com.beba.runninggoal.feature.LocalPreferences
 import au.com.beba.runninggoal.feature.LocalPreferencesImpl
-import au.com.beba.runninggoal.repo.goal.GoalRepo
-import au.com.beba.runninggoal.repo.goal.GoalRepository
-import au.com.beba.runninggoal.repo.widget.WidgetRepo
-import au.com.beba.runninggoal.repo.widget.WidgetRepository
 import au.com.beba.runninggoal.repo.workout.WorkoutRepo
 import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import dagger.Module
@@ -35,16 +31,6 @@ class CommonAppModule {
 
     @Provides
     @Singleton
-    fun goalRepository(application: App): GoalRepository =
-            GoalRepo(application)
-
-    @Provides
-    @Singleton
     fun workoutRepository(application: App): WorkoutRepository =
             WorkoutRepo(application)
-
-    @Provides
-    @Singleton
-    fun widgetRepository(application: App): WidgetRepository =
-            WidgetRepo(application)
 }

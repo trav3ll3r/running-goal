@@ -11,7 +11,6 @@ import au.com.beba.runninggoal.domain.event.SubscriberPostbox
 import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
 import au.com.beba.runninggoal.domain.workout.Workout
 import au.com.beba.runninggoal.feature.sync.SyncFeature
-import au.com.beba.runninggoal.repo.goal.GoalRepository
 import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 
 class GoalViewModel @Inject constructor(
-        private val goalRepository: GoalRepository,
+        private val goalFeature: GoalFeature,
         private val workoutRepository: WorkoutRepository,
         private val syncFeature: SyncFeature,
         private val eventCentre: SubscriberEventCentre
@@ -47,9 +46,7 @@ class GoalViewModel @Inject constructor(
     }
 
     fun fetchGoal() {
-        launch {
-            goalLiveData.postValue(goalRepository.getById(currentGoalId))
-        }
+        goalLiveData.postValue(goalFeature.getById(currentGoalId))
     }
 
     fun fetchWorkouts() {
@@ -61,9 +58,7 @@ class GoalViewModel @Inject constructor(
     fun syncWorkouts(context: Context?, runningGoal: RunningGoal?, jobId: Int = 1001) {
         Timber.i("syncGoals")
         if (context != null) {
-            launch {
-                syncFeature.syncNow(context, runningGoal?.id, jobId)
-            }
+            syncFeature.syncNow(context, runningGoal?.id, jobId)
         }
     }
 

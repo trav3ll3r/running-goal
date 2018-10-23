@@ -38,8 +38,4 @@ abstract class AndroidBindingModule {
     @ActivityScope
     @ContributesAndroidInjector
     abstract fun editSyncSourceActivity(): EditSyncSourceActivity
-
-//    @BroadcastScope
-//    @ContributesAndroidInjector
-//    abstract fun runningGoalWidgetProvider(): RunningGoalWidgetProvider
 }

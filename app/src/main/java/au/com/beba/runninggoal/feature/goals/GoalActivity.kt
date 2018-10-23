@@ -20,14 +20,13 @@ import au.com.beba.runninggoal.domain.event.GoalDeleteEvent
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.feature.goal.GoalFeature
 import au.com.beba.runninggoal.feature.widget.WidgetFeature
-import au.com.beba.runninggoal.repo.workout.WorkoutRepository
+import au.com.beba.runninggoal.feature.workout.WorkoutFeature
 import au.com.beba.runninggoal.ui.component.DistancePickerDialog
 import au.com.beba.runninggoal.ui.component.display
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.anko.find
 import timber.log.Timber
 import java.util.*
@@ -53,7 +52,7 @@ class GoalActivity : AppCompatActivity() {
     @Inject
     lateinit var widgetFeature: WidgetFeature
     @Inject
-    lateinit var workoutRepository: WorkoutRepository
+    lateinit var workoutFeature: WorkoutFeature
     @Inject
     lateinit var eventCentre: PublisherEventCentre
 
@@ -156,7 +155,7 @@ class GoalActivity : AppCompatActivity() {
         // IF DELETING runningGoal IS SUCCESSFUL
         if (goalFeature.delete(runningGoal) == 1) {
             // DELETE ALL RELATED Workouts
-            runBlocking { workoutRepository.deleteAllForGoal(runningGoal.id) }
+            workoutFeature.deleteAllForGoal(runningGoal.id)
             eventCentre.publish(GoalDeleteEvent(runningGoal.id))
         }
 

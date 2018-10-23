@@ -7,6 +7,8 @@ import au.com.beba.runninggoal.feature.sync.SyncFeature
 import au.com.beba.runninggoal.feature.sync.SyncFeatureImpl
 import au.com.beba.runninggoal.feature.widget.WidgetFeature
 import au.com.beba.runninggoal.feature.widget.WidgetFeatureImpl
+import au.com.beba.runninggoal.feature.workout.WorkoutFeature
+import au.com.beba.runninggoal.feature.workout.WorkoutFeatureImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -27,6 +29,14 @@ class FeaturesModule {
     @Singleton
     fun syncFeature(application: App): SyncFeature {
         val feature = SyncFeatureImpl
+        feature.bootstrap(application)
+        return feature
+    }
+
+    @Provides
+    @Singleton
+    fun workoutFeature(application: App): WorkoutFeature {
+        val feature = WorkoutFeatureImpl
         feature.bootstrap(application)
         return feature
     }

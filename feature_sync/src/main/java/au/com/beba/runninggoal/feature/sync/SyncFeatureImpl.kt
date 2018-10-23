@@ -55,8 +55,8 @@ object SyncFeatureImpl : SyncFeature {
                         SyncSourceIntentService.buildIntent(goalId),
                         jobId)
             } else {
-                launch {
-                    // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
+//                launch {
+//                    // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
 //                    val dialog = AlertDialog.Builder(ctx)
 //                            .setCancelable(true)
 //                            .setTitle(R.string.sync_now_error)
@@ -67,7 +67,7 @@ object SyncFeatureImpl : SyncFeature {
 //                    if (!isFinishing) {
 //                        dialog.show()
 //                    }
-                }
+//                }
             }
         }
     }

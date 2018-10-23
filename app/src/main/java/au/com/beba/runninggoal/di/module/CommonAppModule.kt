@@ -6,8 +6,6 @@ import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
 import au.com.beba.runninggoal.feature.LocalPreferences
 import au.com.beba.runninggoal.feature.LocalPreferencesImpl
-import au.com.beba.runninggoal.repo.workout.WorkoutRepo
-import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -28,9 +26,4 @@ class CommonAppModule {
     @Provides
     @Singleton
     fun publisherEventCentre(): PublisherEventCentre = EventCentre
-
-    @Provides
-    @Singleton
-    fun workoutRepository(application: App): WorkoutRepository =
-            WorkoutRepo(application)
 }

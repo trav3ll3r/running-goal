@@ -11,8 +11,7 @@ import au.com.beba.runninggoal.domain.event.SubscriberPostbox
 import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
 import au.com.beba.runninggoal.domain.workout.Workout
 import au.com.beba.runninggoal.feature.sync.SyncFeature
-import au.com.beba.runninggoal.repo.workout.WorkoutRepository
-import kotlinx.coroutines.experimental.launch
+import au.com.beba.runninggoal.feature.workout.WorkoutFeature
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import javax.inject.Inject
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 class GoalViewModel @Inject constructor(
         private val goalFeature: GoalFeature,
-        private val workoutRepository: WorkoutRepository,
+        private val workoutFeature: WorkoutFeature,
         private val syncFeature: SyncFeature,
         private val eventCentre: SubscriberEventCentre
 ) : ViewModel(), Subscriber {
@@ -50,9 +49,7 @@ class GoalViewModel @Inject constructor(
     }
 
     fun fetchWorkouts() {
-        launch {
-            workoutsLiveData.postValue(workoutRepository.getAllForGoal(currentGoalId))
-        }
+        workoutsLiveData.postValue(workoutFeature.getAllForGoal(currentGoalId))
     }
 
     fun syncWorkouts(context: Context?, runningGoal: RunningGoal?, jobId: Int = 1001) {

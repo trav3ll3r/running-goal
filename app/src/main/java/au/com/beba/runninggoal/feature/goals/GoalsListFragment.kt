@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,12 +15,12 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import au.com.beba.runninggoal.MainActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
-import au.com.beba.runninggoal.feature.router.NavigationInteractor
-import au.com.beba.runninggoal.repo.goal.GoalRepository
 import com.google.android.material.button.MaterialButton
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_running_goals.*
@@ -33,10 +34,13 @@ class GoalsListFragment : Fragment() {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
     @Inject
-    lateinit var goalRepository: GoalRepository
+    lateinit var eventCentre: PublisherEventCentre
 
-    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
+    private val goalsViewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProviders.of(this, factory).get(RunningGoalsViewModel::class.java)
+    }
+    private val fabViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelProviders.of(this, factory).get(FabViewModel::class.java)
     }
 
     private lateinit var fab: MaterialButton
@@ -45,7 +49,6 @@ class GoalsListFragment : Fragment() {
 
     private var goalActionListener: GoalActionListener? = null
     private var listItemListener: ListListener<RunningGoal>? = null
-    private var navigationInteractor: NavigationInteractor? = null
 
     /* ********* */
     /* LIFECYCLE */
@@ -69,18 +72,18 @@ class GoalsListFragment : Fragment() {
         initLiveData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        goalsViewModel.fetchGoals()
+        fabViewModel.update()
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is GoalActionListener) {
             goalActionListener = context
         } else {
             Timber.i("%s does not implement %s", context.toString(), GoalActionListener::class.java.simpleName)
-        }
-
-        if (context is NavigationInteractor) {
-            navigationInteractor = context
-        } else {
-            Timber.i("%s does not implement %s", context.toString(), NavigationInteractor::class.java.simpleName)
         }
 
         if (context is ListListener<*>) {
@@ -110,8 +113,8 @@ class GoalsListFragment : Fragment() {
     }
 
     private fun initFAB() {
-        fab = find(R.id.fab_sync)
-//        fab.setOnClickListener { listener?.onAddRunningGoal() }
+        fab = find(R.id.fab)
+        fab.setOnClickListener { onFabClick() }
     }
 
     private fun initRecyclerView() {
@@ -122,31 +125,29 @@ class GoalsListFragment : Fragment() {
         val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(decoration)
 
-        recyclerAdapter = RunningGoalsAdapter(mutableListOf(), object : ListListener<GoalViewHolder> {
-            override fun onItemClick(item: GoalViewHolder) {
-                goalActionListener?.showGoalDetails(item.itemView.tag as RunningGoal, item)
-                listItemListener?.onItemClick(item.itemView.tag as RunningGoal)
-            }
-        })
+        recyclerAdapter = RunningGoalsAdapter()
         recyclerView.adapter = recyclerAdapter
     }
 
     private fun initLiveData() {
         Timber.i("initLiveData")
-        viewModel.goalsLiveData.observe(this, Observer {
-            Timber.i("initLiveData | goalsLiveData | observed")
-            if (it != null) {
-                Timber.d("initLiveData | goalsLiveData | observed | goals=%s", it.size)
-                updateList(it)
-            }
+        goalsViewModel.goalsLiveData.observe(this, Observer {
+            Timber.d("initLiveData | goalsLiveData | observed | goals=%s", it.size)
+            updateList(it)
         })
-        viewModel.fetchGoals()
+
+        fabViewModel.fabLiveData.observe(this, Observer {
+            Timber.i("initLiveData | fabViewModel | observed")
+            updateFab(it)
+        })
     }
 
     /* ******* */
     /* ACTIONS */
     /* ******* */
-    //EMPTY
+    private fun onFabClick() {
+        fabViewModel.fabAction(context)
+    }
 
     /* ********* */
     /* REACTIONS */
@@ -154,16 +155,12 @@ class GoalsListFragment : Fragment() {
     private fun handleToolbarOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
-            R.id.action_sync_all -> {
-                //syncAllGoals()
-                return true
-            }
             R.id.action_create_goal -> {
                 goalActionListener?.createGoal()
                 return true
             }
             R.id.action_manage_sync_sources -> {
-                navigationInteractor?.onSyncSourcesRequested()
+                eventCentre.publish(MainActivity.ManageSyncSourcesEvent())
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -174,5 +171,22 @@ class GoalsListFragment : Fragment() {
         Timber.i("updateList")
         recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()
+    }
+
+    private fun updateFab(model: FabModel) {
+        Timber.i("updateFab")
+        Timber.i("updateFab")
+        fab.visibility = if (model.visible) View.VISIBLE else View.GONE
+        fab.apply {
+            this.text = when (model.actionType) {
+                FabActionType.SYNC_ALL -> getString(R.string.sync_all)
+                else -> getString(R.string.action_manage_sync_sources)
+            }
+            this.icon = ContextCompat.getDrawable(context, when (model.actionType) {
+                FabActionType.SYNC_ALL -> R.drawable.ic_sync_24dp
+                else -> R.drawable.ic_sync_24dp
+            }
+            )
+        }
     }
 }

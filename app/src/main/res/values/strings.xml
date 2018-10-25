@@ -1,16 +1,10 @@
 <resources>
     <string name="app_name">Running Goals</string>
-    <string name="zero_distance">0.0</string>
-    <string name="zero_days">0</string>
-    <string name="unit_kilometre">km</string>
-    <string name="unit_days">days</string>
     <string name="current_units">Current %1$s</string>
     <string name="target_units">Target %1$s</string>
 
-    <string name="btn_flip">Turn Over</string>
     <string name="btn_edit">Edit goal</string>
     <string name="delete">Delete</string>
-    <string name="local_separator">.</string>
     <string name="measure_unit_sign">km</string>
     <string name="running_goals">Running goals</string>
     <string name="sync_sources">Sync sources</string>
@@ -21,7 +15,6 @@
 
     <string name="sync_now_error">Sync failed</string>
     <string name="message_no_default_sync_sources" formatted="false">No Default Sync Sources found.\nPlease configure one first.</string>
-    <string name="warning_goal_for_widget_deleted">Goal for this widget has been deleted!</string>
 
     <!--GOAL STATUS-->
     <string name="status_ongoing">Ongoing</string>
@@ -36,11 +29,15 @@
     <string name="action_manage_sync_sources">Sync sources</string>
 
     <!--GOAL DETAILS-->
+    <string name="goal_period_in_days">Time (in days)</string>
     <string name="lapsed">lapsed</string>
     <string name="total">total</string>
-    <string name="projection">projection</string>
+    <string name="distance_per_day">Distance per day</string>
+    <string name="workouts_summary">Workouts summary</string>
+    <string name="workouts_summary_count">Num of workouts</string>
+    <string name="workouts_summary_distance">Total distance</string>
 
-    <string name="position">position</string>
+    <string name="current_position">Current position</string>
     <string name="position_distance">km</string>
     <string name="position_ideal_days">ideal days</string>
 

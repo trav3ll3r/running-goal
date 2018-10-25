@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="status_ongoing">@color/accent</color>
+    <color name="status_not_started">@color/primary_light</color>
+    <color name="status_expired">@color/secondary_text</color>
+</resources>

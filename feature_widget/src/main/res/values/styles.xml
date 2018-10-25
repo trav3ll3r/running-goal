@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--FIXME-->
+    <!--<style name="flip_button" parent="@style/Widget.AppCompat.Button.Borderless.Colored">-->
+    <style name="flip_button">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:text">@null</item>
+        <item name="android:src">@drawable/ic_list_24dp</item>
+    </style>
+
+    <style name="GoalSlot">
+        <item name="android:layout_width">@dimen/goal_slot_width</item>
+        <item name="android:layout_height">@dimen/goal_slot_height</item>
+        <item name="android:background">@drawable/ic_hex</item>
+        <item name="android:backgroundTint">@color/hex_background_default</item>
+    </style>
+
+    <style name="GoalSlot.Distance">
+        <item name="android:backgroundTint">@color/hex_background_distance</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="GoalSlot.Distance.TopTier">
+        <item name="android:layout_width">@dimen/goal_slot_width_toptier</item>
+        <item name="android:layout_height">@dimen/goal_slot_height_toptier</item>
+    </style>
+
+    <style name="GoalSlot.Days">
+        <item name="android:backgroundTint">@color/hex_background_time</item>
+    </style>
+
+    <style name="GoalSlot.Days.TopTier">
+        <item name="android:layout_width">@dimen/goal_slot_width_toptier</item>
+        <item name="android:layout_height">@dimen/goal_slot_height_toptier</item>
+        <item name="android:backgroundTint">@color/hex_background_time</item>
+    </style>
+
+</resources>

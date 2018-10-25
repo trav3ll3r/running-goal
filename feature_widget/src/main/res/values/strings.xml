@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="btn_flip">Turn Over</string>
+    <string name="warning_goal_for_widget_deleted">Goal for this widget has been deleted!</string>
+    <string name="select_goal">Select goal for widget</string>
+</resources>

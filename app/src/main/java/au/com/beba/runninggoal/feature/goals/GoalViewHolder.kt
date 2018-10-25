@@ -5,16 +5,24 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.component.NumericProgress
-import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.domain.core.display
+import au.com.beba.runninggoal.domain.event.Event
+import au.com.beba.runninggoal.feature.base.ListListener
+import au.com.beba.runninggoal.ui.component.NumericProgress
+import au.com.beba.runninggoal.ui.component.NumericWithLabel
+import au.com.beba.runninggoal.ui.component.display
+import au.com.beba.runninggoal.ui.component.displaySigned
 import org.jetbrains.anko.find
 
 
 class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    companion object {
+        const val layoutId = R.layout.list_item_goal
+    }
+
     private val lblName: TextView = itemView.find(R.id.goal_item_name)
+    private val distancePosition: NumericWithLabel = itemView.find(R.id.goal_distance_position)
     private val periodProgress: NumericProgress = itemView.find(R.id.goal_period_progress)
     private val distanceProgress: NumericProgress = itemView.find(R.id.goal_distance_progress)
     private val status: TextView = itemView.find(R.id.goal_item_status)
@@ -28,15 +36,13 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 context.getString(R.string.progress_total_format, runningGoal.progress.daysTotal.toString()),
                 context.getString(R.string.unit_days))
 
-//        context.getString(R.string.goal_period_summary,
-//                runningGoal.target.period.from.asDisplayLocalLong(),
-//                runningGoal.target.period.to.asDisplayLocalLong()
-//                )
-
         distanceProgress.setValues(runningGoal.progress.distanceToday.display(),
                 context.getString(R.string.progress_total_format, runningGoal.target.distance.display()),
                 context.getString(R.string.unit_kilometre)
         )
+
+        distancePosition.setValues(runningGoal.progress.positionInDistance.displaySigned(true),
+                runningGoal.progress.positionInDistance.units)
 
         status.backgroundTintList = when (runningGoal.progress.status) {
             GoalStatus.ONGOING -> context.getColorStateList(R.color.status_ongoing)
@@ -70,4 +76,6 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         distanceProgress.transitionName = "goal_distance_current_%s".format(id)
         periodProgress.transitionName = "goal_period_current_%s".format(id)
     }
+
+    class GoalSelectedEvent(val runningGoal: RunningGoal, val viewHolder: GoalViewHolder) : Event
 }

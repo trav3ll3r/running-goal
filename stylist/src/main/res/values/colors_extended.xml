@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="darker_background">@color/secondary_background</color>
+    <color name="darker_background_text">@color/secondary_text</color>
+</resources>

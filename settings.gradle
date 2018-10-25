@@ -1,1 +1,1 @@
-include ':app', ':domain_goal', ':https', ':stylist', ':repo_goal', ':goaldatabase', ':domain_widget', ':domain_workout', ':repo_sync', ':repo_workout', ':domain_event'
+include ':app', ':domain_goal', ':https', ':stylist', ':repo_goal', ':goaldatabase', ':domain_widget', ':domain_workout', ':repo_sync', ':repo_workout', ':domain_event', ':feature_base', ':feature_sync', ':feature_widget', ':ui_component', ':feature_goal', ':feature_workout'

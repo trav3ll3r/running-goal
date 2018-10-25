@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="GoalValueLabel">
+        <item name="numericTextColor">@android:color/white</item>
+        <item name="numericTextSize">@dimen/text_base</item>
+        <item name="labelTextColor">@android:color/white</item>
+        <item name="labelTextSize">@dimen/text_small</item>
+        <item name="labelVisibility">visible</item>
+    </style>
+
+    <style name="GoalValueLabel.Large">
+        <item name="numericTextSize">@dimen/text_large</item>
+    </style>
+
+    <style name="GoalValueLabel.XLarge">
+        <item name="numericTextSize">@dimen/text_xlarge</item>
+    </style>
+</resources>

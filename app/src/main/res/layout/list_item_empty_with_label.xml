@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/base_x2">
+
+    <include layout="@layout/list_item_guidelines" />
+
+    <!--GENERIC LABEL-->
+    <TextView
+        android:id="@+id/label"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/example_description"
+        android:textColor="@color/primary_light"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

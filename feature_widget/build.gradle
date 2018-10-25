@@ -1,0 +1,68 @@
+def androidx = rootProject.ext.androidx
+def kotlin = rootProject.ext.kotlin
+def logs = rootProject.ext.logs
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+// ANDROIDX
+dependencies {
+    //implementation "androidx.core:core:${androidx.core}"
+    implementation "androidx.appcompat:appcompat:${androidx.appcompat}"
+    implementation "androidx.constraintlayout:constraintlayout:${androidx.constraintLayoutVer}"
+    implementation "androidx.recyclerview:recyclerview:${androidx.recyclerViewVer}"
+    implementation "androidx.lifecycle:lifecycle-extensions:${androidx.archLifecycleVer}"
+    kapt "androidx.lifecycle:lifecycle-compiler:${androidx.archLifecycleVer}"
+    // ONLY FOR @string/appbar_scrolling_view_behavior
+    implementation "com.google.android.material:material:${androidx.materialVer}" //
+}
+
+// KOTLIN, ANKO, KOTLINX
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
+    implementation "org.jetbrains.anko:anko-sdk25:${kotlin.ankoVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin.coroutines}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.coroutines}"
+    implementation "org.jetbrains.anko:anko-coroutines:${kotlin.ankoVer}"
+    implementation "org.jetbrains.anko:anko-support-v4:${kotlin.ankoVer}"
+    implementation "org.jetbrains.anko:anko-appcompat-v7:${kotlin.ankoVer}"
+    implementation "androidx.core:core-ktx:${kotlin.coreKtx}"
+}
+
+// LOGGING
+dependencies {
+    implementation "org.slf4j:slf4j-api:${logs.slf4j}"
+}
+
+// MODULES
+dependencies {
+    implementation project(":feature_base")
+    implementation project(":domain_goal")
+    implementation project(":domain_event")
+    implementation project(":repo_goal")
+    implementation project(":domain_widget")
+    implementation project(":stylist")
+    implementation project(":ui_component")
+}

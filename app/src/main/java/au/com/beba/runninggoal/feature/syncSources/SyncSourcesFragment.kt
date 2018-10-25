@@ -2,7 +2,6 @@ package au.com.beba.runninggoal.feature.syncSources
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,10 @@ import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.progressSync.SyncSourcesAdapter
-import au.com.beba.runninggoal.repo.goal.GoalRepository
-import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
+import au.com.beba.runninggoal.feature.sync.SyncFeature
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.support.v4.find
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -30,13 +27,7 @@ class SyncSourcesFragment : Fragment() {
     }
 
     @Inject
-    lateinit var goalRepository: GoalRepository
-    @Inject
-    lateinit var syncSourceRepository: SyncSourceRepository
-
-    companion object {
-        private val TAG = SyncSourcesFragment::class.java.simpleName
-    }
+    lateinit var syncFeature: SyncFeature
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: SyncSourcesAdapter
@@ -93,11 +84,9 @@ class SyncSourcesFragment : Fragment() {
     }
 
     private fun refreshList() {
-        Log.i(TAG, "refreshList")
-        launch(UI) {
-            val syncSources = syncSourceRepository.getSyncSources()
-            recyclerAdapter.setItems(syncSources)
-            recyclerAdapter.notifyDataSetChanged()
-        }
+        Timber.i("refreshList")
+        val syncSources = syncFeature.getAllConfiguredSources()
+        recyclerAdapter.setItems(syncSources)
+        recyclerAdapter.notifyDataSetChanged()
     }
 }

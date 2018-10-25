@@ -7,9 +7,9 @@ interface SyncSourceRepository {
 
     suspend fun getSyncSources(): List<SyncSource>
 
-    suspend fun getSyncSourceForType(type: String): SyncSource
+    suspend fun getSyncSourceForType(type: String): List<SyncSource>
 
-    suspend fun getDefaultSyncSource(): SyncSource
+    suspend fun getDefaultSyncSource(): SyncSource?
 
     suspend fun save(syncSource: SyncSource)
 }

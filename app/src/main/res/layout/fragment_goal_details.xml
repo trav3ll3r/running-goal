@@ -21,13 +21,22 @@
     <include layout="@layout/list_item_guidelines" />
 
     <!--STATUS BADGE-->
+    <ImageView
+        android:id="@+id/goal_item_status_background"
+        android:layout_width="@dimen/MATCH_CONSTRAINTS"
+        android:layout_height="@dimen/base_x2"
+        app:srcCompat="@drawable/status_rounded"
+        android:scaleType="fitXY"
+        android:visibility="visible"
+        tools:tint="@color/accent"
+        android:contentDescription="@null" />
+
     <TextView
-        android:id="@+id/goal_item_status"
+        android:id="@+id/goal_item_status_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/base_x1"
         android:layout_marginTop="@dimen/base_x1"
-        android:background="@drawable/status_rounded"
         android:padding="@dimen/base_x1"
         android:textColor="@color/primary_text"
         android:visibility="visible"
@@ -45,10 +54,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/base_x1"
         android:textColor="@color/primary_text"
-        app:layout_constraintBottom_toBottomOf="@id/goal_item_status"
-        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
-        app:layout_constraintStart_toEndOf="@id/goal_item_status"
-        app:layout_constraintTop_toTopOf="@id/goal_item_status"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon"
+        app:layout_constraintEnd_toStartOf="@id/goal_distance_target"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_status_background"
         tools:text="Goal Name" />
 
     <!--EDIT ACTION-->
@@ -83,7 +91,7 @@
         app:srcCompat="@drawable/ic_sync_24dp" />
 
     <!--CURRENT DISTANCE-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_distance_current"
         style="@style/GoalValueLabel.XLarge"
         android:layout_width="wrap_content"
@@ -97,128 +105,13 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end" />
 
     <!--TARGET (GOAL) DISTANCE-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
         android:id="@+id/goal_distance_target"
         style="@style/GoalValueLabel.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/base_x1"
         tools:NumericWithLabel_numericText="250"
-        tools:NumericWithLabel_labelText="Target km"
-        app:layout_constraintBottom_toTopOf="@id/goal_distance_current"
-        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end" />
-
-    <!--PERIOD (LABEL)-->
-    <TextView
-        android:id="@+id/goal_period_label"
-        style="@style/Text.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x1"
-        android:layout_marginBottom="@dimen/base_x1"
-        android:text="@string/unit_days"
-        android:textColor="@color/primary_text"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
-        app:layout_constraintStart_toEndOf="@id/guideline_vertical_icon" />
-
-    <!--PERIOD LAPSED DAYS-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
-        android:id="@+id/goal_days_lapsed"
-        style="@style/GoalValueLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x1"
-        android:layout_marginBottom="@dimen/base_x1"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar_bounds"
-        app:layout_constraintStart_toEndOf="@id/goal_period_label"
-        tools:NumericWithLabel_numericText="7"
-        tools:NumericWithLabel_labelText="@string/lapsed" />
-
-    <!--PERIOD (GOAL) DAYS-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
-        android:id="@+id/goal_days_total"
-        style="@style/GoalValueLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x2"
-        app:layout_constraintBottom_toBottomOf="@id/goal_days_lapsed"
-        app:layout_constraintStart_toEndOf="@id/goal_days_lapsed"
-        app:layout_constraintTop_toTopOf="@id/goal_days_lapsed"
-        tools:NumericWithLabel_numericText="31"
-        tools:NumericWithLabel_labelText="@string/total" />
-
-    <!--POSITION (LABEL)-->
-    <TextView
-        android:id="@+id/goal_progress_label"
-        style="@style/Text.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x1"
-        android:text="@string/position"
-        android:textColor="@color/primary_text"
-        app:layout_constraintBottom_toBottomOf="@id/goal_position_distance"
-        app:layout_constraintStart_toEndOf="@id/guideline_vertical_icon" />
-
-    <!--POSITION::DISTANCE-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
-        android:id="@+id/goal_position_distance"
-        style="@style/GoalValueLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x1"
-        android:layout_marginBottom="@dimen/base_x1"
-        app:layout_constraintBottom_toTopOf="@id/goal_days_lapsed"
-        app:layout_constraintStart_toEndOf="@id/goal_progress_label"
-        tools:NumericWithLabel_numericText="+1.1"
-        tools:NumericWithLabel_labelText="@string/position_distance" />
-
-    <!--POSITION::DISTANCE-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
-        android:id="@+id/goal_position_ideal_days"
-        style="@style/GoalValueLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x2"
-        app:layout_constraintBottom_toBottomOf="@id/goal_position_distance"
-        app:layout_constraintStart_toEndOf="@id/goal_position_distance"
-        tools:NumericWithLabel_numericText="+0.6"
-        tools:NumericWithLabel_labelText="@string/position_ideal_days" />
-
-    <!--PROJECTION (LABEL)-->
-    <TextView
-        android:id="@+id/goal_projection_label"
-        style="@style/Text.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x1"
-        android:text="@string/projection"
-        android:textColor="@color/primary_text"
-        app:layout_constraintBottom_toBottomOf="@id/goal_projection_period_daily"
-        app:layout_constraintStart_toEndOf="@id/guideline_vertical_icon" />
-
-    <!--PROJECTION::ENTIRE PERIOD DAILY-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
-        android:id="@+id/goal_projection_period_daily"
-        style="@style/GoalValueLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/base_x1"
-        app:layout_constraintBottom_toTopOf="@id/goal_position_distance"
-        app:layout_constraintStart_toStartOf="@id/goal_position_distance"
-        tools:NumericWithLabel_numericText="6.67"
-        tools:NumericWithLabel_labelText="@string/period_daily_distance" />
-
-    <!--PROJECTION::REMAINING DAILY-->
-    <au.com.beba.runninggoal.component.NumericWithLabel
-        android:id="@+id/goal_projection_remaining_daily"
-        style="@style/GoalValueLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_x2"
-        app:layout_constraintBottom_toBottomOf="@id/goal_projection_period_daily"
-        app:layout_constraintStart_toEndOf="@id/goal_position_distance"
-        tools:NumericWithLabel_numericText="6.18"
-        tools:NumericWithLabel_labelText="@string/remaining_daily_distance" />
+        tools:NumericWithLabel_labelText="Target km" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

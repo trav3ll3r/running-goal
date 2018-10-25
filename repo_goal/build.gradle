@@ -50,7 +50,7 @@ android {
 // KOTLIN, ANKO, KOTLINX
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.coroutines}"
 }
 
 // TESTING
@@ -67,6 +67,7 @@ dependencies {
 dependencies {
     implementation project(':domain_goal')
     implementation project(':domain_widget')
+    implementation project(':domain_event')
     implementation project(':goaldatabase')
 }
 

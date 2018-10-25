@@ -1,44 +1,46 @@
 package au.com.beba.runninggoal
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.transition.ChangeBounds
 import androidx.transition.ChangeImageTransform
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionSet
 import au.com.beba.runninggoal.domain.RunningGoal
+import au.com.beba.runninggoal.domain.event.Event
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.goal.GoalActionListener
-import au.com.beba.runninggoal.feature.goals.GoalActivity
-import au.com.beba.runninggoal.feature.goals.GoalDetailsFragment
+import au.com.beba.runninggoal.feature.goal.GoalDetailsFragment
+import au.com.beba.runninggoal.feature.goals.GoalEditActivity
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.GoalsListFragment
-import au.com.beba.runninggoal.feature.progressSync.SyncSourceIntentService
-import au.com.beba.runninggoal.feature.router.NavigationInteractor
+import au.com.beba.runninggoal.feature.navigation.AppScreen
+import au.com.beba.runninggoal.feature.navigation.GoalDetailsScreen
+import au.com.beba.runninggoal.feature.navigation.GoalsScreen
+import au.com.beba.runninggoal.feature.navigation.NavigationViewModel
+import au.com.beba.runninggoal.feature.navigation.SyncSourcesScreen
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
-import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(),
         SyncSourcesFragment.SyncSourceListener,
-        GoalActionListener,
-        NavigationInteractor {
+        GoalActionListener {
 
     @Inject
-    lateinit var syncSourceRepository: SyncSourceRepository
+    lateinit var factory: ViewModelProvider.Factory
 
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
+    private val navViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelProviders.of(this, factory).get(NavigationViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        showRunningGoals()
+        initLiveData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,19 +60,32 @@ class MainActivity : AppCompatActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
-            R.id.action_sync_all -> {
-                syncAllGoals()
-                return true
-            }
             R.id.action_create_goal -> {
                 createGoal()
                 return true
             }
-            R.id.action_manage_sync_sources -> {
-                showSyncSources()
-                return true
-            }
+//            R.id.action_manage_sync_sources -> {
+//                //showSyncSources()
+//                return true
+//            }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun initLiveData() {
+        Timber.i("initLiveData")
+        navViewModel.navLiveData.observe(this, Observer {
+            Timber.d("initLiveData | goalsLiveData | observed | screen=%s", it)
+            handleNavigation(it)
+        })
+    }
+
+    /* REACTIONS */
+    private fun handleNavigation(screen: AppScreen) {
+        when (screen) {
+            is GoalsScreen -> showRunningGoals()
+            is GoalDetailsScreen -> gotoGoalDetails(screen.runningGoal, screen.holder)
+            is SyncSourcesScreen -> showSyncSources()
         }
     }
 
@@ -82,20 +97,8 @@ class MainActivity : AppCompatActivity(),
         gotoEditGoal(runningGoal)
     }
 
-    override fun syncGoal(runningGoal: RunningGoal) {
-        syncOneGoal(runningGoal)
-    }
-
-    override fun showGoalDetails(runningGoal: RunningGoal, holder: GoalViewHolder) {
-        gotoGoalDetails(runningGoal, holder)
-    }
-
     override fun onSyncSourceClicked(syncSource: SyncSource) {
         editSyncSource(syncSource)
-    }
-
-    override fun onSyncSourcesRequested() {
-        showSyncSources()
     }
 
     private fun showRunningGoals() {
@@ -128,12 +131,12 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun gotoCreateGoal() {
-        val intent = Intent(this, GoalActivity::class.java)
+        val intent = GoalEditActivity.buildIntent(this, null)
         startActivity(intent)
     }
 
     private fun gotoEditGoal(runningGoal: RunningGoal) {
-        val intent = GoalActivity.buildIntent(this, runningGoal.id)
+        val intent = GoalEditActivity.buildIntent(this, runningGoal.id)
         startActivity(intent)
     }
 
@@ -142,44 +145,21 @@ class MainActivity : AppCompatActivity(),
         startActivity(intent)
     }
 
-    private fun syncOneGoal(runningGoal: RunningGoal) {
-        Log.i(TAG, "syncOneGoal")
-        syncGoals(runningGoal, 1001)
-    }
+    private fun alertUI() {
+        // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
+        val dialog = AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle(R.string.sync_now_error)
+                .setMessage(R.string.message_no_default_sync_sources)
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
 
-    private fun syncAllGoals() {
-        Log.i(TAG, "syncAllGoals")
-        syncGoals(null, 1000)
-    }
-
-    private fun syncGoals(runningGoal: RunningGoal?, jobId: Int) {
-        Log.i(TAG, "syncGoals")
-        val ctx = this
-        launch {
-            val syncSource = syncSourceRepository.getDefaultSyncSource()
-            if (syncSource.isDefault) {
-                // Enqueues new JobIntentService
-                SyncSourceIntentService.enqueueWork(
-                        ctx,
-                        SyncSourceIntentService.buildIntent(runningGoal),
-                        jobId)
-            } else {
-                launch(UI) {
-                    // NOTIFY USER ABOUT MISSING DEFAULT SYNC SOURCE
-                    val dialog = AlertDialog.Builder(ctx)
-                            .setCancelable(true)
-                            .setTitle(R.string.sync_now_error)
-                            .setMessage(R.string.message_no_default_sync_sources)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .create()
-
-                    if (!isFinishing) {
-                        dialog.show()
-                    }
-                }
-            }
+        if (!isFinishing) {
+            dialog.show()
         }
     }
+
+    class ManageSyncSourcesEvent : Event
 }
 
 class DetailsTransition : TransitionSet() {

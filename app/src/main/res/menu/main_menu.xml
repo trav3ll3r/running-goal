@@ -18,20 +18,4 @@
         android:orderInCategory="2"
         app:showAsAction="collapseActionView"
         />
-
-    <item
-        android:id="@+id/action_running_goals"
-        android:icon="@drawable/ic_finish_flag_24dp"
-        android:title="@string/running_goals"
-        android:orderInCategory="3"
-        android:enabled="false" />
-
-    <item
-        android:id="@+id/action_sync_all"
-        android:title="@string/sync_all"
-        android:visible="true"
-        android:enabled="false"
-        app:showAsAction="collapseActionView"
-        android:orderInCategory="4"
-        />
 </menu>

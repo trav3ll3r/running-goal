@@ -7,9 +7,9 @@ interface SyncSourceStorage {
 
     suspend fun all(): List<SyncSource>
 
-    suspend fun allForType(type: String): SyncSource
+    suspend fun allForType(type: String): List<SyncSource>
 
-    suspend fun default(): SyncSource
+    suspend fun default(): SyncSource?
 
     suspend fun save(syncSource: SyncSource)
 }

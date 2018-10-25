@@ -27,22 +27,21 @@ class SyncSourceStorageImpl(private val context: Context)
 
     override suspend fun all(): List<SyncSource> = withContext(coroutineContext) {
         logger.info("all")
-        val entities = syncSourceDao.getAll()
-        val sources = entities.asSequence().map { entity2model(it) }.toList()
-        logger.debug("syncSources=%s".format(sources.size))
-        sources
+        val entities: List<SyncSourceEntity> = syncSourceDao.getAll()
+        logger.debug("syncSources=%s".format(entities.size))
+        entities.toModels()
     }
 
-    override suspend fun allForType(type: String): SyncSource = withContext(coroutineContext) {
+    override suspend fun allForType(type: String): List<SyncSource> = withContext(coroutineContext) {
         logger.info("allForType")
         val entity = syncSourceDao.getForType(type)
-        entity2model(entity)
+        entity.toModels()
     }
 
-    override suspend fun default(): SyncSource = withContext(coroutineContext) {
+    override suspend fun default(): SyncSource? = withContext(coroutineContext) {
         logger.info("default")
         val entity = syncSourceDao.getDefault()
-        entity2model(entity)
+        entity?.toModel()
     }
 
     override suspend fun save(syncSource: SyncSource) = withContext(coroutineContext) {
@@ -59,18 +58,18 @@ class SyncSourceStorageImpl(private val context: Context)
             syncSourceDao.update(syncEntity)
         }
     }
+}
 
-    private fun entity2model(entity: SyncSourceEntity?): SyncSource {
-        return if (entity != null) {
-            SyncSource(
-                    entity.uid,
-                    entity.type,
-                    entity.accessToken,
-                    entity.isActive,
-                    LocalDateTime.ofEpochSecond(entity.syncedAt, 0, ZoneOffset.UTC)
-            )
-        } else {
-            SyncSource()
-        }
-    }
+private fun List<SyncSourceEntity>.toModels(): List<SyncSource> {
+    return asSequence().map { it.toModel() }.toList()
+}
+
+private fun SyncSourceEntity.toModel(): SyncSource {
+    return SyncSource(
+            uid,
+            type,
+            accessToken,
+            isActive,
+            LocalDateTime.ofEpochSecond(syncedAt, 0, ZoneOffset.UTC)
+    )
 }

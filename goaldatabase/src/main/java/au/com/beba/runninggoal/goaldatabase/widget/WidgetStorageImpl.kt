@@ -11,6 +11,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.experimental.coroutineContext
 
+
 class WidgetStorageImpl(private val context: Context)
     : WidgetStorage {
 
@@ -34,10 +35,9 @@ class WidgetStorageImpl(private val context: Context)
         logger.info("getAllForGoal")
         logger.debug("getAllForGoal | goalId=%s".format(goalId))
         val entities = widgetDao.getAllForGoal(goalId)
-        val widgets: List<Widget> = entities.map { entity2model(it)!! }.toList()
+        val widgets: List<Widget> = entities.asSequence().map { entity2model(it)!! }.toList()
         logger.debug("widgets=%s".format(widgets.size))
         widgets
-
     }
 
     override suspend fun pairWithGoal(goalId: Long, appWidgetId: Int) = withContext(coroutineContext) {
@@ -73,9 +73,9 @@ class WidgetStorageImpl(private val context: Context)
         }
     }
 
-    override suspend fun delete(widget: Widget): Int = withContext(coroutineContext) {
+    override suspend fun delete(widgetId: Int): Int = withContext(coroutineContext) {
         logger.info("delete")
-        val widgetEntity = WidgetEntity(widget.id)
+        val widgetEntity = WidgetEntity(widgetId)
         val deletedRows = widgetDao.delete(widgetEntity)
         logger.debug("delete | widgets=%s".format(deletedRows))
         deletedRows

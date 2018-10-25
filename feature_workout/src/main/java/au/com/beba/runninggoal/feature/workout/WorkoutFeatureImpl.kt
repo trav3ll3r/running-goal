@@ -20,8 +20,8 @@ object WorkoutFeatureImpl : WorkoutFeature {
         workoutRepo = WorkoutRepo(application)
     }
 
-    override val isSuspended = false
-    override val isReady = true
+    override var isSuspended = false
+    override var isReady = !isSuspended
 
     override fun getAllForGoal(goalId: Long): List<Workout>? {
         logger.info("getAllForGoal")

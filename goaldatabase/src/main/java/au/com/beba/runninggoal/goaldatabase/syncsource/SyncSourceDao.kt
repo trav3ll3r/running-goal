@@ -15,7 +15,7 @@ interface SyncSourceDao {
     fun getAll(): List<SyncSourceEntity>
 
     @Query("SELECT * FROM sync_source WHERE type = :type")
-    fun getForType(type: String): SyncSourceEntity?
+    fun getForType(type: String): List<SyncSourceEntity>
 
     @Query("SELECT * FROM sync_source WHERE is_active = 1")
     fun getDefault(): SyncSourceEntity?

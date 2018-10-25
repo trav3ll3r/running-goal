@@ -16,11 +16,11 @@ interface Feature {
      *
      * @return True if the [Feature] is suspended and should not be exposed in the host app.
      */
-    val isSuspended: Boolean
+    var isSuspended: Boolean
 
     /**
      * Checks if the [Feature] is fully set up and ready to be used
      */
-    val isReady: Boolean
+    var isReady: Boolean
 
 }

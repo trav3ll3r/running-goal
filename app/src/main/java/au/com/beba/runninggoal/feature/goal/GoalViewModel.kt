@@ -52,10 +52,10 @@ class GoalViewModel @Inject constructor(
         workoutsLiveData.postValue(workoutFeature.getAllForGoal(currentGoalId))
     }
 
-    fun syncWorkouts(context: Context?, runningGoal: RunningGoal?, jobId: Int = 1001) {
+    fun syncWorkouts(context: Context?, runningGoal: RunningGoal?) {
         Timber.i("syncGoals")
         if (context != null) {
-            syncFeature.syncNow(context, runningGoal?.id, jobId)
+            syncFeature.syncNow(context, runningGoal?.id)
         }
     }
 

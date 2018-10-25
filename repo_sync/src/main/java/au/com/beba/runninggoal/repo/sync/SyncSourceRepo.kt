@@ -1,9 +1,9 @@
 package au.com.beba.runninggoal.repo.sync
 
 import android.content.Context
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.goaldatabase.SyncSourceStorage
 import au.com.beba.runninggoal.goaldatabase.syncsource.SyncSourceStorageImpl
-import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.withContext
 import org.slf4j.Logger
@@ -30,13 +30,12 @@ class SyncSourceRepo constructor(
         syncSourceStorage.all()
     }
 
-    override suspend fun getSyncSourceForType(type: String): SyncSource = withContext(coroutineContext) {
+    override suspend fun getSyncSourceForType(type: String): List<SyncSource> = withContext(coroutineContext) {
         logger.info("getSyncSourceForType")
         syncSourceStorage.allForType(type)
     }
 
-    // TODO: SHOULD RETURN SyncSource?
-    override suspend fun getDefaultSyncSource(): SyncSource = withContext(coroutineContext) {
+    override suspend fun getDefaultSyncSource(): SyncSource? = withContext(coroutineContext) {
         logger.info("getDefaultSyncSource")
         syncSourceStorage.default()
     }

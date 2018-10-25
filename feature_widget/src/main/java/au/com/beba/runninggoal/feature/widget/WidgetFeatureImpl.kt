@@ -33,8 +33,8 @@ object WidgetFeatureImpl
     private lateinit var widgetRepo: WidgetRepository
 
     private var bootstrapped: Boolean = false
-    override val isSuspended = false
-    override val isReady = true
+    override var isSuspended = false
+    override var isReady = !isSuspended
 
     private lateinit var eventCentre: SubscriberEventCentre
     private lateinit var appContext: WeakReference<Context> // APPLICATION CONTEXT

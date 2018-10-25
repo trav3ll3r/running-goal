@@ -33,14 +33,16 @@ import java.util.*
 import javax.inject.Inject
 
 
-class GoalActivity : AppCompatActivity() {
+class GoalEditActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_GOAL_ID = "EXTRA_GOAL_ID"
 
-        fun buildIntent(context: Context, goalId: Long): Intent {
-            val intent = Intent(context, GoalActivity::class.java)
-            intent.putExtra(EXTRA_GOAL_ID, goalId)
+        fun buildIntent(context: Context, goalId: Long?): Intent {
+            val intent = Intent(context, GoalEditActivity::class.java)
+            if (goalId != null) {
+                intent.putExtra(EXTRA_GOAL_ID, goalId)
+            }
             return intent
         }
     }
@@ -88,21 +90,32 @@ class GoalActivity : AppCompatActivity() {
 
     private fun resolveGoal(goalId: Long): RunningGoal {
         Timber.i("resolveGoal")
-        val goal: RunningGoal? =
-                if (goalId > 0) {
-                    Timber.d("resolveGoal | from goalId")
-                    goalFeature.getById(goalId)
-                } else {
-                    val widget = widgetFeature.getById(appWidgetId)
-                    if (widget != null) {
-                        Timber.d("resolveGoal | linked to widgetId")
-                        goalFeature.getById(widget.goalId)
-                    } else {
-                        null
-                    }
-                }
+
+        var goal: RunningGoal? = null
+
+        if (goalId > 0) {
+            Timber.d("resolveGoal | from goalId")
+            goal = goalFeature.getById(goalId)
+        }
+
+        if (goal == null) {
+            goal = resolveFromWidgetId()
+        }
+
 
         return goal ?: RunningGoal()
+    }
+
+    private fun resolveFromWidgetId(): RunningGoal? {
+        if (appWidgetId > AppWidgetManager.INVALID_APPWIDGET_ID) {
+            val widget = widgetFeature.getById(appWidgetId)
+            if (widget != null) {
+                Timber.d("resolveGoal | linked to widgetId")
+                return goalFeature.getById(widget.goalId)
+            }
+        }
+
+        return null
     }
 
     private fun initForm() {

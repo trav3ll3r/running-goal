@@ -7,6 +7,7 @@ import au.com.beba.runninggoal.domain.Distance
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.event.EventCentre
+import au.com.beba.runninggoal.domain.event.NoDefaultSyncSource
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
 import au.com.beba.runninggoal.domain.workout.Workout
@@ -43,7 +44,7 @@ internal class SyncSourceIntentService : JobIntentService() {
          *
          * @param goalId NULL to sync all all eligible goals or ONE specific goal
          */
-        fun buildIntent(goalId: Long?): Intent {
+        private fun buildIntent(goalId: Long?): Intent {
             return Intent().apply {
                 if (goalId != null) {
                     putExtra(EXTRA_GOAL_ID, goalId)
@@ -54,9 +55,9 @@ internal class SyncSourceIntentService : JobIntentService() {
         /**
          * Convenience method for enqueuing work into this service.
          */
-        fun enqueueWork(context: Context, work: Intent, jobId: Int) {
+        fun enqueueWork(context: Context, goalId: Long?, jobId: Int = 1000) {
             //logger.debug("enqueueWork")
-            enqueueWork(context, SyncSourceIntentService::class.java, jobId, work)
+            enqueueWork(context, SyncSourceIntentService::class.java, jobId, buildIntent(goalId))
         }
     }
 
@@ -73,9 +74,8 @@ internal class SyncSourceIntentService : JobIntentService() {
         logger.info("onHandleWork")
 
         launch {
-
             val syncSource = syncSourceRepository.getDefaultSyncSource()
-            if (syncSource.isDefault) {
+            if (syncSource != null) {
                 logger.debug("onHandleWork | syncType=%s", syncSource.type)
 
                 val goals = getGoalsForUpdate(intent.getLongExtra(EXTRA_GOAL_ID, -1L))
@@ -101,6 +101,7 @@ internal class SyncSourceIntentService : JobIntentService() {
                 }
             } else {
                 logger.error("onHandleWork | no Default Sync Source found")
+                eventCentre.publish(NoDefaultSyncSource())
             }
         }
     }

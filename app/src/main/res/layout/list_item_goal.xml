@@ -36,22 +36,34 @@
         android:id="@+id/goal_period_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:currentValue="50"
-        app:totalValue="100"
-        app:unitValue="days"
+        tools:currentValue="50 / "
+        tools:totalValue="100"
+        tools:unitValue="days"
+        android:layout_marginStart="@dimen/base_x4"
         app:layout_constraintTop_toBottomOf="@id/goal_item_name"
-        app:layout_constraintStart_toStartOf="@id/guideline_vertical_start" />
+        app:layout_constraintStart_toEndOf="@id/goal_distance_position" />
 
     <!--DISTANCE PROGRESS-->
     <au.com.beba.runninggoal.ui.component.NumericProgress
         android:id="@+id/goal_distance_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:currentValue="50"
-        app:totalValue="100"
-        app:unitValue="km"
+        tools:currentValue="50 / "
+        tools:totalValue="100"
+        tools:unitValue="km"
         app:layout_constraintTop_toBottomOf="@id/goal_item_name"
         app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end" />
+
+    <!--DISTANCE POSITION-->
+    <au.com.beba.runninggoal.ui.component.NumericWithLabel
+        android:id="@+id/goal_distance_position"
+        style="@style/GoalValueLabel.XLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:NumericWithLabel_numericText="+1.2"
+        tools:NumericWithLabel_labelText="km"
+        app:layout_constraintTop_toBottomOf="@id/goal_item_name"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_icon" />
 
     <ProgressBar
         android:id="@+id/goal_item_updating_status"

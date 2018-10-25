@@ -8,8 +8,12 @@ import kotlinx.coroutines.experimental.runBlocking
 
 object GoalFeatureImpl : GoalFeature {
 
-    override val isSuspended = false
-    override val isReady = true
+    override var isSuspended = false
+    override var isReady: Boolean = false
+        get() {
+            return !isSuspended && fetchGoals().isNotEmpty()
+        }
+
     private lateinit var goalRepo: GoalRepository
 
     override fun bootstrap(application: Context) {
@@ -25,7 +29,7 @@ object GoalFeatureImpl : GoalFeature {
     }
 
     override fun save(goal: RunningGoal): Long {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return runBlocking { goalRepo.save(goal) }
     }
 
     override fun delete(goal: RunningGoal): Int {

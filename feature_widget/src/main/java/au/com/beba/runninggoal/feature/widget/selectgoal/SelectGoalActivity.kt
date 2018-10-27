@@ -7,9 +7,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.feature.widget.R
-import au.com.beba.runninggoal.repo.widget.WidgetRepo
-import au.com.beba.runninggoal.repo.widget.WidgetRepository
-import kotlinx.coroutines.experimental.runBlocking
+import au.com.beba.runninggoal.feature.widget.WidgetFeature
+import au.com.beba.runninggoal.feature.widget.WidgetFeatureImpl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -23,7 +22,11 @@ class SelectGoalActivity
 
     private val logger: Logger = LoggerFactory.getLogger(TAG)
 
-    private val widgetRepo: WidgetRepository by lazy { WidgetRepo(this) }
+    private val widgetFeature: WidgetFeature by lazy {
+        val feature = WidgetFeatureImpl
+        feature.bootstrap(this)
+        feature
+    }
 
     private var appWidgetId: Int = -1
 
@@ -58,13 +61,16 @@ class SelectGoalActivity
     private fun bindGoalToWidget(runningGoal: RunningGoal, appWidgetId: Int) {
         logger.info("bindGoalToWidget")
 
-//        runBlocking {
-//            widgetRepo.pairWithGoal(runningGoal.id, appWidgetId)
-//        }
-
+        widgetFeature.pairWithGoal(runningGoal.id, appWidgetId)
         closeWidgetConfig()
     }
 
+    /**
+     * Close the widget-handling Activity by setting result
+     * as Activity.RESULT_OK and extra value of [appWidgetId]
+     *
+     * NOTE: Launched by system via [Context#startActivityForResult]
+     */
     private fun closeWidgetConfig() {
         logger.info("closeWidgetConfig")
         logger.info("closeWidgetConfig | appWidgetId=$appWidgetId")

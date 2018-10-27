@@ -8,7 +8,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class RunningGoalsViewModel
+class GoalsViewModel
 @Inject constructor(
         private val goalFeature: GoalFeature
 ) : ViewModel() {

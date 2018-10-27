@@ -1,31 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    >
+    android:padding="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <!--TYPE-->
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/sync_source_type"
             style="@style/Text.Large"
+            android:layout_width="@dimen/MATCH_CONSTRAINTS"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingBottom="16dp"
+            android:spinnerMode="dialog" />
+
+        <!--NICKNAME-->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/sync_source_nickname_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            tools:text="Sync Source Name"
-            />
+            app:layout_constraintTop_toBottomOf="@id/sync_source_type"
+            android:paddingBottom="16dp">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/sync_source_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/nickname"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!--ACCESS TOKEN-->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/sync_source_access_token_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/sync_source_type"
+            app:layout_constraintTop_toBottomOf="@id/sync_source_nickname_layout"
             android:paddingBottom="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -37,14 +54,13 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/sync_source_is_active"
+            android:id="@+id/sync_source_is_default"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/sync_source_access_token_layout"
-            android:text="Is Active"
+            android:text="@string/is_default"
             app:switchPadding="16dp"
-            android:checked="false"
-            />
+            android:checked="false" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_ok"

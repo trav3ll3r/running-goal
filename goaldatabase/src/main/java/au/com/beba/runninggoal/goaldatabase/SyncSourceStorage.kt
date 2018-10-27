@@ -7,7 +7,7 @@ interface SyncSourceStorage {
 
     suspend fun all(): List<SyncSource>
 
-    suspend fun allForType(type: String): List<SyncSource>
+    suspend fun getById(syncSourceId: Long): SyncSource?
 
     suspend fun default(): SyncSource?
 

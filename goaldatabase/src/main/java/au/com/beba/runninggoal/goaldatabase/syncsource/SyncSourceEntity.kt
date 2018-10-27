@@ -10,7 +10,10 @@ import androidx.room.PrimaryKey
 data class SyncSourceEntity(
 
         @PrimaryKey(autoGenerate = true)
-        var uid: Int = 0,
+        var uid: Long = 0,
+
+        @ColumnInfo()
+        var nickname: String = "",
 
         @ColumnInfo()
         var type: String = "",
@@ -18,8 +21,8 @@ data class SyncSourceEntity(
         @ColumnInfo(name = "access_token")
         var accessToken: String = "",
 
-        @ColumnInfo(name = "is_active")
-        var isActive: Boolean = false,
+        @ColumnInfo(name = "is_default")
+        var isDefault: Boolean = false,
 
         @ColumnInfo(name = "synced_at")
         var syncedAt: Long = 0

@@ -11,7 +11,6 @@ import au.com.beba.runninggoal.domain.event.NoDefaultSyncSource
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
 import au.com.beba.runninggoal.domain.workout.Workout
-import au.com.beba.runninggoal.domain.workout.sync.ApiSourceProfile
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.repo.goal.GoalRepo
 import au.com.beba.runninggoal.repo.goal.GoalRepository
@@ -112,7 +111,7 @@ internal class SyncSourceIntentService : JobIntentService() {
         //TODO: RESOLVE DYNAMICALLY BASED ON CONFIG
         val syncSourceProvider: SyncSourceProvider = StravaSyncSourceProvider()
 
-        syncSourceProvider.setSyncSourceProfile(ApiSourceProfile(syncSource.accessToken))
+        syncSourceProvider.setSyncSourceProfile(syncSource)
         return syncSourceProvider.getWorkoutsForDateRange(
                 goal.target.period.from.asEpochUtc(),
                 goal.target.period.to.asEpochUtc())

@@ -1,6 +1,5 @@
 package au.com.beba.runninggoal.feature.goal
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.ui.component.display
 import au.com.beba.runninggoal.domain.workout.Workout
+import au.com.beba.runninggoal.ui.component.display
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_goal_details.*
 import timber.log.Timber
@@ -32,9 +31,8 @@ class GoalDetailsFragment : Fragment() {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
-
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this, factory).get(GoalViewModel::class.java)
+        ViewModelProviders.of(this, factory).get(GoalDetailsViewModel::class.java)
     }
 
     companion object {
@@ -58,8 +56,6 @@ class GoalDetailsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: GoalDetailsAdapter
 
-    private var goalActionListener: GoalActionListener? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -82,20 +78,6 @@ class GoalDetailsFragment : Fragment() {
         initLiveData()
 
         initRecyclerView()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is GoalActionListener) {
-            goalActionListener = context
-        } else {
-            Timber.d("%s must implement %s".format(context.toString(), GoalActionListener::class.java.simpleName))
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        goalActionListener = null
     }
 
     /* ************ */
@@ -148,7 +130,7 @@ class GoalDetailsFragment : Fragment() {
     /* ACTIONS */
     /* ******* */
     private fun editGoal(goal: RunningGoal) {
-        goalActionListener?.editGoal(goal)
+        viewModel.editGoal(goal.id)
     }
 
     private fun syncGoal(goal: RunningGoal) {

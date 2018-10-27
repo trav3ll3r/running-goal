@@ -3,13 +3,16 @@ package au.com.beba.runninggoal.di.module
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import au.com.beba.runninggoal.feature.base.AlertViewModel
-import au.com.beba.runninggoal.feature.goal.GoalViewModel
-import au.com.beba.runninggoal.feature.goals.FabViewModel
-import au.com.beba.runninggoal.feature.goals.RunningGoalsViewModel
+import au.com.beba.runninggoal.feature.goal.GoalDetailsViewModel
+import au.com.beba.runninggoal.feature.goals.GoalsFabViewModel
+import au.com.beba.runninggoal.feature.goals.GoalsViewModel
 import au.com.beba.runninggoal.feature.navigation.NavigationViewModel
+import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFabViewModel
+import au.com.beba.runninggoal.feature.syncSources.SyncSourcesViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+
 
 @Module
 abstract class ViewModelModule {
@@ -29,16 +32,26 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RunningGoalsViewModel::class)
-    internal abstract fun runningGoalViewModel(viewModel: RunningGoalsViewModel): ViewModel
+    @ViewModelKey(GoalsViewModel::class)
+    internal abstract fun goalsViewModel(viewModel: GoalsViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(FabViewModel::class)
-    internal abstract fun goalSyncViewModel(viewModel: FabViewModel): ViewModel
+    @ViewModelKey(GoalsFabViewModel::class)
+    internal abstract fun goalsFabViewModel(viewModel: GoalsFabViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(GoalViewModel::class)
-    internal abstract fun goalViewModel(viewModel: GoalViewModel): ViewModel
+    @ViewModelKey(GoalDetailsViewModel::class)
+    internal abstract fun goalDetailsViewModel(viewModel: GoalDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SyncSourcesViewModel::class)
+    internal abstract fun syncSourcesViewModel(viewModel: SyncSourcesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SyncSourcesFabViewModel::class)
+    internal abstract fun syncSourcesFabViewModel(viewModel: SyncSourcesFabViewModel): ViewModel
 }

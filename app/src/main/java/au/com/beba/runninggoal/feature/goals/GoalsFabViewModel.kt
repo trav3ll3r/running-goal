@@ -3,7 +3,6 @@ package au.com.beba.runninggoal.feature.goals
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import au.com.beba.runninggoal.MainActivity
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.domain.event.Subscriber
 import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
@@ -11,13 +10,15 @@ import au.com.beba.runninggoal.domain.event.SubscriberPostbox
 import au.com.beba.runninggoal.domain.event.SyncSourceChange
 import au.com.beba.runninggoal.domain.event.SyncSourceDelete
 import au.com.beba.runninggoal.feature.goal.GoalFeature
+import au.com.beba.runninggoal.feature.navigation.ShowEditGoalEvent
+import au.com.beba.runninggoal.feature.navigation.ShowSyncSourcesEvent
 import au.com.beba.runninggoal.feature.sync.SyncFeature
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 
-class FabViewModel
+class GoalsFabViewModel
 @Inject constructor(
         private val goalFeature: GoalFeature,
         private val syncFeature: SyncFeature,
@@ -42,17 +43,18 @@ class FabViewModel
     private var currentAction: FabActionType = FabActionType.MANAGE_SYNC_SOURCES
         get() {
             Timber.i("currentAction | get")
-            val result = when (syncFeature.isReady) {
-                true -> FabActionType.SYNC_ALL
-                else -> FabActionType.MANAGE_SYNC_SOURCES
+            val result = when {
+                goalFeature.isReady && goalFeature.fetchGoals().isEmpty() -> FabActionType.CREATE_GOAL
+                syncFeature.isReady -> FabActionType.SYNC_ALL
+                !syncFeature.isReady -> FabActionType.MANAGE_SYNC_SOURCES
+                else -> FabActionType.NONE
             }
             Timber.i("currentAction | return %s".format(result))
             return result
         }
 
     fun update() {
-        val visible = goalFeature.isReady
-        fabLiveData.postValue(FabModel(currentAction, visible))
+        fabLiveData.postValue(FabModel(currentAction))
     }
 
     override fun newEvent(postbox: WeakReference<SubscriberPostbox>) {
@@ -71,16 +73,20 @@ class FabViewModel
     fun fabAction(context: Context?) {
         if (context != null) {
             when (currentAction) {
+                FabActionType.CREATE_GOAL -> pubEventCentre.publish(ShowEditGoalEvent(null))
                 FabActionType.SYNC_ALL -> syncFeature.syncNow(context, null)
-                FabActionType.MANAGE_SYNC_SOURCES -> pubEventCentre.publish(MainActivity.ManageSyncSourcesEvent())
+                FabActionType.MANAGE_SYNC_SOURCES -> pubEventCentre.publish(ShowSyncSourcesEvent())
+                FabActionType.NONE -> Unit
             }
         }
     }
 }
 
-data class FabModel(val actionType: FabActionType, val visible: Boolean = true)
+data class FabModel(val actionType: FabActionType)
 
 enum class FabActionType {
+    NONE,
+    CREATE_GOAL,
     MANAGE_SYNC_SOURCES,
     SYNC_ALL
 }

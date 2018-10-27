@@ -14,8 +14,6 @@ import au.com.beba.runninggoal.goaldatabase.widget.WidgetDao
 import au.com.beba.runninggoal.goaldatabase.widget.WidgetEntity
 import au.com.beba.runninggoal.goaldatabase.workout.WorkoutDao
 import au.com.beba.runninggoal.goaldatabase.workout.WorkoutEntity
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -61,30 +59,17 @@ abstract class AppDatabase : RoomDatabase() {
                                 // Generate the data for pre-population
                                 //AppDatabase.getInstance(appContext, executor)
 
-                                populateSyncSources()
-
-//                                // notify that the database was created and it's ready to be used
-//                                //database.setDatabaseCreated()
+                                // notify that the database was created and it's ready to be used
+                                //database.setDatabaseCreated()
                             }
                         }
                     })
                     .build()
         }
-
-        private fun populateSyncSources() {
-            INSTANCE!!.syncSourceDao().insert(
-                    SyncSourceEntity(0,
-                            "STRAVA",
-                            "",
-                            false,
-                            LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC))
-            )
-        }
     }
 
-    //FIXME: REMOVE OUT-OF-MODULE REFERENCES AND MAKE INTERNAL
-    /*internal */abstract fun runningGoalDao(): RunningGoalDao
-    /*internal */abstract fun syncSourceDao(): SyncSourceDao
-    /*internal */abstract fun widgetDao(): WidgetDao
-    /*internal */abstract fun workoutDao(): WorkoutDao
+    internal abstract fun runningGoalDao(): RunningGoalDao
+    internal abstract fun syncSourceDao(): SyncSourceDao
+    internal abstract fun widgetDao(): WidgetDao
+    internal abstract fun workoutDao(): WorkoutDao
 }

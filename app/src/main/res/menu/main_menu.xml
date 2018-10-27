@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/action_create_goal"
-        android:title="@string/action_create_goal"
+        android:title="@string/set_goal"
         android:visible="true"
         android:orderInCategory="1"
         app:showAsAction="collapseActionView"

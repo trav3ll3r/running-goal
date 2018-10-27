@@ -7,6 +7,7 @@ import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.event.EventCentre
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.feature.base.ListListener
+import au.com.beba.runninggoal.feature.navigation.ShowGoalDetailsEvent
 import timber.log.Timber
 
 
@@ -29,7 +30,7 @@ class RunningGoalsAdapter : RecyclerView.Adapter<GoalViewHolder>() {
     override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
         holder.bindView(getItem(position), object : ListListener<GoalViewHolder> {
             override fun onItemClick(item: GoalViewHolder) {
-                eventCentre.publish(GoalViewHolder.GoalSelectedEvent(item.itemView.tag as RunningGoal, item))
+                eventCentre.publish(ShowGoalDetailsEvent(item.itemView.tag as RunningGoal, item))
             }
         })
     }

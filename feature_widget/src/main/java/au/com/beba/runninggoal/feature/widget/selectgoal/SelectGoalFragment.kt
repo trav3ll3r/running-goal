@@ -15,8 +15,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.feature.widget.R
-import au.com.beba.runninggoal.repo.goal.GoalRepo
-import au.com.beba.runninggoal.repo.goal.GoalRepository
 import kotlinx.android.synthetic.main.fragment_select_goal.*
 import org.jetbrains.anko.support.v4.find
 import org.slf4j.Logger
@@ -33,8 +31,6 @@ class SelectGoalFragment : Fragment() {
 
     //TODO: INJECT
     private var factory: ViewModelProvider.Factory? = null
-    //TODO: INJECT
-    private var goalRepository: GoalRepository? = null
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProviders.of(this, factory).get(SelectGoalViewModel::class.java)
@@ -46,9 +42,7 @@ class SelectGoalFragment : Fragment() {
     private var listItemListener: ListListener<RunningGoal>? = null
 
     private fun resolveDependencies() {
-        if (context != null) {
-            goalRepository = GoalRepo(context!!)
-        }
+
     }
 
     /* ********* */

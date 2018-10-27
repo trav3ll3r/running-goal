@@ -6,9 +6,7 @@ import androidx.lifecycle.ViewModel
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.repo.goal.GoalRepo
 import au.com.beba.runninggoal.repo.goal.GoalRepository
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -22,20 +20,18 @@ class SelectGoalViewModel
 
     private val logger: Logger = LoggerFactory.getLogger(TAG)
 
-    private lateinit var goalRepository: GoalRepository
+    private var goalRepository: GoalRepository? = null
     val goalsLiveData: MutableLiveData<List<RunningGoal>> = MutableLiveData()
 
     fun fetchGoals(context: Context) {
-
-        goalRepository = GoalRepo(context)
-
         logger.info("fetchGoals")
-        launch {
-            val goals = withContext(Dispatchers.Default) {
-                goalRepository.fetchGoals()
-            }
-            logger.debug("fetchGoals | goals count = %s", goals.size)
-            goalsLiveData.postValue(goals)
+        if (goalRepository == null) {
+            goalRepository = GoalRepo(context)
         }
+
+        val goals = runBlocking { goalRepository!!.fetchGoals() }
+
+        logger.debug("fetchGoals | goals count = %s", goals.size)
+        goalsLiveData.postValue(goals)
     }
 }

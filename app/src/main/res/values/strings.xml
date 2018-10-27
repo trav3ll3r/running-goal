@@ -27,7 +27,6 @@
 
     <!--LIST OF GOALS-->
     <string name="goal_period_summary" formatted="true">%1$s - %2$s (%3$d / %4$d days)</string>
-    <string name="progress_total_format">" "/ %1$s</string>
     <string name="action_manage_sync_sources">Sync sources</string>
 
     <!--GOAL DETAILS-->

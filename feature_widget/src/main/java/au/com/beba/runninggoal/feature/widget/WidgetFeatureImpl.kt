@@ -39,22 +39,6 @@ object WidgetFeatureImpl
     private lateinit var eventCentre: SubscriberEventCentre
     private lateinit var appContext: WeakReference<Context> // APPLICATION CONTEXT
 
-    override fun getById(widgetId: Int): Widget? {
-        return runBlocking { widgetRepo.getByWidgetId(widgetId) }
-    }
-
-    override fun getAllForGoal(goalId: Long): List<Widget> {
-        return runBlocking { widgetRepo.getAllForGoal(goalId) }
-    }
-
-    override fun save(widget: Widget) {
-        runBlocking { widgetRepo.save(widget) }
-    }
-
-    override fun delete(widgetId: Int) {
-        runBlocking { widgetRepo.delete(widgetId) }
-    }
-
     override fun bootstrap(application: Context) {
         logger.info("bootstrap")
         if (!bootstrapped) {
@@ -69,6 +53,31 @@ object WidgetFeatureImpl
             eventCentre.registerSubscriber(this, WidgetDeleteEvent::class)
             bootstrapped = true
         }
+    }
+
+    override fun getById(widgetId: Int): Widget? {
+        logger.info("getById")
+        return runBlocking { widgetRepo.getById(widgetId) }
+    }
+
+    override fun getAllForGoal(goalId: Long): List<Widget> {
+        logger.info("getAllForGoal")
+        return runBlocking { widgetRepo.getAllForGoal(goalId) }
+    }
+
+    override fun save(widget: Widget) {
+        logger.info("save")
+        runBlocking { widgetRepo.save(widget) }
+    }
+
+    override fun delete(widgetId: Int) {
+        logger.info("delete")
+        runBlocking { widgetRepo.delete(widgetId) }
+    }
+
+    override fun pairWithGoal(goalId: Long, widgetId: Int) {
+        logger.info("pairWithGoal")
+        runBlocking { widgetRepo.pairWithGoal(goalId, widgetId) }
     }
 
     override fun newEvent(postbox: WeakReference<SubscriberPostbox>) {

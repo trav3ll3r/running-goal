@@ -7,6 +7,7 @@ import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.feature.widget.R
 import au.com.beba.runninggoal.ui.component.NumericProgress
+import au.com.beba.runninggoal.ui.component.display
 import org.jetbrains.anko.find
 
 
@@ -32,19 +33,14 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             GoalStatus.UNKNOWN -> context.getColorStateList(R.color.status_not_started)
         }
 
-//        periodProgress.setValues(runningGoal.progress.daysLapsed.toString(),
-//                context.getString(R.string.progress_total_format, runningGoal.progress.daysTotal.toString()),
-//                context.getString(R.string.unit_days))
+        periodProgress.setValues(runningGoal.progress.daysLapsed.toString(),
+                context.getString(R.string.progress_total_format, runningGoal.progress.daysTotal.toString()),
+                context.getString(R.string.unit_days))
 
-//        context.getString(R.string.goal_period_summary,
-//                runningGoal.target.period.from.asDisplayLocalLong(),
-//                runningGoal.target.period.to.asDisplayLocalLong()
-//                )
-
-//        distanceProgress.setValues(runningGoal.progress.distanceToday.display(),
-//                context.getString(R.string.progress_total_format, runningGoal.target.distance.display()),
-//                context.getString(R.string.unit_kilometre)
-//        )
+        distanceProgress.setValues(runningGoal.progress.distanceToday.display(),
+                context.getString(R.string.progress_total_format, runningGoal.target.distance.display()),
+                context.getString(R.string.unit_kilometre)
+        )
 
         itemView.tag = runningGoal
         itemView.setOnClickListener {

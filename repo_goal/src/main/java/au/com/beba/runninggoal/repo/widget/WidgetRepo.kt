@@ -34,20 +34,14 @@ class WidgetRepo constructor(
         WidgetStorageImpl(context)
     }
 
-    override suspend fun getByWidgetId(widgetId: Int): Widget? = withContext(coroutineContext) {
-        logger.info("getByWidgetId")
+    override suspend fun getById(widgetId: Int): Widget? = withContext(coroutineContext) {
+        logger.info("getById")
         widgetStorage.getId(widgetId)
     }
 
     override suspend fun getAllForGoal(goalId: Long): List<Widget> = withContext(coroutineContext) {
         logger.info("getAllForGoal")
         widgetStorage.allForGoal(goalId)
-    }
-
-    override suspend fun pairWithGoal(goalId: Long, appWidgetId: Int) = withContext(coroutineContext) {
-        logger.info("pairWithGoal")
-        widgetStorage.pairWithGoal(goalId, appWidgetId)
-        //eventCentre.publish(WidgetChangeEvent(appWidgetId.toLong(), goalId))
     }
 
     override suspend fun save(widget: Widget) = withContext(coroutineContext) {
@@ -61,5 +55,11 @@ class WidgetRepo constructor(
         val count = widgetStorage.delete(widgetId)
         eventCentre.publish(WidgetDeleteEvent(widgetId.toLong()))
         count
+    }
+
+    override suspend fun pairWithGoal(goalId: Long, appWidgetId: Int) = withContext(coroutineContext) {
+        logger.info("pairWithGoal")
+        widgetStorage.pairWithGoal(goalId, appWidgetId)
+        eventCentre.publish(WidgetChangeEvent(appWidgetId.toLong(), goalId))
     }
 }

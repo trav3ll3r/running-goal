@@ -108,7 +108,7 @@ internal class WidgetUpdateIntentService
 
             logger.debug("updateWidgetView | appWidgetId=%s | goalId=%s".format(appWidgetId, goal?.id))
 
-            val widget = widgetRepo.getByWidgetId(appWidgetId)
+            val widget = widgetRepo.getById(appWidgetId)
             if (widget != null) {
                 GoalWidgetRenderer().updateUi(context, rootView, goal, widget)
                 // Tell the AppWidgetManager to perform an update on the current app widget
@@ -118,7 +118,7 @@ internal class WidgetUpdateIntentService
     }
 
     private suspend fun getGoalForWidget(widgetId: Int): RunningGoal? {
-        val widget = widgetRepo.getByWidgetId(widgetId)
+        val widget = widgetRepo.getById(widgetId)
         if (widget != null) {
             return goalRepo.getById(widget.goalId)
         }

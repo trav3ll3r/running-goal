@@ -6,12 +6,13 @@ import au.com.beba.runninggoal.repo.goal.GoalRepo
 import au.com.beba.runninggoal.repo.goal.GoalRepository
 import kotlinx.coroutines.experimental.runBlocking
 
+
 object GoalFeatureImpl : GoalFeature {
 
     override var isSuspended = false
     override var isReady: Boolean = false
         get() {
-            return !isSuspended && fetchGoals().isNotEmpty()
+            return !isSuspended
         }
 
     private lateinit var goalRepo: GoalRepository

@@ -1,6 +1,5 @@
 package au.com.beba.runninggoal.feature.goals
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -15,12 +14,11 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import au.com.beba.runninggoal.MainActivity
 import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
-import au.com.beba.runninggoal.feature.base.ListListener
-import au.com.beba.runninggoal.feature.goal.GoalActionListener
+import au.com.beba.runninggoal.feature.navigation.ShowEditGoalEvent
+import au.com.beba.runninggoal.feature.navigation.ShowSyncSourcesEvent
 import com.google.android.material.button.MaterialButton
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_running_goals.*
@@ -37,18 +35,15 @@ class GoalsListFragment : Fragment() {
     lateinit var eventCentre: PublisherEventCentre
 
     private val goalsViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this, factory).get(RunningGoalsViewModel::class.java)
+        ViewModelProviders.of(this, factory).get(GoalsViewModel::class.java)
     }
     private val fabViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this, factory).get(FabViewModel::class.java)
+        ViewModelProviders.of(this, factory).get(GoalsFabViewModel::class.java)
     }
 
     private lateinit var fab: MaterialButton
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: RunningGoalsAdapter
-
-    private var goalActionListener: GoalActionListener? = null
-    private var listItemListener: ListListener<RunningGoal>? = null
 
     /* ********* */
     /* LIFECYCLE */
@@ -76,27 +71,6 @@ class GoalsListFragment : Fragment() {
         super.onResume()
         goalsViewModel.fetchGoals()
         fabViewModel.update()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is GoalActionListener) {
-            goalActionListener = context
-        } else {
-            Timber.i("%s does not implement %s", context.toString(), GoalActionListener::class.java.simpleName)
-        }
-
-        if (context is ListListener<*>) {
-            listItemListener = context as ListListener<RunningGoal>
-        } else {
-            Timber.i("%s does not implement %s", context.toString(), ListListener::class.java.simpleName)
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        goalActionListener = null
-        listItemListener = null
     }
 
     /* ************ */
@@ -132,7 +106,7 @@ class GoalsListFragment : Fragment() {
     private fun initLiveData() {
         Timber.i("initLiveData")
         goalsViewModel.goalsLiveData.observe(this, Observer {
-            Timber.d("initLiveData | goalsLiveData | observed | goals=%s", it.size)
+            Timber.d("initLiveData | goalsLiveData | observed | count=%s", it.size)
             updateList(it)
         })
 
@@ -156,11 +130,11 @@ class GoalsListFragment : Fragment() {
         // Handle item selection
         return when (item.itemId) {
             R.id.action_create_goal -> {
-                goalActionListener?.createGoal()
+                eventCentre.publish(ShowEditGoalEvent(null))
                 return true
             }
             R.id.action_manage_sync_sources -> {
-                eventCentre.publish(MainActivity.ManageSyncSourcesEvent())
+                eventCentre.publish(ShowSyncSourcesEvent())
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -175,17 +149,24 @@ class GoalsListFragment : Fragment() {
 
     private fun updateFab(model: FabModel) {
         Timber.i("updateFab")
-        Timber.i("updateFab")
-        fab.visibility = if (model.visible) View.VISIBLE else View.GONE
+        Timber.d("updateFab | type=%s".format(model.actionType))
         fab.apply {
+            this.visibility = when (model.actionType) { FabActionType.NONE -> View.GONE
+                else -> View.VISIBLE
+            }
             this.text = when (model.actionType) {
+                FabActionType.CREATE_GOAL -> getString(R.string.set_goal)
                 FabActionType.SYNC_ALL -> getString(R.string.sync_all)
-                else -> getString(R.string.action_manage_sync_sources)
+                FabActionType.MANAGE_SYNC_SOURCES -> getString(R.string.action_manage_sync_sources)
+                FabActionType.NONE -> ""
             }
-            this.icon = ContextCompat.getDrawable(context, when (model.actionType) {
-                FabActionType.SYNC_ALL -> R.drawable.ic_sync_24dp
-                else -> R.drawable.ic_sync_24dp
-            }
+            this.icon = ContextCompat.getDrawable(context,
+                    when (model.actionType) {
+                        FabActionType.CREATE_GOAL -> R.drawable.ic_medal_24
+                        FabActionType.SYNC_ALL -> R.drawable.ic_sync_24dp
+                        FabActionType.MANAGE_SYNC_SOURCES -> R.drawable.ic_sync_24dp
+                        FabActionType.NONE -> R.drawable.ic_medal_24 // FIXME
+                    }
             )
         }
     }

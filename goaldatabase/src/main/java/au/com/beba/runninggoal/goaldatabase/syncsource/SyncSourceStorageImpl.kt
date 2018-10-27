@@ -32,10 +32,10 @@ class SyncSourceStorageImpl(private val context: Context)
         entities.toModels()
     }
 
-    override suspend fun allForType(type: String): List<SyncSource> = withContext(coroutineContext) {
+    override suspend fun getById(syncSourceId: Long): SyncSource? = withContext(coroutineContext) {
         logger.info("allForType")
-        val entity = syncSourceDao.getForType(type)
-        entity.toModels()
+        val entity = syncSourceDao.getById(syncSourceId)
+        entity?.toModel()
     }
 
     override suspend fun default(): SyncSource? = withContext(coroutineContext) {
@@ -48,6 +48,7 @@ class SyncSourceStorageImpl(private val context: Context)
         logger.info("save")
         val syncEntity = SyncSourceEntity(
                 syncSource.id,
+                syncSource.nickname,
                 syncSource.type,
                 syncSource.accessToken,
                 syncSource.isDefault,
@@ -67,9 +68,10 @@ private fun List<SyncSourceEntity>.toModels(): List<SyncSource> {
 private fun SyncSourceEntity.toModel(): SyncSource {
     return SyncSource(
             uid,
+            nickname,
             type,
             accessToken,
-            isActive,
+            isDefault,
             LocalDateTime.ofEpochSecond(syncedAt, 0, ZoneOffset.UTC)
     )
 }

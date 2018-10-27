@@ -1,8 +1,6 @@
 package au.com.beba.runninggoal
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -14,17 +12,16 @@ import androidx.transition.ChangeTransform
 import androidx.transition.TransitionSet
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.event.Event
-import au.com.beba.runninggoal.domain.workout.sync.SyncSource
-import au.com.beba.runninggoal.feature.goal.GoalActionListener
 import au.com.beba.runninggoal.feature.goal.GoalDetailsFragment
 import au.com.beba.runninggoal.feature.goals.GoalEditActivity
 import au.com.beba.runninggoal.feature.goals.GoalViewHolder
 import au.com.beba.runninggoal.feature.goals.GoalsListFragment
-import au.com.beba.runninggoal.feature.navigation.AppScreen
-import au.com.beba.runninggoal.feature.navigation.GoalDetailsScreen
-import au.com.beba.runninggoal.feature.navigation.GoalsScreen
 import au.com.beba.runninggoal.feature.navigation.NavigationViewModel
-import au.com.beba.runninggoal.feature.navigation.SyncSourcesScreen
+import au.com.beba.runninggoal.feature.navigation.ShowEditGoalEvent
+import au.com.beba.runninggoal.feature.navigation.ShowEditSyncSourceEvent
+import au.com.beba.runninggoal.feature.navigation.ShowGoalDetailsEvent
+import au.com.beba.runninggoal.feature.navigation.ShowGoalsEvent
+import au.com.beba.runninggoal.feature.navigation.ShowSyncSourcesEvent
 import au.com.beba.runninggoal.feature.syncSources.EditSyncSourceActivity
 import au.com.beba.runninggoal.feature.syncSources.SyncSourcesFragment
 import dagger.android.AndroidInjection
@@ -32,9 +29,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(),
-        SyncSourcesFragment.SyncSourceListener,
-        GoalActionListener {
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -51,27 +46,6 @@ class MainActivity : AppCompatActivity(),
         initLiveData()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        return when (item.itemId) {
-            R.id.action_create_goal -> {
-                createGoal()
-                return true
-            }
-//            R.id.action_manage_sync_sources -> {
-//                //showSyncSources()
-//                return true
-//            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun initLiveData() {
         Timber.i("initLiveData")
         navViewModel.navLiveData.observe(this, Observer {
@@ -80,28 +54,20 @@ class MainActivity : AppCompatActivity(),
         })
     }
 
+    /* ********* */
     /* REACTIONS */
-    private fun handleNavigation(screen: AppScreen) {
-        when (screen) {
-            is GoalsScreen -> showRunningGoals()
-            is GoalDetailsScreen -> gotoGoalDetails(screen.runningGoal, screen.holder)
-            is SyncSourcesScreen -> showSyncSources()
+    /* ********* */
+    private fun handleNavigation(event: Event) {
+        when (event) {
+            is ShowGoalsEvent -> gotoRunningGoals()
+            is ShowEditGoalEvent -> gotoEditGoal(event.goalId)
+            is ShowGoalDetailsEvent -> gotoGoalDetails(event.runningGoal, event.viewHolder)
+            is ShowSyncSourcesEvent -> gotoSyncSources()
+            is ShowEditSyncSourceEvent -> editSyncSource(event.syncSourceId)
         }
     }
 
-    override fun createGoal() {
-        gotoCreateGoal()
-    }
-
-    override fun editGoal(runningGoal: RunningGoal) {
-        gotoEditGoal(runningGoal)
-    }
-
-    override fun onSyncSourceClicked(syncSource: SyncSource) {
-        editSyncSource(syncSource)
-    }
-
-    private fun showRunningGoals() {
+    private fun gotoRunningGoals() {
         supportFragmentManager.beginTransaction().replace(R.id.content_container, GoalsListFragment()).commit()
     }
 
@@ -123,25 +89,21 @@ class MainActivity : AppCompatActivity(),
                 .commit()
     }
 
-    private fun showSyncSources() {
+    private fun gotoSyncSources() {
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content_container, SyncSourcesFragment())
                 .addToBackStack(null)
                 .commit()
     }
 
-    private fun gotoCreateGoal() {
-        val intent = GoalEditActivity.buildIntent(this, null)
+    private fun gotoEditGoal(goalId: Long?) {
+        val intent = GoalEditActivity.buildIntent(this, goalId)
         startActivity(intent)
     }
 
-    private fun gotoEditGoal(runningGoal: RunningGoal) {
-        val intent = GoalEditActivity.buildIntent(this, runningGoal.id)
-        startActivity(intent)
-    }
-
-    private fun editSyncSource(syncSource: SyncSource) {
-        val intent = EditSyncSourceActivity.buildIntent(this, syncSource)
+    //TODO: TRIGGER VIA EVENT
+    private fun editSyncSource(syncSourceId: Long?) {
+        val intent = EditSyncSourceActivity.buildIntent(this, syncSourceId)
         startActivity(intent)
     }
 
@@ -158,8 +120,6 @@ class MainActivity : AppCompatActivity(),
             dialog.show()
         }
     }
-
-    class ManageSyncSourcesEvent : Event
 }
 
 class DetailsTransition : TransitionSet() {

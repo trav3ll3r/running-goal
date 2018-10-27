@@ -1,11 +1,15 @@
 package au.com.beba.runninggoal.feature.syncSources
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +17,7 @@ import au.com.beba.runninggoal.R
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.feature.progressSync.SyncSourcesAdapter
-import au.com.beba.runninggoal.feature.sync.SyncFeature
+import com.google.android.material.button.MaterialButton
 import dagger.android.support.AndroidSupportInjection
 import org.jetbrains.anko.support.v4.find
 import timber.log.Timber
@@ -22,16 +26,19 @@ import javax.inject.Inject
 
 class SyncSourcesFragment : Fragment() {
 
-    interface SyncSourceListener {
-        fun onSyncSourceClicked(syncSource: SyncSource)
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+
+    private val syncSourcesViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelProviders.of(this, factory).get(SyncSourcesViewModel::class.java)
+    }
+    private val fabViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelProviders.of(this, factory).get(SyncSourcesFabViewModel::class.java)
     }
 
-    @Inject
-    lateinit var syncFeature: SyncFeature
-
+    private lateinit var fab: MaterialButton
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: SyncSourcesAdapter
-    private var listener: SyncSourceListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -45,26 +52,34 @@ class SyncSourcesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
+        initFAB()
         initRecyclerView()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is SyncSourceListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement %s".format(SyncSourceListener::class.java.simpleName))
-        }
+        initLiveData()
     }
 
     override fun onResume() {
         super.onResume()
-        refreshList()
+        syncSourcesViewModel.fetchSyncSources()
+        fabViewModel.update()
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
+    /* ************ */
+    /* INITIALISERS */
+    /* ************ */
+    private fun initToolbar() {
+        find<Toolbar>(R.id.toolbar).apply {
+            //inflateMenu(R.menu.main_menu)
+            setTitle(R.string.sync_sources)
+//            toolbar.setOnMenuItemClickListener {
+//                handleToolbarOptionsItemSelected(it)
+//            }
+        }
+    }
+
+    private fun initFAB() {
+        fab = find(R.id.fab)
+        fab.setOnClickListener { onFabClick() }
     }
 
     private fun initRecyclerView() {
@@ -77,16 +92,57 @@ class SyncSourcesFragment : Fragment() {
 
         recyclerAdapter = SyncSourcesAdapter(mutableListOf(), object : ListListener<SyncSource> {
             override fun onItemClick(item: SyncSource) {
-                listener?.onSyncSourceClicked(item)
+                //TODO: REPLACE WITH publish(Event)
+                syncSourcesViewModel.editSyncSource(item.id)
             }
         })
         recyclerView.adapter = recyclerAdapter
     }
 
-    private fun refreshList() {
-        Timber.i("refreshList")
-        val syncSources = syncFeature.getAllConfiguredSources()
-        recyclerAdapter.setItems(syncSources)
+    private fun initLiveData() {
+        syncSourcesViewModel.syncSourcesLiveData.observe(this, Observer {
+            Timber.d("initLiveData | syncSourcesViewModel | observed | count=%s", it.size)
+            updateList(it)
+        })
+        fabViewModel.fabLiveData.observe(this, Observer {
+            Timber.d("initLiveData | fabViewModel | observed")
+            updateFab(it)
+        })
+    }
+
+    /* ******* */
+    /* ACTIONS */
+    /* ******* */
+    private fun onFabClick() {
+        fabViewModel.fabAction(context)
+    }
+
+    /* ********* */
+    /* REACTIONS */
+    /* ********* */
+    private fun updateList(items: List<SyncSource>) {
+        Timber.i("updateList")
+        recyclerAdapter.setItems(items)
         recyclerAdapter.notifyDataSetChanged()
+    }
+
+    private fun updateFab(model: FabModel) {
+        Timber.i("updateFab")
+        Timber.d("updateFab | type=%s".format(model.actionType))
+        fab.apply {
+            this.visibility = when (model.actionType) { FabActionType.NONE -> View.GONE
+                else -> View.VISIBLE
+            }
+            this.text = when (model.actionType) {
+                FabActionType.CREATE_SYNC_SOURCE -> getString(R.string.add)
+                FabActionType.NONE -> ""
+            }
+            this.icon = ContextCompat.getDrawable(context,
+                    when (model.actionType) {
+                        FabActionType.CREATE_SYNC_SOURCE -> R.drawable.ic_medal_24
+                        FabActionType.NONE -> R.drawable.ic_medal_24 // FIXME
+                    }
+            )
+        }
     }
 }

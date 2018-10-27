@@ -76,6 +76,4 @@ class GoalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         distanceProgress.transitionName = "goal_distance_current_%s".format(id)
         periodProgress.transitionName = "goal_period_current_%s".format(id)
     }
-
-    class GoalSelectedEvent(val runningGoal: RunningGoal, val viewHolder: GoalViewHolder) : Event
 }

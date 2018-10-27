@@ -14,10 +14,10 @@ interface SyncSourceDao {
     @Query("SELECT * FROM sync_source")
     fun getAll(): List<SyncSourceEntity>
 
-    @Query("SELECT * FROM sync_source WHERE type = :type")
-    fun getForType(type: String): List<SyncSourceEntity>
+    @Query("SELECT * FROM sync_source WHERE uid = :syncSourceId")
+    fun getById(syncSourceId: Long): SyncSourceEntity?
 
-    @Query("SELECT * FROM sync_source WHERE is_active = 1")
+    @Query("SELECT * FROM sync_source WHERE is_default = 1")
     fun getDefault(): SyncSourceEntity?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

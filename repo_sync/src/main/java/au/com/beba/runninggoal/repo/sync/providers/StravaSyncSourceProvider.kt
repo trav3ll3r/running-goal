@@ -1,7 +1,7 @@
 package au.com.beba.runninggoal.repo.sync.providers
 
-import au.com.beba.runninggoal.domain.workout.sync.ApiSourceProfile
 import au.com.beba.runninggoal.domain.workout.Workout
+import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.https.HttpHeaders
 import au.com.beba.runninggoal.https.HttpRequest
 import au.com.beba.runninggoal.https.HttpResponse
@@ -24,10 +24,10 @@ class StravaSyncSourceProvider : CommonSyncSourceProvider() {
 
     private val logger: Logger = LoggerFactory.getLogger(TAG)
 
-    private var sourceProfile: ApiSourceProfile? = null
+    private var syncSource: SyncSource? = null
 
-    override fun setSyncSourceProfile(apiSourceProfile: ApiSourceProfile) {
-        sourceProfile = apiSourceProfile
+    override fun setSyncSourceProfile(syncSource: SyncSource) {
+        this.syncSource = syncSource
     }
 
     override suspend fun getWorkoutsForDateRange(startTime: Long, endTime: Long): List<Workout> {
@@ -56,7 +56,7 @@ class StravaSyncSourceProvider : CommonSyncSourceProvider() {
     private suspend fun getActivitiesForUrl(url: String): List<Workout> {
         logger.info("getActivitiesForUrl")
         ATHLETE_ACTIVITIES_HEADERS.addHeader("accept", "application/json")
-        ATHLETE_ACTIVITIES_HEADERS.addHeader("Authorization", "Bearer %s".format(sourceProfile?.accessToken
+        ATHLETE_ACTIVITIES_HEADERS.addHeader("Authorization", "Bearer %s".format(syncSource?.accessToken
                 ?: "NOT SET"))
         val request = HttpRequest("GET", url, ATHLETE_ACTIVITIES_HEADERS)
 

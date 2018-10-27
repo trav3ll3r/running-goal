@@ -5,18 +5,23 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import au.com.beba.runninggoal.R
-import au.com.beba.runninggoal.feature.base.ListListener
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
+import au.com.beba.runninggoal.feature.base.ListListener
 import org.jetbrains.anko.find
 
 
 class SyncSourceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val lblType: TextView = itemView.find(R.id.sync_source_item_type)
+
+    companion object {
+        const val layoutId = R.layout.list_item_sync_source
+    }
+
+    private val lblNickname: TextView = itemView.find(R.id.sync_source_nickname)
     private val lblSyncedAt: TextView = itemView.find(R.id.sync_source_item_synced_at)
     private val statusStatus: TextView = itemView.find(R.id.sync_source_item_status)
 
     fun bindView(syncSource: SyncSource, listener: ListListener<SyncSource>) {
-        lblType.text = syncSource.type
+        lblNickname.text = syncSource.nickname
         lblSyncedAt.text = syncSource.syncedAt.toString()
 
         statusStatus.visibility = View.GONE

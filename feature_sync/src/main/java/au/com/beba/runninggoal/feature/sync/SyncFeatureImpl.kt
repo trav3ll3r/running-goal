@@ -1,6 +1,8 @@
 package au.com.beba.runninggoal.feature.sync
 
 import android.content.Context
+import au.com.beba.runninggoal.domain.workout.sync.SourceType
+import au.com.beba.runninggoal.domain.workout.sync.StravaSourceType
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
 import au.com.beba.runninggoal.repo.sync.SyncSourceRepo
 import au.com.beba.runninggoal.repo.sync.SyncSourceRepository
@@ -32,8 +34,14 @@ object SyncFeatureImpl : SyncFeature {
             return !isSuspended && defaultSyncSource != null
         }
 
-    override fun getSyncSourceForType(syncSourceType: String): SyncSource {
-        return runBlocking { syncSourceRepository.getSyncSourceForType(syncSourceType).first() }
+    override fun getById(syncSourceId: Long): SyncSource? {
+        return runBlocking { syncSourceRepository.getById(syncSourceId) }
+    }
+
+    override fun getSyncSourceTypes(): List<SourceType> {
+        return listOf(
+                StravaSourceType(R.drawable.ic_strava, R.string.source_strava)
+        )
     }
 
     override fun getAllConfiguredSources(): List<SyncSource> {

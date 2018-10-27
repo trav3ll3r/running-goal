@@ -25,14 +25,14 @@ class SyncSourceRepo constructor(
         SyncSourceStorageImpl(context)
     }
 
+    override suspend fun getById(syncSourceId: Long): SyncSource? = withContext(coroutineContext) {
+        logger.info("getById")
+        syncSourceStorage.getById(syncSourceId)
+    }
+
     override suspend fun getSyncSources(): List<SyncSource> = withContext(coroutineContext) {
         logger.info("getSyncSources")
         syncSourceStorage.all()
-    }
-
-    override suspend fun getSyncSourceForType(type: String): List<SyncSource> = withContext(coroutineContext) {
-        logger.info("getSyncSourceForType")
-        syncSourceStorage.allForType(type)
     }
 
     override suspend fun getDefaultSyncSource(): SyncSource? = withContext(coroutineContext) {

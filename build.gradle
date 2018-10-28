@@ -20,7 +20,7 @@ buildscript {
         kotlin = [
                 kotlinVer          : "1.2.71",
                 ankoVer            : "0.10.7",
-                coroutines         : "0.30.2",
+                coroutines         : "0.30.2",  // 1.0.0-RC1 (for EAP add -> maven { url "https://kotlin.bintray.com/kotlin-eap" })
                 coreKtx            : "1.0.0",
         ]
         testing = [

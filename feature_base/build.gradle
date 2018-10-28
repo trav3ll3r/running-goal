@@ -30,8 +30,8 @@ android {
 // KOTLIN, ANKO, KOTLINX
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin.kotlinCoroutinesVer}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.kotlinCoroutinesVer}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin.coroutines}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlin.coroutines}"
     implementation "org.jetbrains.anko:anko-coroutines:${kotlin.ankoVer}"
 }
 

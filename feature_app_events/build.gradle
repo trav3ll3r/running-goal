@@ -1,0 +1,29 @@
+def kotlin = rootProject.ext.kotlin
+def test = rootProject.ext.testing
+def logs = rootProject.ext.logs
+
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+// KOTLIN, ANKO, KOTLINX
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
+}
+
+// MODULES
+dependencies {
+    implementation project(':domain_event')
+}
+
+// TESTING
+dependencies {
+    testImplementation "junit:junit:${test.junit}"
+}
+
+// LOGGING
+dependencies {
+    implementation "org.slf4j:slf4j-api:${logs.slf4j}"
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"

@@ -1,4 +1,4 @@
-package au.com.beba.runninggoal.repo.widget
+package au.com.beba.runningoal.repo.widget
 
 import au.com.beba.runninggoal.domain.widget.Widget
 

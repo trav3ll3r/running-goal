@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.domain.event.Subscriber
 import au.com.beba.runninggoal.domain.event.SubscriberPostbox
-import au.com.beba.runninggoal.domain.event.SyncSourceChange
-import au.com.beba.runninggoal.domain.event.SyncSourceDelete
+import au.com.beba.runninggoal.feature.appevents.SyncSourceChange
+import au.com.beba.runninggoal.feature.appevents.SyncSourceDelete
 import au.com.beba.runninggoal.feature.navigation.ShowEditSyncSourceEvent
 import au.com.beba.runninggoal.feature.sync.SyncFeature
 import timber.log.Timber

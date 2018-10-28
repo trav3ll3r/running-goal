@@ -1,10 +1,10 @@
 package au.com.beba.runninggoal.feature.base
 
 import androidx.lifecycle.ViewModel
-import au.com.beba.runninggoal.domain.event.NoDefaultSyncSource
 import au.com.beba.runninggoal.domain.event.Subscriber
 import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
 import au.com.beba.runninggoal.domain.event.SubscriberPostbox
+import au.com.beba.runninggoal.feature.appevents.NoDefaultSyncSource
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import javax.inject.Inject

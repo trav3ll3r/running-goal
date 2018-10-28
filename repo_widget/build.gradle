@@ -28,25 +28,6 @@ android {
     }
 }
 
-//def koin_version = '1.0.1'
-//// KOIN (DI)
-//dependencies {
-//    // Koin for Kotlin
-//    implementation "org.koin:koin-core:$koin_version"
-//    // Koin extended & experimental features
-//    implementation "org.koin:koin-core-ext:$koin_version"
-//    // Koin for Unit tests
-//    //testImplementation "org.koin:koin-test:$koin_version"
-//
-//    // Koin for Android
-//    implementation "org.koin:koin-android:$koin_version"
-//    // Android Scope feature
-//    implementation "org.koin:koin-android-scope:$koin_version"
-//    // AndroidX (based on koin-android)
-//    // Koin AndroidX Scope feature
-//    implementation "org.koin:koin-androidx-scope:$koin_version"
-//}
-
 // KOTLIN, ANKO, KOTLINX
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin.kotlinVer}"
@@ -65,8 +46,10 @@ dependencies {
 
 // MODULES
 dependencies {
-    implementation project(':domain_goal')
+    //implementation project(':domain_goal')
+    implementation project(':domain_widget')
     implementation project(':domain_event')
+    implementation project(':feature_app_events')
     implementation project(':goaldatabase')
 }
 

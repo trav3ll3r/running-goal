@@ -7,11 +7,11 @@ import au.com.beba.runninggoal.domain.Distance
 import au.com.beba.runninggoal.domain.GoalStatus
 import au.com.beba.runninggoal.domain.RunningGoal
 import au.com.beba.runninggoal.domain.event.EventCentre
-import au.com.beba.runninggoal.domain.event.NoDefaultSyncSource
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
-import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
 import au.com.beba.runninggoal.domain.workout.Workout
 import au.com.beba.runninggoal.domain.workout.sync.SyncSource
+import au.com.beba.runninggoal.feature.appevents.NoDefaultSyncSource
+import au.com.beba.runninggoal.feature.appevents.WorkoutSyncEvent
 import au.com.beba.runninggoal.repo.goal.GoalRepo
 import au.com.beba.runninggoal.repo.goal.GoalRepository
 import au.com.beba.runninggoal.repo.sync.SyncSourceRepo
@@ -21,6 +21,7 @@ import au.com.beba.runninggoal.repo.sync.providers.SyncSourceProvider
 import au.com.beba.runninggoal.repo.workout.WorkoutRepo
 import au.com.beba.runninggoal.repo.workout.WorkoutRepository
 import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import org.slf4j.Logger
@@ -121,7 +122,7 @@ internal class SyncSourceIntentService : JobIntentService() {
     private suspend fun getGoalsForUpdate(singleGoalId: Long): List<RunningGoal> {
         val goals: List<RunningGoal> = if (singleGoalId > 0) {
             // ONLY UPDATE SINGLE (SPECIFIC) GOAL
-            val goal = withContext(DefaultDispatcher) { goalRepository.getById(singleGoalId) }
+            val goal = withContext(Dispatchers.Default) { goalRepository.getById(singleGoalId) }
             if (goal != null) {
                 listOf(goal)
             } else {
@@ -129,7 +130,7 @@ internal class SyncSourceIntentService : JobIntentService() {
             }
         } else {
             // UPDATE ALL ELIGIBLE GOALS
-            withContext(DefaultDispatcher) { goalRepository.fetchGoals() }
+            withContext(Dispatchers.Default) { goalRepository.fetchGoals() }
         }
         return goals.filter { it.progress.status in listOf(GoalStatus.EXPIRED, GoalStatus.ONGOING) }
     }

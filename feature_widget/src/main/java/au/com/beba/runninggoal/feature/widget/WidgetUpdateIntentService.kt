@@ -10,8 +10,8 @@ import au.com.beba.runninggoal.domain.event.EventCentre
 import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
 import au.com.beba.runninggoal.repo.goal.GoalRepo
 import au.com.beba.runninggoal.repo.goal.GoalRepository
-import au.com.beba.runninggoal.repo.widget.WidgetRepo
-import au.com.beba.runninggoal.repo.widget.WidgetRepository
+import au.com.beba.runningoal.repo.widget.WidgetRepo
+import au.com.beba.runningoal.repo.widget.WidgetRepository
 import kotlinx.coroutines.experimental.launch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,21 +25,6 @@ internal class WidgetUpdateIntentService
 
         private const val EXTRA_GOAL_ID = "EXTRA_GOAL_ID"
         private const val EXTRA_WIDGET_ID = "EXTRA_WIDGET_ID"
-
-//        /**
-//         * Builds Intent for [WidgetUpdateIntentService] and
-//         * enqueues work to update one or all eligible goals
-//         *
-//         * @param goalId NULL to sync all all eligible goals or ONE specific goal
-//         */
-//        fun enqueueWork(context: Context, goalId: Long?, jobId: Int = 1000) {
-//            val work = Intent().apply {
-//                if (goalId != null) {
-//                    putExtra(EXTRA_GOAL_ID, goalId)
-//                }
-//            }
-//            enqueueWork(context, WidgetUpdateIntentService::class.java, jobId, work)
-//        }
 
         fun updateWidget(context: Context, widgetId: Int, jobId: Int = 1001) {
             val work = Intent().apply {

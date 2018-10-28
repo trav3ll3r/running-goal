@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.domain.event.GoalChangeEvent
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
 import au.com.beba.runninggoal.domain.event.Subscriber
 import au.com.beba.runninggoal.domain.event.SubscriberEventCentre
 import au.com.beba.runninggoal.domain.event.SubscriberPostbox
-import au.com.beba.runninggoal.domain.event.WorkoutSyncEvent
 import au.com.beba.runninggoal.domain.workout.Workout
+import au.com.beba.runninggoal.feature.appevents.GoalChangeEvent
+import au.com.beba.runninggoal.feature.appevents.WorkoutSyncEvent
 import au.com.beba.runninggoal.feature.navigation.ShowEditGoalEvent
 import au.com.beba.runninggoal.feature.sync.SyncFeature
 import au.com.beba.runninggoal.feature.workout.WorkoutFeature

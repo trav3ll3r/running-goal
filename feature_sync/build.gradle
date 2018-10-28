@@ -49,6 +49,7 @@ dependencies {
 // MODULES
 dependencies {
     implementation project(":feature_base")
+    implementation project(':feature_app_events')
     implementation project(":domain_goal")
     implementation project(":domain_workout")
     implementation project(":domain_event")

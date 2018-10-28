@@ -342,17 +342,3 @@ interface Event {
         return type == other.type
     }
 }
-
-//TODO: MOVE THIS SOMEWHERE ELSE
-class GoalChangeEvent(val goalId: Long) : Event
-
-class GoalDeleteEvent(val goalId: Long) : Event
-
-class SyncSourceChange : Event
-class SyncSourceDelete : Event
-class NoDefaultSyncSource : Event
-class WorkoutSyncEvent(val goalId: Long, val isUpdating: Boolean) : Event
-
-
-class WidgetChangeEvent(val widgetId: Long, val goalId: Long?) : Event
-class WidgetDeleteEvent(val widgetId: Long) : Event

@@ -15,9 +15,9 @@ import au.com.beba.runninggoal.domain.GoalDate
 import au.com.beba.runninggoal.domain.GoalTarget
 import au.com.beba.runninggoal.domain.Period
 import au.com.beba.runninggoal.domain.RunningGoal
-import au.com.beba.runninggoal.domain.event.GoalChangeEvent
-import au.com.beba.runninggoal.domain.event.GoalDeleteEvent
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
+import au.com.beba.runninggoal.feature.appevents.GoalChangeEvent
+import au.com.beba.runninggoal.feature.appevents.GoalDeleteEvent
 import au.com.beba.runninggoal.feature.goal.GoalFeature
 import au.com.beba.runninggoal.feature.widget.WidgetFeature
 import au.com.beba.runninggoal.feature.workout.WorkoutFeature

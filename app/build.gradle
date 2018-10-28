@@ -101,6 +101,7 @@ dependencies {
     implementation project(':feature_sync')
     implementation project(":feature_workout")
     implementation project(':feature_widget')
+    implementation project(':feature_app_events')
     implementation project(':stylist')
     implementation project(':ui_component')
 }

@@ -59,10 +59,12 @@ dependencies {
 // MODULES
 dependencies {
     implementation project(":feature_base")
+    implementation project(":feature_app_events")
     implementation project(":domain_goal")
+    implementation project(":domain_widget")
     implementation project(":domain_event")
     implementation project(":repo_goal")
-    implementation project(":domain_widget")
+    implementation project(":repo_widget")
     implementation project(":stylist")
     implementation project(":ui_component")
 }

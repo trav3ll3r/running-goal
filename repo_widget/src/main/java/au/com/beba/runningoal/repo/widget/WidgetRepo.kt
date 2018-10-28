@@ -1,11 +1,11 @@
-package au.com.beba.runninggoal.repo.widget
+package au.com.beba.runningoal.repo.widget
 
 import android.content.Context
 import au.com.beba.runninggoal.domain.event.EventCentre
 import au.com.beba.runninggoal.domain.event.PublisherEventCentre
-import au.com.beba.runninggoal.domain.event.WidgetChangeEvent
-import au.com.beba.runninggoal.domain.event.WidgetDeleteEvent
 import au.com.beba.runninggoal.domain.widget.Widget
+import au.com.beba.runninggoal.feature.appevents.WidgetChangeEvent
+import au.com.beba.runninggoal.feature.appevents.WidgetDeleteEvent
 import au.com.beba.runninggoal.goaldatabase.WidgetStorage
 import au.com.beba.runninggoal.goaldatabase.widget.WidgetStorageImpl
 import kotlinx.coroutines.experimental.Dispatchers

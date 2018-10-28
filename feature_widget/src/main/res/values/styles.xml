@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--FIXME-->
-    <!--<style name="flip_button" parent="@style/Widget.AppCompat.Button.Borderless.Colored">-->
-    <style name="flip_button">
+
+    <style name="flip_button" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:textColor">@android:color/white</item>

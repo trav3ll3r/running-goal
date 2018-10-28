@@ -3,6 +3,6 @@
     <color name="marker_color">#FFFFFF</color>
 
     <color name="hex_background_default">#aaFFFFFF</color>
-    <color name="hex_background_distance">#aaFFFFFF</color>
-    <color name="hex_background_time">#aaFFFFFF</color>
+    <color name="hex_background_distance">@color/primary</color>
+    <color name="hex_background_time">@color/primary_dark</color>
 </resources>
